@@ -1,0 +1,22 @@
+* text=auto eol=lf
+# Unity scenes, prefabs, assets — use Unity YAML Merge driver
+*.unity     merge=unityyamlmerge
+*.prefab    merge=unityyamlmerge
+*.asset     merge=unityyamlmerge
+*.anim      merge=unityyamlmerge
+*.controller merge=unityyamlmerge
+*.mask      merge=unityyamlmerge
+*.meta      merge=unityyamlmerge
+# Binary files tracked by LFS (common Unity large assets)
+*.psd       filter=lfs diff=lfs merge=lfs -text
+*.tga       filter=lfs diff=lfs merge=lfs -text
+*.png       filter=lfs diff=lfs merge=lfs -text
+*.jpg       filter=lfs diff=lfs merge=lfs -text
+*.fbx       filter=lfs diff=lfs merge=lfs -text
+*.wav       filter=lfs diff=lfs merge=lfs -text
+*.mp3       filter=lfs diff=lfs merge=lfs -text
+*.ogg       filter=lfs diff=lfs merge=lfs -text
+*.mp4       filter=lfs diff=lfs merge=lfs -text
+*.unitypackage filter=lfs diff=lfs merge=lfs -text
+*.zip       filter=lfs diff=lfs merge=lfs -text
+*.exr filter=lfs diff=lfs merge=lfs -text
