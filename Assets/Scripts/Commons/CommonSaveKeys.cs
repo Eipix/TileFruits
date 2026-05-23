@@ -1,6 +1,6 @@
 namespace Commons
 {
-    public class SaveKeys
+    public class CommonSaveKeys
     {
         public const string CurrencyInt = "Currency";
         public const string MusicVolumeFloat = "MusicVolume";

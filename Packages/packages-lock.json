@@ -1,11 +1,27 @@
 {
   "dependencies": {
+    "com.coffee.ui-effect": {
+      "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0"
+      },
+      "hash": "70937d2ce39b61c29c4feb4d13642c65bb553d6c"
+    },
     "com.playgama.bridge": {
       "version": "https://github.com/playgama/bridge-unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
       "hash": "b18f83dad5530ff68060542f124ce96e5a592cfc"
+    },
+    "com.spellsinger.sprites": {
+      "version": "https://github.com/SpellSingerGames/sprite-animation-helpers.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "b828d7f9fe4870bcad1c5b484180bcf4dee81e88"
     },
     "com.unity.2d.animation": {
       "version": "10.2.1",

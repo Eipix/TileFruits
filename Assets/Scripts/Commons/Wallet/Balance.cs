@@ -17,7 +17,7 @@ namespace Commons.Wallet
         private void Construct(ISaveSystem saveSystem)
         {
             _saveSystem = saveSystem;
-            Value = _saveSystem.Load(SaveKeys.CurrencyInt, 0);
+            Value = _saveSystem.Load(CommonSaveKeys.CurrencyInt, 0);
         }
 
         public void Add(int value)
@@ -32,7 +32,7 @@ namespace Commons.Wallet
             }
 
             Value += value;
-            _saveSystem.Save(SaveKeys.CurrencyInt, Value);
+            _saveSystem.Save(CommonSaveKeys.CurrencyInt, Value);
             ValueChanged?.Invoke();
         }
 
@@ -42,7 +42,7 @@ namespace Commons.Wallet
                 return false;
 
             Value -= price;
-            _saveSystem.Save(SaveKeys.CurrencyInt, Value);
+            _saveSystem.Save(CommonSaveKeys.CurrencyInt, Value);
             ValueChanged?.Invoke();
             return true;
         }

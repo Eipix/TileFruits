@@ -12,7 +12,7 @@ using Commons.Systems.Save;
 using Playgama.Modules.Leaderboards;
 using Zenject;
 
-public class SDK
+public class SDK : IInitializable
 {
     private SaveSystem _saveSystem;
     private AudioManager _audioManager;
@@ -26,7 +26,8 @@ public class SDK
         _audioManager = audioManager;
     }
 
-    private void Start() => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
+    public void Initialize()
+        => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
 
     public IEnumerator InitRoutine(Action onInit = null)
     {
@@ -82,13 +83,13 @@ public class SDK
         {
             case InterstitialState.Loading:
             case InterstitialState.Opened:
-                _audioManager.MuteMusic();
-                _audioManager.MuteSounds();
+                _audioManager.MuteMusic = true;
+                _audioManager.MuteSounds = true;
                 break;
             case InterstitialState.Closed:
             case InterstitialState.Failed:
-                _audioManager.UnmuteMusic();
-                _audioManager.UnmuteSounds();
+                _audioManager.MuteMusic = false;
+                _audioManager.MuteSounds = false;
                 break;
             default:
                 break;
