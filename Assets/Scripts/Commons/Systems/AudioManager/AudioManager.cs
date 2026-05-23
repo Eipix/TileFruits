@@ -29,9 +29,30 @@ namespace Commons.Systems.AudioManager
         private ComponentPool<AudioSource> _soundsPool;
         private IRegistry<IPausable> _pauseRegistry;
 
+        private bool _muteSound;
+        
         public float MusicVolume { get; private set; }
         public float SoundVolume { get; private set; }
         public bool IsPaused { get; private set; }
+
+        public bool MuteMusic
+        {
+            get => _music.mute;
+            set => _music.mute = value;
+        }
+        
+        public bool MuteSounds
+        {
+            get => _muteSound;
+            set
+            {
+                if (_muteSound == value)
+                    return;
+                
+                _muteSound = value;
+                ForEachSound((sound, _) => sound.Mute = _muteSound);
+            }
+        }
 
         [Inject]
         private void Construct(ISaveSystem saveSystem, IRegistry<IPausable> pauseRegistry)
@@ -40,8 +61,8 @@ namespace Commons.Systems.AudioManager
             _pauseRegistry = pauseRegistry;
             _pauseRegistry.Register(this);
 
-            MusicVolume = saveSystem.Load(SaveKeys.MusicVolumeFloat, 0.5f);
-            SoundVolume = saveSystem.Load(SaveKeys.SoundVolumeFloat, 0.5f);
+            MusicVolume = saveSystem.Load(CommonSaveKeys.MusicVolumeFloat, 0.5f);
+            SoundVolume = saveSystem.Load(CommonSaveKeys.SoundVolumeFloat, 0.5f);
 
             _music.volume = MusicVolume;
             _soundsPool = new(_soundPrefab, transform, defaultCapacity: _defaultPoolSize);
@@ -205,12 +226,6 @@ namespace Commons.Systems.AudioManager
             ResumeSounds();
         }
 
-        public void MuteMusic() => _music.mute = true;
-        public void UnmuteMusic() => _music.mute = false;
-
-        public void MuteSounds() => ForEachSound((sound, _) => sound.Mute = true);
-        public void UnmuteSounds() => ForEachSound((sound, _) => sound.Mute = false);
-
         public void PauseMusic() => _music.Pause();
         public void ResumeMusic() => _music.UnPause();
 
@@ -220,7 +235,7 @@ namespace Commons.Systems.AudioManager
         public void SetMusicVolume(float volume)
         {
             volume = Mathf.Clamp01(volume);
-            _saveSystem.Save(SaveKeys.MusicVolumeFloat, volume);
+            _saveSystem.Save(CommonSaveKeys.MusicVolumeFloat, volume);
             
             MusicVolume = volume;
             _music.volume = MusicVolume;
@@ -229,7 +244,7 @@ namespace Commons.Systems.AudioManager
         public void SetSoundVolume(float volume)
         {
             volume = Mathf.Clamp01(volume);
-            _saveSystem.Save(SaveKeys.SoundVolumeFloat, volume);
+            _saveSystem.Save(CommonSaveKeys.SoundVolumeFloat, volume);
             
             SoundVolume = volume;
             ForEachSound((sound, _) => sound.SetVolume(SoundVolume));

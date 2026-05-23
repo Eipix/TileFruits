@@ -3,6 +3,7 @@ using Commons.Extensions;
 using DG.Tweening;
 using Effects;
 using JetBrains.Annotations;
+using NaughtyAttributes;
 using UI;
 using UnityEngine;
 
@@ -25,13 +26,14 @@ namespace Commons
         private void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
-            _canvasGroup.Hide();
+            ForceClose();
         }
 
         private void OnDisable() => Close(true);
 
+        [Button]
         public void Open() => Open(false);
-
+        
         public void Open(bool silent)
         {
             if (IsOpened)
@@ -51,6 +53,7 @@ namespace Commons
 
         protected virtual void OnOpen() { }
 
+        [Button]
         public void Close() => Close(false);
 
         public void Close(bool silent)
@@ -68,6 +71,16 @@ namespace Commons
 
             IsOpened = false;
             OnClose();
+        }
+
+        private void ForceClose()
+        {
+            _canvasGroup.Hide();
+            
+            if (_windowAnimation != null)
+                _windowAnimation.Close().Complete();
+            
+            IsOpened = false;
         }
 
         protected virtual void OnClose() { }

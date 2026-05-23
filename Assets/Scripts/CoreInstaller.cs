@@ -13,6 +13,7 @@ namespace DefaultNamespace
         
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<SDK>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PauseManager>().AsSingle().NonLazy();
             Container.Bind<ISaveSystem>().To<SaveSystem>().AsSingle().NonLazy();
             Container.Bind<AudioManager>().FromComponentInNewPrefab(_audioManagerPrefab)
