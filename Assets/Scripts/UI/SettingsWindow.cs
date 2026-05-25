@@ -26,8 +26,8 @@ namespace UI
 
         protected override void OnOpen()
         {
-            _musicToggle.isOn = _saveSystem.Load(SaveKeys.MuteMusic, false);
-            _soundToggle.isOn = _saveSystem.Load(SaveKeys.MuteSound, false);
+            _musicToggle.isOn = _audioManager.MuteMusic;
+            _soundToggle.isOn = _audioManager.MuteSounds;
             
             _closeButton.onClick.AddListener(Close);
             _musicToggle.onValueChanged.AddListener(OnMusicValueChanged);
