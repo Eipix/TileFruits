@@ -15,9 +15,10 @@ namespace Gameplay
         private int _symbolInitialSortingOrder;
 
         [Inject]
-        public void Construct(TileConfig config)
+        public void Construct(TileConfig config, int layer)
         {
             _config = config;
+            SetLayer(layer);
         }
 
         public void Initialize()
@@ -26,22 +27,29 @@ namespace Gameplay
             _boneInitialSortingOrder = _bone.sortingOrder;
             _symbolInitialSortingOrder = _symbol.sortingOrder;
         }
+
+        private void SetLayer(int layer)
+        {
+            _bone.sortingOrder = layer;
+            _symbol.sortingOrder = layer;
+        }
         
         [Button(enabledMode: EButtonEnableMode.Playmode)]
-        public void LayerUp()
+        private void LayerUp()
         {
             _bone.sortingOrder++;
             _symbol.sortingOrder++;
         }
         
         [Button(enabledMode: EButtonEnableMode.Playmode)]
-        public void LayerDown()
+        private void LayerDown()
         {
             _bone.sortingOrder--;
             _symbol.sortingOrder--;
         }
         
-        public void ResetLayers()
+        [Button(enabledMode: EButtonEnableMode.Playmode)]
+        private void ResetLayers()
         {
             _bone.sortingOrder = _boneInitialSortingOrder;
             _symbol.sortingOrder = _symbolInitialSortingOrder;

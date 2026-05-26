@@ -34,7 +34,7 @@ namespace Commons.Extensions
             }
         }
 
-        public static T GetRandomElement<T>(this IReadOnlyList<T> list, System.Random random)
+        public static T GetRandom<T>(this IReadOnlyList<T> list, System.Random random)
         {
             return list[random.Next(0, list.Count)];
         }

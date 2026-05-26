@@ -1,26 +1,23 @@
-using UnityEngine;
-using Zenject;
+using System;
 
 namespace Generator
 {
     public class TileMapGenerator
     {
-        private readonly TileFactory _factory;
-        private readonly TileMapGeneratorSettings _settings;
+        public event Action<ITileMap> Generated;
         
-        public Vector2 Center => _settings.Center;
-        public float PaddingBetweenTiles => _settings.PaddingBetweenTiles;
-
-        public TileMapGenerator(TileFactory tileFactory, TileMapGeneratorSettings settings)
+        public ITileMap GenerateGrid(GeneratorConfig config)
         {
-            _factory = tileFactory;
-            _settings = settings;
-        }
-
-        public void GenerateGrid(GeneratorConfig config)
-        {
-            TileMap map = new(_settings.MapSize);
+            TileMap map = new(config.MapSize);
             
+            var generationStrategy = config.GenerationStrategy.GetStrategy(map);
+            generationStrategy.GenerateShape();
+            
+            var distributionStrategy = config.DistributionStrategy.GetStrategy(map, config.TileList);
+            distributionStrategy.Distribute();
+            
+            Generated?.Invoke(map);
+            return map;
         }
     }
 }

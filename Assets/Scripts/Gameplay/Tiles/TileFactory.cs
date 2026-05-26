@@ -16,18 +16,16 @@ namespace Generator
         }
 
         public Tile Create(TileConfig config, Vector3 position, Transform parent)
-        {
-            return Create(config, position, Quaternion.identity, parent);
-        }
+            => Create(config, position, parent, 0);
 
-        public Tile Create(TileConfig config, Vector2 position, Quaternion rotation, Transform parent)
+        public Tile Create(TileConfig config, Vector2 position, Transform parent, int layer)
         {
             return _instantiator.InstantiatePrefabForComponent<Tile>(
                 _prefab, 
                 position, 
-                rotation,
+                Quaternion.identity,
                 parent, 
-                extraArgs: new object[] { config }
+                extraArgs: new object[] { config, layer }
             );
         }
     }

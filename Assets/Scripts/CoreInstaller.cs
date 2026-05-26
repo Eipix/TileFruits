@@ -5,6 +5,7 @@ using Commons.Systems.SaveManager;
 using Gameplay;
 using Generator;
 using Input;
+using Input.Levels;
 using UnityEngine;
 using WebGLCommons.Scripts;
 using Zenject;
@@ -13,10 +14,9 @@ namespace DefaultNamespace
 {
     public class CoreInstaller : MonoInstaller
     {
-        [SerializeField] private TileMapGeneratorSettings _tileMapSettings;
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private AudioManager _audioManagerPrefab;
-        
+
         public override void InstallBindings()
         {
             Container.Bind<ISaveSystem>().To<SDKSaveSystem>().AsSingle();
@@ -34,15 +34,18 @@ namespace DefaultNamespace
                 .NonLazy();
             
             Container.BindInterfacesAndSelfTo<TileClickDetector>().AsSingle().NonLazy();
+            
             Container.Bind<TileMapGenerator>()
                 .AsSingle()
-                .WithArguments(_tileMapSettings)
                 .NonLazy();
             
             Container.Bind<TileFactory>()
                 .AsSingle()
                 .WithArguments(_tilePrefab)
                 .NonLazy();
+
+            Container.Bind<LevelManager>().AsSingle().NonLazy();
+            Container.Bind<GameManager>().AsSingle().NonLazy();
         }
     }
 }
