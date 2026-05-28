@@ -1,62 +1,31 @@
 using Playgama;
 using System.Collections;
-using System.IO;
-using UnityEngine;
 using Playgama.Modules.Platform;
 using Playgama.Modules.Advertisement;
 using System;
-using Commons.Coroutines;
-using Commons.Systems;
 using Commons.Systems.AudioManager;
-using Commons.Systems.Save;
 using Playgama.Modules.Leaderboards;
 using Zenject;
 
-public class SDK
+public class SDK : IInitializable
 {
-    private SaveSystem _saveSystem;
     private AudioManager _audioManager;
-    
-    public bool IsLoad { get; private set; }
 
     [Inject]
-    private void Construct(ISaveSystem saveSystem, AudioManager audioManager)
+    private void Construct(AudioManager audioManager)
     {
-        _saveSystem  = (SaveSystem)saveSystem;
         _audioManager = audioManager;
     }
 
-    private void Start() => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
+    public void Initialize()
+        => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
 
-    public IEnumerator InitRoutine(Action onInit = null)
+    public void Setup()
     {
         //TODO setup language
         //Language.Instance.ChangeLanguage(Bridge.platform.language);
-        Load();
         GameReady();
-        yield return new WaitUntil(() => IsLoad);
         ShowBanner();
-        onInit?.Invoke();
-    }
-
-    public void Save()
-        => Bridge.storage.Set(SaveSystem.SaveFile, _saveSystem.JsonData);
-
-    public void Load()
-    {
-#if UNITY_EDITOR
-        IsLoad = true;
-#else
-        Bridge.storage.Get(SaveSerial.SaveFile, OnLoadComplete);
-#endif
-    }
-
-    public void OnLoadComplete(bool success, string data)
-    {
-        if (success && !string.IsNullOrEmpty(data))
-            File.WriteAllText(_saveSystem.Path, data);
-
-        IsLoad = true;
     }
 
     public void SetToLeaderBoard(int value, Action<bool> onComplete = null)
@@ -82,15 +51,13 @@ public class SDK
         {
             case InterstitialState.Loading:
             case InterstitialState.Opened:
-                _audioManager.MuteMusic();
-                _audioManager.MuteSounds();
+                _audioManager.MuteMusic = true;
+                _audioManager.MuteSounds = true;
                 break;
             case InterstitialState.Closed:
             case InterstitialState.Failed:
-                _audioManager.UnmuteMusic();
-                _audioManager.UnmuteSounds();
-                break;
-            default:
+                _audioManager.MuteMusic = false;
+                _audioManager.MuteSounds = false;
                 break;
         }
     }
