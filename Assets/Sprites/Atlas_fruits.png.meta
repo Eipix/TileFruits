@@ -126,7 +126,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Atlas_fruits_0
+      name: Apple
       rect:
         serializedVersion: 2
         x: 21
@@ -134,7 +134,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -148,7 +148,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_1
+      name: Banana
       rect:
         serializedVersion: 2
         x: 140
@@ -156,7 +156,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -170,15 +170,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_2
+      name: Pear
       rect:
         serializedVersion: 2
         x: 262
-        y: 388
+        y: 387
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -192,7 +192,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_3
+      name: Peach
       rect:
         serializedVersion: 2
         x: 384
@@ -200,7 +200,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -214,7 +214,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_4
+      name: Orange
       rect:
         serializedVersion: 2
         x: 21
@@ -222,7 +222,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -236,15 +236,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_5
+      name: Kiwi
       rect:
         serializedVersion: 2
-        x: 140
-        y: 271
+        x: 141
+        y: 272
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -258,7 +258,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_6
+      name: Grape
       rect:
         serializedVersion: 2
         x: 262
@@ -266,7 +266,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -280,7 +280,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_7
+      name: Watermelon
       rect:
         serializedVersion: 2
         x: 384
@@ -288,7 +288,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -302,7 +302,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_8
+      name: Pineapple
       rect:
         serializedVersion: 2
         x: 21
@@ -310,7 +310,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -324,7 +324,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_9
+      name: Coconut
       rect:
         serializedVersion: 2
         x: 140
@@ -332,7 +332,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -346,7 +346,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_10
+      name: Lemon
       rect:
         serializedVersion: 2
         x: 262
@@ -354,7 +354,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -368,7 +368,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_11
+      name: Pomegranate
       rect:
         serializedVersion: 2
         x: 384
@@ -376,7 +376,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -390,7 +390,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_12
+      name: Plum
       rect:
         serializedVersion: 2
         x: 21
@@ -398,7 +398,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -412,15 +412,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_13
+      name: Lime
       rect:
         serializedVersion: 2
-        x: 140
-        y: 21
+        x: 139
+        y: 20
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -434,7 +434,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Atlas_fruits_14
+      name: Persimmon
       rect:
         serializedVersion: 2
         x: 262
@@ -442,7 +442,7 @@ TextureImporter:
         width: 105
         height: 105
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -469,21 +469,21 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Atlas_fruits_0: 8414293819749889914
-      Atlas_fruits_1: 48820108
-      Atlas_fruits_10: -1987543303
-      Atlas_fruits_11: -284907914
-      Atlas_fruits_12: -1160254500
-      Atlas_fruits_13: -1023663529
-      Atlas_fruits_14: -149554968
-      Atlas_fruits_2: -939373067
-      Atlas_fruits_3: 1075321130
-      Atlas_fruits_4: 1171148799
-      Atlas_fruits_5: -20470536
-      Atlas_fruits_6: -565564275
-      Atlas_fruits_7: 976019153
-      Atlas_fruits_8: 1716320458
-      Atlas_fruits_9: 2039272374
+      Apple: 8414293819749889914
+      Banana: 48820108
+      Coconut: 2039272374
+      Grape: -565564275
+      Kiwi: -20470536
+      Lemon: -1987543303
+      Lime: -1023663529
+      Orange: 1171148799
+      Peach: 1075321130
+      Pear: -939373067
+      Persimmon: -149554968
+      Pineapple: 1716320458
+      Plum: -1160254500
+      Pomegranate: -284907914
+      Watermelon: 976019153
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
