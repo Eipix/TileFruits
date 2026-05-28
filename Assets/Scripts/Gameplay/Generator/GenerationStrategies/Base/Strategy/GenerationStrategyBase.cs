@@ -1,17 +1,20 @@
 using System;
+using System.Linq;
 using Generator;
 using Generator.GenerationStrategies;
 using UnityEngine;
+
+using static Constants.MahjongConstants;
 
 namespace Gameplay.Generator.GenerationStrategies.Base
 {
     public abstract class GenerationStrategyBase : IGenerationStrategy
     {
-        protected GenerationStrategyConfigBase Config;
-        protected TileMap Map { get; private set; }
+        protected GenerationStrategyConfigBase Config { get; }
+        protected TileMap Map { get; }
         protected Vector2Int Size => Map.Size;
         
-        protected bool IsSlotsCountEven => Map.Count % 2 == 0;
+        protected bool IsSlotsCountEven => Map.Count % TilesPerMatch == 0;
         
         public GenerationStrategyBase(GenerationStrategyConfigBase config, TileMap map)
         {
@@ -23,8 +26,8 @@ namespace Gameplay.Generator.GenerationStrategies.Base
         {
             OnGenerateShape();
 
-            if (Map.Count < 2)
-                throw new InvalidOperationException("At least 2 slots are required");
+            if (Map.Count < TilesPerMatch)
+                throw new InvalidOperationException($"At least {TilesPerMatch} slots are required");
             
             if (IsSlotsCountEven is false)
                 RemoveFromTopMost();
@@ -32,17 +35,10 @@ namespace Gameplay.Generator.GenerationStrategies.Base
 
         private void RemoveFromTopMost()
         {
-            int highestLayer = Map.HighestLayer;
-            
-            foreach (var position in Map.Positions)
-            {
-                if(position.z == highestLayer)
-                {
-                    Map.Remove(position);
-                    Debug.LogWarning($"Slots count ({Map.Count}) must be even. Removing {position} slot");
-                    break;
-                }
-            }
+            var lastSlotPosition = Map.Positions.Last();
+
+            Debug.LogWarning($"Slots count ({Map.Count}) must be even. Removing {lastSlotPosition} slot");
+            Map.Remove(lastSlotPosition);
         }
 
         protected abstract void OnGenerateShape();

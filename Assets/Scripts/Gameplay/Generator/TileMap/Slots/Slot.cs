@@ -19,8 +19,10 @@ namespace Generator
                     return;
                 }
                 
-                if (_tile != null)
+                if (_tile == null)
                     _tile = value;
+                else
+                    Debug.LogWarning("TileConfig is already set");
             }
         }
         

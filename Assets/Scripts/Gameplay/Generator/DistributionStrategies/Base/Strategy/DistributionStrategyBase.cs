@@ -1,3 +1,4 @@
+using System;
 using Gameplay;
 using Generator.DistributionStrategies.Base.Config;
 
@@ -5,9 +6,9 @@ namespace Generator.DistributionStrategies
 {
     public abstract class DistributionStrategyBase : IDistributionStrategy
     {
-        protected DistributionStrategyConfigBase Config;
-        protected TileMap Map { get; private set; }
-        protected TileList TileList { get; private set; }
+        protected DistributionStrategyConfigBase Config { get; }
+        protected TileMap Map { get; }
+        protected TileList TileList { get; }
         
         public DistributionStrategyBase(DistributionStrategyConfigBase config,
             TileMap map,
@@ -18,6 +19,17 @@ namespace Generator.DistributionStrategies
             TileList = tileList;
         }
 
-        public abstract void Distribute();
+        public void Distribute()
+        {
+            OnDistribute();
+            
+            foreach (var slot in Map.Slots)
+            {
+                if(slot.IsEmpty)
+                    throw new InvalidOperationException("Not all slots are distributed");
+            }
+        }
+        
+        protected abstract void OnDistribute();
     }
 }

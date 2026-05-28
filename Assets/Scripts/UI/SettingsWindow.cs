@@ -43,13 +43,13 @@ namespace UI
 
         private void OnMusicValueChanged(bool isOn)
         {
-            _saveSystem.Save(SaveKeys.MuteMusic, isOn);
+            _saveSystem.Save(SaveKeys.MuteMusicBool, isOn);
             _audioManager.MuteMusic = isOn;
         }
         
         private void OnSoundValueChanged(bool isOn)
         {
-            _saveSystem.Save(SaveKeys.MuteSound, isOn);
+            _saveSystem.Save(SaveKeys.MuteSoundBool, isOn);
             _audioManager.MuteSounds = isOn;
         }
     }

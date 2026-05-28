@@ -5,6 +5,8 @@ namespace Generator.GenerationStrategies.PyramidStrategy
 {
     public class PyramidStrategy : GenerationStrategy<PyramidStrategyConfig>
     {
+        private const int TileGridSize = 2;
+        
         public PyramidStrategy(PyramidStrategyConfig config, TileMap map) : base(config, map) { }
 
         protected override void OnGenerateShape()
@@ -36,9 +38,9 @@ namespace Generator.GenerationStrategies.PyramidStrategy
             int endX = Size.x - layer;
             int endY = Size.y - layer;
 
-            for (int x = layer; x < endX; x += 2)
+            for (int x = layer; x < endX; x += TileGridSize)
             {
-                for (int y = layer; y < endY; y += 2)
+                for (int y = layer; y < endY; y += TileGridSize)
                 {
                     Vector3Int position = new(x, y, layer);
                     

@@ -18,8 +18,8 @@ namespace Commons.Systems.SaveManager
 
         public async UniTask Load()
         {
-            var loadTasks = _saveLoaders.Select(loader => loader.Load());
-            await UniTask.WhenAll(loadTasks);
+            foreach (var saveLoader in _saveLoaders)
+                await saveLoader.Load();
         }
     }
 }

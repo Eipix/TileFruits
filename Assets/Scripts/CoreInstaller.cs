@@ -14,13 +14,16 @@ namespace DefaultNamespace
 {
     public class CoreInstaller : MonoInstaller
     {
+        [SerializeField, Min(1)] private int _tilePoolInitialSize = 50;
+        
+        [SerializeField] private MapVisualizer _mapVisualizer;
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private AudioManager _audioManagerPrefab;
 
         public override void InstallBindings()
         {
             Container.Bind<ISaveSystem>().To<SDKSaveSystem>().AsSingle();
-            Container.Bind<SaveManager>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<SaveManager>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<SDK>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PauseManager>().AsSingle().NonLazy();
             
@@ -38,13 +41,15 @@ namespace DefaultNamespace
             Container.Bind<TileMapGenerator>()
                 .AsSingle()
                 .NonLazy();
-            
-            Container.Bind<TileFactory>()
-                .AsSingle()
-                .WithArguments(_tilePrefab)
-                .NonLazy();
 
-            Container.Bind<LevelManager>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<MapVisualizer>().FromInstance(_mapVisualizer).AsSingle().NonLazy();
+            
+            Container.BindMemoryPool<Tile, Tile.Pool>()
+                .WithInitialSize(_tilePoolInitialSize)
+                .FromComponentInNewPrefab(_tilePrefab)
+                .UnderTransformGroup("Tile Pool");
+            
+            Container.BindInterfacesAndSelfTo<LevelManager>().AsSingle().NonLazy();
             Container.Bind<GameManager>().AsSingle().NonLazy();
         }
     }

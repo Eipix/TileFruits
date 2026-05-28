@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Commons.Extensions;
 using Gameplay;
+using UnityEngine;
+using static Constants.MahjongConstants;
 
 namespace Generator.DistributionStrategies.Implementations.ReverseTraversal
 {
@@ -12,7 +14,7 @@ namespace Generator.DistributionStrategies.Implementations.ReverseTraversal
         public ReverseTraversalStrategy(ReverseTraversalStrategyConfig config, TileMap map, TileList tileList)
             : base(config, map, tileList) { }
 
-        public override void Distribute()
+        protected override void OnDistribute()
         {
             SortSlotsByLayer();
             var orderedSlots = GetOrderedSlots();
@@ -47,7 +49,7 @@ namespace Generator.DistributionStrategies.Implementations.ReverseTraversal
 
         private void DistributeTiles(List<Slot> orderedSlots)
         {
-            for (int i = 0; i < orderedSlots.Count; i += 2)
+            for (int i = 0; i < orderedSlots.Count; i += TilesPerMatch)
             {
                 DistributePair(orderedSlots, i);
             }
@@ -57,11 +59,13 @@ namespace Generator.DistributionStrategies.Implementations.ReverseTraversal
         {
             Slot slot1 = orderedSlots[i];
             Slot slot2 = orderedSlots[i + 1];
+            Slot slot3 = orderedSlots[i + 2];
 
-            var tileData = TileList.GetRandom(); 
+            var tileData = TileList.GetRandom();
 
             slot1.Tile = tileData;
             slot2.Tile = tileData;
+            slot3.Tile = tileData;
         }
     }
 }

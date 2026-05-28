@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Generator.GenerationStrategies.PyramidStrategy
 {
-    [CreateAssetMenu(menuName = "Tiles/Generator/GenerationStrategies/Pyramid")]
+    [CreateAssetMenu(menuName = "Generator/GenerationStrategies/Pyramid")]
     public class PyramidStrategyConfig : GenerationStrategyConfig<PyramidStrategy>
     {
         [field: SerializeField] public bool UnlimitedLayers { get; private set; }

@@ -129,10 +129,10 @@ TextureImporter:
       name: Atlas_fruits_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 512
+        x: 21
+        y: 388
+        width: 105
+        height: 105
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -143,6 +143,314 @@ TextureImporter:
       bones: []
       spriteID: a77f4f1f5a395c470800000000000000
       internalID: 8414293819749889914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_1
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 388
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5091e6f3ac0f7bb419c04f02a8dbb3c2
+      internalID: 48820108
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_2
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 388
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b75ce9f7979961e43ab0cdfdcb3eeb17
+      internalID: -939373067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_3
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 388
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4886deb110628414c83f80ce3b2ee2e5
+      internalID: 1075321130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_4
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 271
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 89dea3dffe699124bb68f7ccfe503f4a
+      internalID: 1171148799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_5
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 271
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7eb479946770ec2499b58f9a8c22ab71
+      internalID: -20470536
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_6
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 271
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aa434dd53633d0f409b4965a432f424c
+      internalID: -565564275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_7
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 271
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 609f7afc9980a1944ba4e1d620849283
+      internalID: 976019153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_8
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 146
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b8bd2279ec2862449ea6820f96b40fd
+      internalID: 1716320458
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_9
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 146
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b82e0c9d3d5d6a46858fc32e2d7ab73
+      internalID: 2039272374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_10
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 146
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc26f1f12c92b7f4cb1e72dae8ccd631
+      internalID: -1987543303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_11
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 146
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d891018bf51b3314bb2fe59e7f8fa236
+      internalID: -284907914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_12
+      rect:
+        serializedVersion: 2
+        x: 21
+        y: 21
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9cc29707a338ec438ab9fc27acfcba0
+      internalID: -1160254500
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_13
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 21
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab3f8244beb598e41a7aa5b73c5305af
+      internalID: -1023663529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Atlas_fruits_14
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 21
+        width: 105
+        height: 105
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 709511174751659499fdd62aa51d2ead
+      internalID: -149554968
       vertices: []
       indices: 
       edges: []
@@ -162,6 +470,20 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       Atlas_fruits_0: 8414293819749889914
+      Atlas_fruits_1: 48820108
+      Atlas_fruits_10: -1987543303
+      Atlas_fruits_11: -284907914
+      Atlas_fruits_12: -1160254500
+      Atlas_fruits_13: -1023663529
+      Atlas_fruits_14: -149554968
+      Atlas_fruits_2: -939373067
+      Atlas_fruits_3: 1075321130
+      Atlas_fruits_4: 1171148799
+      Atlas_fruits_5: -20470536
+      Atlas_fruits_6: -565564275
+      Atlas_fruits_7: 976019153
+      Atlas_fruits_8: 1716320458
+      Atlas_fruits_9: 2039272374
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

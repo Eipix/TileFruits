@@ -18,6 +18,8 @@ namespace Generator
         };
 
         public IEnumerable<Vector3Int> Positions => _slots.Keys;
+        public IEnumerable<Slot> Slots => _slots.Values;
+        
         public Vector2Int Size { get; }
         public int HighestLayer { get; private set; }
         public int Count => _slots.Count;
@@ -154,7 +156,10 @@ namespace Generator
         }
 
         IEnumerator<KeyValuePair<Vector3Int, IReadOnlySlot>> IEnumerable<KeyValuePair<Vector3Int, IReadOnlySlot>>.GetEnumerator()
-            => ((IEnumerable<KeyValuePair<Vector3Int, IReadOnlySlot>>)_slots).GetEnumerator();
+        {
+            foreach (var (position, slot) in _slots)
+                yield return new(position, slot);
+        }
 
         public IEnumerator<KeyValuePair<Vector3Int, Slot>> GetEnumerator() => _slots.GetEnumerator();
 

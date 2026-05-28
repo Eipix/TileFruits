@@ -34,7 +34,7 @@ namespace WebGLCommons.Scripts
             {
                 if (success is false || data is null)
                 {
-                    Debug.Log($"Load Fail {key}");
+                    Debug.Log($"Load Fail {key}. Returned default value {defaultValue}");
                     loaded = true;
                     return;
                 }

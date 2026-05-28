@@ -24,8 +24,10 @@ public class SDK : IInitializable
     {
         //TODO setup language
         //Language.Instance.ChangeLanguage(Bridge.platform.language);
-        GameReady();
+        #if !UNITY_EDITOR
         ShowBanner();
+#endif
+        GameReady();
     }
 
     public void SetToLeaderBoard(int value, Action<bool> onComplete = null)

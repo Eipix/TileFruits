@@ -3,6 +3,7 @@ using Commons.Systems.Save;
 using Commons.Systems.SaveManager;
 using Constants;
 using Cysharp.Threading.Tasks;
+using Input.Levels;
 using UnityEngine;
 using Zenject;
 
@@ -12,34 +13,38 @@ public class GameplayBootstrap : IInitializable
     private AudioManager _audioManager;
     private ISaveSystem _saveSystem;
     private SaveManager _saveManager;
+    private LevelManager _levelManager;
     
     [Inject]
     private void Construct(SDK sdk, AudioManager audioManager,
-        ISaveSystem saveSystem, SaveManager saveManager)
+        ISaveSystem saveSystem, SaveManager saveManager, LevelManager levelManager)
     {
         _sdk = sdk;
         _audioManager = audioManager;
         _saveSystem = saveSystem;
         _saveManager = saveManager;
+        _levelManager = levelManager;
     }
 
     public async void Initialize()
     {
         await LoadData();
         _sdk.Setup();
+        
+        _levelManager.StartLevel();
         Debug.Log("Initialized Gameplay Bootstrap");
     }
 
     private async UniTask LoadData()
     {
-        await _saveManager.Load();
-
         var (muteSounds, muteMusic) = await UniTask.WhenAll(
-            _saveSystem.Load(SaveKeys.MuteSound, false),
-            _saveSystem.Load(SaveKeys.MuteMusic, false)
+            _saveSystem.Load(SaveKeys.MuteSoundBool, false),
+            _saveSystem.Load(SaveKeys.MuteMusicBool, false)
         );
         
         _audioManager.MuteSounds = muteSounds;
         _audioManager.MuteMusic = muteMusic;
+        
+        await _saveManager.Load();
     }
 }

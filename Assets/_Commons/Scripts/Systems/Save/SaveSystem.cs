@@ -49,27 +49,27 @@ namespace Commons.Systems
             SerializeAndWrite(data);
         }
 
-        public async UniTask<T> Load<T>(string key, T defaultValue = default)
+        public UniTask<T> Load<T>(string key, T defaultValue = default)
         {
             if (File.Exists(Path) is false)
-                return defaultValue;
+                return UniTask.FromResult(defaultValue);
 
             var data = Data;
 
             if (data.TryGetValue(key, out object value) is false)
-                return defaultValue;
+                return UniTask.FromResult(defaultValue);
 
             if (value is T direct)
-                return direct;
+                return UniTask.FromResult(direct);
 
             try
             {
-                return (T)Convert.ChangeType(value, typeof(T));
+                return UniTask.FromResult((T)Convert.ChangeType(value, typeof(T)));
             }
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to load '{key}' as {typeof(T)}: {ex.Message}. Using default value.");
-                return defaultValue;
+                return UniTask.FromResult(defaultValue);
             }
         }
         
