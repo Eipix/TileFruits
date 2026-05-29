@@ -29,7 +29,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base
             if (Map.Count < TilesPerMatch)
                 throw new InvalidOperationException($"At least {TilesPerMatch} slots are required");
             
-            if (IsSlotsCountEven is false)
+            while (IsSlotsCountEven is false)
                 RemoveFromTopMost();
         }
 
