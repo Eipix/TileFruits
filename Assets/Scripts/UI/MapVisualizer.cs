@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Gameplay;
 using NaughtyAttributes;
@@ -10,7 +11,7 @@ namespace Generator
     {
         private const int LayerPriority = 10;
         
-        private readonly List<Tile> _tiles = new();
+        private readonly Dictionary<Vector3Int, Tile> _tiles = new();
 
         [SerializeField] private bool _autoCentering;
         
@@ -28,38 +29,51 @@ namespace Generator
 
         private void RecalculatePosition()
         {
-            foreach (var tile in _tiles)
-                tile.transform.position = (Center + tile.GridPosition) * PaddingBetweenTiles;
+            foreach (var tile in _tiles.Values)
+                tile.transform.position = ((Vector3)Center + tile.GridPosition) * PaddingBetweenTiles;
         }
 
         public void CreateTiles(ITileMap tileMap)
         {
-            Clear();
+            Clear(UnsubscribeFromMap);
+            
+            tileMap.Taken += OnTileTaken;
             
             foreach (var (position, slot) in tileMap)
                 CreateTileView(position, slot);
 
             if (_autoCentering)
-                transform.position = _initialPosition - (Vector2)tileMap.Size / 4;
+            {
+                var targetPosition = _initialPosition - (Vector2)tileMap.Size / 4;
+                transform.position = targetPosition;
+            }
+            
+            void UnsubscribeFromMap() => tileMap.Taken -= OnTileTaken;
+        }
+
+        private void OnTileTaken(Vector3Int position)
+        {
+            var tile = _tiles[position];
+            _tilePool.Despawn(tile);
+            _tiles.Remove(position);
         }
 
         private void CreateTileView(Vector3Int position, IReadOnlySlot slot)
         {
-            var gridPosition2D = (Vector2Int)position;
-            Vector2 spawnPosition = (Vector2)gridPosition2D * PaddingBetweenTiles;
-
+            Vector2 spawnPosition = (Vector3)position * PaddingBetweenTiles;
             var layer = (position.z * LayerPriority) - position.y;
             
-            var tile = _tilePool.Spawn(slot.Tile, gridPosition2D, spawnPosition, layer, transform);
-            _tiles.Add(tile);
+            var tile = _tilePool.Spawn(slot.Tile, position, spawnPosition, layer, transform);
+            _tiles.Add(position, tile);
         }
 
-        private void Clear()
+        private void Clear(Action onCleared)
         {
-            foreach (var tile in _tiles)
+            foreach (var tile in _tiles.Values)
                 _tilePool.Despawn(tile);
             
             _tiles.Clear();
+            onCleared?.Invoke();
         } 
     }
 }

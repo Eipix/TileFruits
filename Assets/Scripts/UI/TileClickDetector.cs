@@ -1,10 +1,11 @@
 using System;
-using Gameplay;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
-namespace Input
+using PlayerInput = Input.PlayerInput;
+
+namespace Gameplay
 {
     public class TileClickDetector : IInitializable, IDisposable
     {
@@ -22,21 +23,37 @@ namespace Input
         private void OnClick(InputAction.CallbackContext ctx)
         {
             var clickPosition = _playerInput.UI.Point.ReadValue<Vector2>();
-            Debug.Log($"Click position: {clickPosition}");
 
             Ray ray = _mainCamera.ScreenPointToRay(clickPosition);
-
-            var hit = Physics2D.Raycast(ray.origin, ray.direction);
-
-            var hitObject = hit.collider;
+            var hits = Physics2D.RaycastAll(ray.origin, ray.direction);
             
-            if (hitObject == null)
+            if (hits.Length == 0)
                 return;
 
-            Debug.Log($"Raycast hit object: {hitObject.name} in position {hit.point}");
-
-            if (hitObject.TryGetComponent<Tile>(out var tile))
+            if (TryGetHighest(hits, out Tile tile))
                 TileClicked?.Invoke(tile);
+        }
+
+        private bool TryGetHighest(RaycastHit2D[] hits, out Tile topTile)
+        {
+            topTile = null;
+            float maxZ = float.MinValue;
+
+            foreach (var hit in hits)
+            {
+                if (hit.collider.TryGetComponent<Tile>(out var tile) is false)
+                    continue;
+                
+                float layer = tile.GridPosition.z;
+                
+                if (layer > maxZ)
+                {
+                    maxZ = layer;
+                    topTile = tile;
+                }
+            }
+            
+            return topTile != null;
         }
 
         public void Dispose()

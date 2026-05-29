@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace Input.Levels
+namespace Gameplay.Levels
 {
     [CreateAssetMenu(menuName = "Levels/Level List")]
     public class LevelList : ScriptableObjectInstaller, IEnumerable<Level>

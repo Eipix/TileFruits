@@ -1,6 +1,6 @@
 using Zenject;
 
-namespace Input
+namespace Gameplay
 {
     public class GameManager
     {

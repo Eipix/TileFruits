@@ -1,9 +1,10 @@
+using System;
 using Commons.Systems.AudioManager;
 using Commons.Systems.Save;
 using Commons.Systems.SaveManager;
 using Constants;
 using Cysharp.Threading.Tasks;
-using Input.Levels;
+using Gameplay.Levels;
 using UnityEngine;
 using Zenject;
 
@@ -28,11 +29,18 @@ public class GameplayBootstrap : IInitializable
 
     public async void Initialize()
     {
-        await LoadData();
-        _sdk.Setup();
+        try
+        {
+            await LoadData();
+            _sdk.Setup();
         
-        _levelManager.StartLevel();
-        Debug.Log("Initialized Gameplay Bootstrap");
+            _levelManager.StartLevel();
+            Debug.Log("Initialized Gameplay Bootstrap");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Initialize error: " + e);
+        }
     }
 
     private async UniTask LoadData()

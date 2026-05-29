@@ -1,7 +1,7 @@
 using Generator;
 using UnityEngine;
 
-namespace Input.Levels
+namespace Gameplay.Levels
 {
     [CreateAssetMenu(menuName = "Levels/Level")]
     public class Level : ScriptableObject

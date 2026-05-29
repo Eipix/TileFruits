@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Commons.Utils;
 using UnityEngine;
 
 namespace Generator
@@ -9,13 +10,7 @@ namespace Generator
     {
         private readonly Dictionary<Vector3Int, Slot> _slots = new();
         
-        private readonly (int x, int y)[] _positionsAround =
-        {
-            (0, 1), (0, -1),
-            (1, 0), (-1, 0),
-            (-1, 1), (1, 1),
-            (-1, -1), (1, -1)
-        };
+        public event Action<Vector3Int> Taken;
 
         public IEnumerable<Vector3Int> Positions => _slots.Keys;
         public IEnumerable<Slot> Slots => _slots.Values;
@@ -74,9 +69,39 @@ namespace Generator
         public bool TryGet(Vector3Int position, out Slot slot)
             => _slots.TryGetValue(position, out slot);
 
-        public bool CanTakeBone(Vector3Int position)
+        public bool TryTakeTile(Vector3Int position)
         {
-            throw new NotImplementedException();
+            if(CanTakeTile(position))
+            {
+                Remove(position);
+                Taken?.Invoke(position);
+                return true;
+            }
+            
+            return false;
+        }
+
+        public bool CanTakeTile(Vector3Int position)
+        {
+            if (HasSlotInDirection(position, TileMapUtils.Left)
+                && HasSlotInDirection(position, TileMapUtils.Right))
+                return false;
+
+            if (IsBlockedByAbove(position))
+                return false;
+            
+            return true;
+        }
+
+        public bool IsBlockedByAbove(Vector3Int position)
+        {
+            if (HasSlotInDirection(position, TileMapUtils.UpLayer))
+                return true;
+            
+            if (HasSlotInDirections(position, TileMapUtils.UpperDirectionsAround))
+                return true;
+
+            return false;
         }
 
         public void Clear()
@@ -120,7 +145,7 @@ namespace Generator
                 return false;
             }
             
-            if(HasNeighbour(position))
+            if(HasSlotInDirections(position, TileMapUtils.DirectionsAround))
             {
                 errorMessage = $"Can't add a slot to a position {position}";
                 return false;
@@ -135,18 +160,21 @@ namespace Generator
             errorMessage = null;
             return true;
         }
-
-        private bool HasNeighbour(Vector3Int slotPosition)
+        
+        private bool HasSlotInDirections(Vector3Int slotPosition, ReadOnlySpan<Vector3Int> directions)
         {
-            var position = new Vector3Int(slotPosition.x, slotPosition.y, slotPosition.z);
-
-            foreach (var (xOffset, yOffset) in _positionsAround)
+            foreach (var direction in directions)
             {
-                position.Set(slotPosition.x + xOffset, slotPosition.y + yOffset, slotPosition.z);
-                return _slots.TryGetValue(position, out var slot) && slot != null;
+                if(HasSlotInDirection(slotPosition, direction))
+                    return true;
             }
 
             return false;
+        }
+
+        private bool HasSlotInDirection(Vector3Int slotPosition, Vector3Int direction)
+        {
+            return _slots.TryGetValue(slotPosition + direction, out var slot) && slot != null;
         }
         
         private void SetLayerIfHigher(Vector3Int position)
