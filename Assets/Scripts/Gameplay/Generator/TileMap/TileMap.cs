@@ -1,73 +1,107 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Commons.Utils;
 using UnityEngine;
-using Zenject;
 
 namespace Generator
 {
-    public class TileMap : IEnumerable<KeyValuePair<Vector3Int, IReadOnlySlot>>
+    public class TileMap : ITileMap, IEnumerable<KeyValuePair<Vector3Int, Slot>>
     {
         private readonly Dictionary<Vector3Int, Slot> _slots = new();
         
-        public IEnumerable<KeyValuePair<Vector3Int, IReadOnlySlot>> Slots
-            => (IEnumerable<KeyValuePair<Vector3Int, IReadOnlySlot>>)_slots;
+        public event Action<Vector3Int> Taken;
+
+        public IEnumerable<Vector3Int> Positions => _slots.Keys;
+        public IEnumerable<Slot> Slots => _slots.Values;
         
         public Vector2Int Size { get; }
+        public int HighestLayer { get; private set; }
+        public int Count => _slots.Count;
         
-        public TileMap(Vector2Int size)
-        {
-            Size = size;
-        }
+        public TileMap(Vector2Int size) => Size = size;
         
-        public IReadOnlySlot this[Vector3Int position]
+        public void CoverLayer(int layer, out int slotsAdded)
         {
-            get
+            slotsAdded = 0;
+            
+            int endX = Size.x;
+            int endY = Size.y;
+            
+            for (int x = 0; x < endX; x++)
             {
-                var slot = _slots[position];
-                
-                if(slot == null)
-                    throw new InvalidOperationException("Slot not found in position " + position);
-                
-                return slot;
+                for (int y = 0; y < endY; y++)
+                {
+                    Vector3Int position = new(x, y, layer);
+                    
+                    if(TryAdd(position))
+                        slotsAdded++;
+                }
             }
         }
 
-        public bool TryAddSlot(Vector3Int position)
+        public bool Remove(Vector3Int position) => _slots.Remove(position);
+
+        public bool TryAdd(Vector3Int position)
         {
-            if(position.x < 0 || position.y < 0)
+            if(IsValidPosition(position, out _))
             {
-                Debug.LogError($"Position cannot be negative ({position})");
-                return false;
+                SetLayerIfHigher(position);
+                _slots[position] = new Slot(position);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Add(Vector3Int position)
+        {
+            if (IsValidPosition(position, out var errorMessage) is false)
+            {
+                Debug.LogError(errorMessage);
+                return;
             }
             
-            if (position.x > Size.x || position.y > Size.y)
-            {
-                Debug.LogError($"Slot position ({position}) out of range ({Size})");
-                return false;
-            }
-            
-            if(HasNeighbourSlot(position))
-                return false;
-            
-            if (_slots.TryGetValue(position, out var slot) && slot != null)
-            {
-                Debug.LogError($"Slot in position ({position}) has already been added");
-                return false;
-            }
-            
+            SetLayerIfHigher(position);
             _slots[position] = new Slot(position);
+        }
+
+        public bool TryGet(Vector3Int position, out Slot slot)
+            => _slots.TryGetValue(position, out slot);
+
+        public bool TryTakeTile(Vector3Int position)
+        {
+            if(CanTakeTile(position))
+            {
+                Remove(position);
+                Taken?.Invoke(position);
+                return true;
+            }
+            
+            return false;
+        }
+
+        public bool CanTakeTile(Vector3Int position)
+        {
+            if (HasSlotInDirection(position, TileMapUtils.Left)
+                && HasSlotInDirection(position, TileMapUtils.Right))
+                return false;
+
+            if (IsBlockedByAbove(position))
+                return false;
+            
             return true;
         }
 
-        public bool TryGetSlot(Vector3Int position, out Slot slot)
+        public bool IsBlockedByAbove(Vector3Int position)
         {
-            return _slots.TryGetValue(position, out slot);
-        }
+            if (HasSlotInDirection(position, TileMapUtils.UpLayer))
+                return true;
+            
+            if (HasSlotInDirections(position, TileMapUtils.UpperDirectionsAround))
+                return true;
 
-        public bool CanTakeBone(Vector3Int position)
-        {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void Clear()
@@ -77,25 +111,85 @@ namespace Generator
 
             _slots.Clear();
         }
-
-        private bool HasNeighbourSlot(Vector3Int slotPosition)
+        
+        public bool HasFreePosition(int layer)
         {
-            var position = new Vector3Int(slotPosition.x, slotPosition.y, slotPosition.z);
-
-            return HasSlot(0, 1)
-                   || HasSlot(0, -1)
-                   || HasSlot(1, 0)
-                   || HasSlot(-1, 0);
-
-            bool HasSlot(int xOffset, int yOffset)
+            if(layer < 0)
+                throw new ArgumentOutOfRangeException(nameof(layer));
+            
+            for (int x = 0; x < Size.x; x++)
             {
-                position.Set(slotPosition.x + xOffset, slotPosition.y + yOffset, slotPosition.z);
-                return _slots.TryGetValue(position, out var slot) && slot != null;
+                for (int y = 0; y < Size.y; y++)
+                {
+                    Vector3Int testPosition = new(x, y, layer);
+            
+                    if (IsValidPosition(testPosition, out _))
+                        return true;
+                }
             }
+    
+            return false;
         }
 
-        public IEnumerator<KeyValuePair<Vector3Int, IReadOnlySlot>> GetEnumerator()
-            => Slots.GetEnumerator();
+        private bool IsValidPosition(Vector3Int position, out string errorMessage)
+        {
+            if(position.x < 0 || position.y < 0)
+            {
+                errorMessage = $"Position cannot be negative ({position})";
+                return false;
+            }
+            
+            if (position.x > Size.x || position.y > Size.y)
+            {
+                errorMessage = $"Slot position ({position}) out of range ({Size})";
+                return false;
+            }
+            
+            if(HasSlotInDirections(position, TileMapUtils.DirectionsAround))
+            {
+                errorMessage = $"Can't add a slot to a position {position}";
+                return false;
+            }
+            
+            if (_slots.TryGetValue(position, out var slot) && slot != null)
+            {
+                errorMessage = $"Slot in position ({position}) has already been added";
+                return false;
+            }
+            
+            errorMessage = null;
+            return true;
+        }
+        
+        private bool HasSlotInDirections(Vector3Int slotPosition, ReadOnlySpan<Vector3Int> directions)
+        {
+            foreach (var direction in directions)
+            {
+                if(HasSlotInDirection(slotPosition, direction))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool HasSlotInDirection(Vector3Int slotPosition, Vector3Int direction)
+        {
+            return _slots.TryGetValue(slotPosition + direction, out var slot) && slot != null;
+        }
+        
+        private void SetLayerIfHigher(Vector3Int position)
+        {
+            if(position.z > HighestLayer)
+                HighestLayer = position.z;
+        }
+
+        IEnumerator<KeyValuePair<Vector3Int, IReadOnlySlot>> IEnumerable<KeyValuePair<Vector3Int, IReadOnlySlot>>.GetEnumerator()
+        {
+            foreach (var (position, slot) in _slots)
+                yield return new(position, slot);
+        }
+
+        public IEnumerator<KeyValuePair<Vector3Int, Slot>> GetEnumerator() => _slots.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

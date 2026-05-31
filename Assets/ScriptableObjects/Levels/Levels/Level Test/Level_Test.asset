@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54faef65d48c4eb98958793ca7b0aeab, type: 3}
+  m_Name: Level_Test
+  m_EditorClassIdentifier: 
+  <GeneratorConfig>k__BackingField:
+    <MapSize>k__BackingField: {x: 10, y: 10}
+    <TileList>k__BackingField: {fileID: 11400000, guid: 5e7bfcc3e87e677419e45771037d3f4b, type: 2}
+    <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: 5ff983a992d19fc4e898a9ee39b0aed0, type: 2}
+    <DistributionStrategy>k__BackingField: {fileID: 11400000, guid: 716c097c00456a54dbfc033c82075a3f, type: 2}
