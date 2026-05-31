@@ -4,6 +4,6 @@ namespace Constants
     {
         public const string MuteMusicBool = "MuteMusic";
         public const string MuteSoundBool = "MuteSound";
-        public const string LevelIndexInt = "LevelIndexInt";
+        public const string LevelData = "LevelIndexInt";
     }
 }

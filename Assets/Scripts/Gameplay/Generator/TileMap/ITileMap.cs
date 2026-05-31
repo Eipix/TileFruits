@@ -15,5 +15,6 @@ namespace Generator
         bool CanTakeTile(Vector3Int position);
         bool TryTakeTile(Vector3Int position);
         bool IsBlockedByAbove(Vector3Int position);
+        void Dispose();
     }
 }

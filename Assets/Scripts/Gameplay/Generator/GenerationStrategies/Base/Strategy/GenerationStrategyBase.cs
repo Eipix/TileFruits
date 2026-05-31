@@ -14,7 +14,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base
         protected TileMap Map { get; }
         protected Vector2Int Size => Map.Size;
         
-        protected bool IsSlotsCountEven => Map.Count % TilesPerMatch == 0;
+        protected bool IsSlotsCountSolvable => Map.Count % TilesPerMatch == 0;
         
         public GenerationStrategyBase(GenerationStrategyConfigBase config, TileMap map)
         {
@@ -29,7 +29,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base
             if (Map.Count < TilesPerMatch)
                 throw new InvalidOperationException($"At least {TilesPerMatch} slots are required");
             
-            while (IsSlotsCountEven is false)
+            while (IsSlotsCountSolvable is false)
                 RemoveFromTopMost();
         }
 

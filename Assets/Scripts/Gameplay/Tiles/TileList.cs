@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Commons.Extensions;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -21,13 +22,8 @@ namespace Gameplay
             if (_configs == null)
                 return false;
 
-            bool hasIdDuplicate = _configs
-                .GroupBy(config => config.Id)
-                .Any(g => g.Count() > 1);
-            
-            bool hasSymbolDuplicate = _configs
-                .GroupBy(config => config.Symbol)
-                .Any(g => g.Count() > 1);
+            bool hasIdDuplicate = _configs.HasDuplicate(config => config.Id);
+            bool hasSymbolDuplicate = _configs.HasDuplicate(config => config.Symbol);
             
             return (hasIdDuplicate || hasSymbolDuplicate) is false;
         }

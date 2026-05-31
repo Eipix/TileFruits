@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Generator
 {
-    public class TileMap : ITileMap, IEnumerable<KeyValuePair<Vector3Int, Slot>>
+    public class TileMap : ITileMap, IEnumerable<KeyValuePair<Vector3Int, Slot>>, IDisposable
     {
         private readonly Dictionary<Vector3Int, Slot> _slots = new();
         
@@ -192,5 +192,11 @@ namespace Generator
         public IEnumerator<KeyValuePair<Vector3Int, Slot>> GetEnumerator() => _slots.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public void Dispose()
+        {
+            _slots.Clear();
+            Taken = null;
+        }
     }
 }
