@@ -10,8 +10,6 @@ namespace Generator
     [Serializable]
     public class GeneratorConfig
     {
-        [field: SerializeField] public Vector2Int MapSize { get; private set; } = Vector2Int.one * 10;
-        
         [field: SerializeField, Expandable, AllowNesting]
         public TileList TileList { get; private set; }
         

@@ -1,0 +1,40 @@
+using System;
+using System.Collections.Generic;
+using Commons;
+using Gameplay;
+using UnityEngine;
+using UnityEngine.UI;
+using Zenject;
+
+namespace View.Windows.Collection
+{
+    public class CollectionWindow : Window
+    {
+        private readonly List<CollectionItem> _items = new();
+        
+        [SerializeField] private Button _close;
+        [SerializeField] private RectTransform _itemsParent;
+
+        [Inject] private CollectionItem.Factory _itemsFactory;
+
+        public void Add(TileConfig config)
+        {
+            var item = _itemsFactory.Create(config, _itemsParent);
+            _items.Add(item);
+        }
+
+        public void Unlock(TileConfig config)
+        {
+            var targetItem = _items.Find(x => x.Id == config.Id);
+            
+            if (targetItem == null)
+                throw new NullReferenceException($"Could not find tile {config.name}");
+            
+            targetItem.IsUnlocked = true;
+        }
+
+        protected override void OnOpen() => _close.onClick.AddListener(Close);
+
+        protected override void OnClose() => _close.onClick.RemoveListener(Close);
+    }
+}

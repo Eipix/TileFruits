@@ -27,7 +27,10 @@ namespace Commons
         {
             _canvasGroup = GetComponent<CanvasGroup>();
             ForceClose();
+            OnAwake();
         }
+
+        protected virtual void OnAwake() { }
 
         private void OnDisable() => Close(true);
 

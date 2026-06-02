@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 285c02da3e604c8c85c51aae2f52318d, type: 3}
   m_Name: Pyramid
   m_EditorClassIdentifier: 
+  <Size>k__BackingField: {x: 10, y: 10}
   <UnlimitedLayers>k__BackingField: 1
   <MaxLayers>k__BackingField: 5

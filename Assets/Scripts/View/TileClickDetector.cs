@@ -71,7 +71,7 @@ namespace Gameplay
                 if (hit.collider.TryGetComponent<Tile>(out var tile) is false)
                     continue;
                 
-                float layer = tile.GridPosition.z;
+                float layer = tile.SortingOrder;
                 
                 if (layer > maxZ)
                 {

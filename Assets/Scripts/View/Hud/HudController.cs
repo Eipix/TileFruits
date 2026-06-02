@@ -1,5 +1,7 @@
 using System;
+using _Commons.Scripts.UI;
 using Gameplay.Levels;
+using View.Windows.Collection;
 using Zenject;
 
 namespace UI
@@ -7,20 +9,23 @@ namespace UI
     public class HudController : IInitializable, IDisposable
     {
         private readonly Hud _hud;
-        private readonly SettingsWindow _settingsWindow;
+        private readonly UIManager _uiManager;
         private readonly LevelManager _levelManager;
 
-        public HudController(Hud hud, SettingsWindow settingsWindow, LevelManager levelManager)
+        public HudController(Hud hud, UIManager uiManager, LevelManager levelManager)
         {
             _hud = hud;
-            _settingsWindow = settingsWindow;
+            _uiManager = uiManager;
             _levelManager = levelManager;
         }
 
         public void Initialize()
         {
-            _hud.Setup(_settingsWindow.Open,
-                _settingsWindow.Open);
+            var settingsWindow = _uiManager.GetWindow<SettingsWindow>();
+            var collectionWindow = _uiManager.GetWindow<CollectionWindow>();
+            
+            _hud.Setup(settingsWindow.Open,
+                collectionWindow.Open);
 
             _levelManager.LevelStarted += SetLevelNumber;
         }

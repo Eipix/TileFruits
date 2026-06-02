@@ -12,6 +12,8 @@ namespace Gameplay
         public TileConfig Config { get; private set; }
         public Vector3Int GridPosition { get; private set; }
 
+        public int SortingOrder => _bone.sortingOrder;
+
         private void SetLayer(int layer)
         {
             _bone.sortingOrder = layer;

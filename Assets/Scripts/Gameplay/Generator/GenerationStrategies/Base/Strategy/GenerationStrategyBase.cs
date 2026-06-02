@@ -11,19 +11,20 @@ namespace Gameplay.Generator.GenerationStrategies.Base
     public abstract class GenerationStrategyBase : IGenerationStrategy
     {
         protected GenerationStrategyConfigBase Config { get; }
-        protected TileMap Map { get; }
-        protected Vector2Int Size => Map.Size;
+        protected global::Generator.TileMap Map { get; private set; }
+        protected Vector2Int Size { get; private set; }
         
         protected bool IsSlotsCountSolvable => Map.Count % TilesPerMatch == 0;
         
-        public GenerationStrategyBase(GenerationStrategyConfigBase config, TileMap map)
+        public GenerationStrategyBase(GenerationStrategyConfigBase config, Vector2Int size)
         {
             Config = config;
-            Map = map;
+            Size = size;
         }
 
-        public void GenerateShape()
+        public global::Generator.TileMap GenerateMap()
         {
+            Map = new(Size);
             OnGenerateShape();
 
             if (Map.Count < TilesPerMatch)
@@ -31,6 +32,8 @@ namespace Gameplay.Generator.GenerationStrategies.Base
             
             while (IsSlotsCountSolvable is false)
                 RemoveFromTopMost();
+            
+            return Map;
         }
 
         private void RemoveFromTopMost()

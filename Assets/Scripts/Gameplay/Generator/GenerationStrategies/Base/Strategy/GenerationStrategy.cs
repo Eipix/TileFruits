@@ -1,4 +1,4 @@
-using Generator;
+using UnityEngine;
 
 namespace Gameplay.Generator.GenerationStrategies.Base.Strategy
 {
@@ -7,7 +7,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base.Strategy
     {
         protected new T Config { get; }
         
-        protected GenerationStrategy(T config, TileMap map) : base(config, map)
+        protected GenerationStrategy(T config, Vector2Int size) : base(config, size)
         {
             Config = config;
         }

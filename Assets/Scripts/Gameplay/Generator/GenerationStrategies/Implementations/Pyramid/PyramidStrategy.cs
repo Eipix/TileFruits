@@ -7,7 +7,7 @@ namespace Generator.GenerationStrategies.PyramidStrategy
     {
         private const int TileGridSize = 2;
         
-        public PyramidStrategy(PyramidStrategyConfig config, TileMap map) : base(config, map) { }
+        public PyramidStrategy(PyramidStrategyConfig config, Vector2Int size) : base(config, size) { }
 
         protected override void OnGenerateShape()
         {

@@ -35,13 +35,13 @@ namespace UI.Settings
 
         private void OnMusicValueChanged(bool isOn)
         {
-            _saveSystem.Save(SaveKeys.MuteMusicBool, isOn);
+            _saveSystem.Save(SaveKeys.MuteMusic_Bool, isOn);
             _audioManager.MuteMusic = isOn;
         }
         
         private void OnSoundValueChanged(bool isOn)
         {
-            _saveSystem.Save(SaveKeys.MuteSoundBool, isOn);
+            _saveSystem.Save(SaveKeys.MuteSound_Bool, isOn);
             _audioManager.MuteSounds = isOn;
         }
 
