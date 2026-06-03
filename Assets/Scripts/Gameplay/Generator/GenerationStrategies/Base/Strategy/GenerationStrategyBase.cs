@@ -11,33 +11,36 @@ namespace Gameplay.Generator.GenerationStrategies.Base
     public abstract class GenerationStrategyBase : IGenerationStrategy
     {
         protected GenerationStrategyConfigBase Config { get; }
-        protected TileMap Map { get; }
-        protected Vector2Int Size => Map.Size;
+        protected global::Generator.TileMap Map { get; private set; }
+        protected Vector2Int Size { get; private set; }
         
-        protected bool IsSlotsCountEven => Map.Count % TilesPerMatch == 0;
+        protected bool IsSlotsCountSolvable => Map.Count % TilesPerMatch == 0;
         
-        public GenerationStrategyBase(GenerationStrategyConfigBase config, TileMap map)
+        public GenerationStrategyBase(GenerationStrategyConfigBase config, Vector2Int size)
         {
             Config = config;
-            Map = map;
+            Size = size;
         }
 
-        public void GenerateShape()
+        public global::Generator.TileMap GenerateMap()
         {
+            Map = new(Size);
             OnGenerateShape();
 
             if (Map.Count < TilesPerMatch)
                 throw new InvalidOperationException($"At least {TilesPerMatch} slots are required");
             
-            if (IsSlotsCountEven is false)
+            while (IsSlotsCountSolvable is false)
                 RemoveFromTopMost();
+            
+            return Map;
         }
 
         private void RemoveFromTopMost()
         {
             var lastSlotPosition = Map.Positions.Last();
 
-            Debug.LogWarning($"Slots count ({Map.Count}) must be even. Removing {lastSlotPosition} slot");
+            Debug.LogWarning($"Slots count ({Map.Count}) must be divided by {TilesPerMatch}. Removing {lastSlotPosition} slot");
             Map.Remove(lastSlotPosition);
         }
 

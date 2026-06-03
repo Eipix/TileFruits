@@ -32,9 +32,9 @@ namespace DefaultNamespace
 
         public override void InstallBindings()
         {
-            InjectSystems();
-            InjectPools();
-            InjectPresenters();
+            BindSystems();
+            BindPools();
+            BindPresenters();
             
             Container.BindInterfacesAndSelfTo<GameplayBootstrap>().AsSingle().NonLazy();
             
@@ -66,7 +66,7 @@ namespace DefaultNamespace
             Container.BindInterfacesAndSelfTo<TileTrayView>().FromInstance(_tileTrayView).NonLazy();
         }
 
-        public void InjectPresenters()
+        public void BindPresenters()
         {
             Container.BindInterfacesAndSelfTo<LevelManager>().AsSingle().NonLazy();
             Container.Bind<GameManager>().AsSingle().NonLazy();
@@ -75,7 +75,7 @@ namespace DefaultNamespace
             Container.BindInterfacesAndSelfTo<TileTrayPresenter>().AsSingle().NonLazy();
         }
 
-        public void InjectSystems()
+        public void BindSystems()
         {
             Container.Bind<ISaveSystem>().To<SDKSaveSystem>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveManager>().AsSingle().NonLazy();
@@ -86,7 +86,7 @@ namespace DefaultNamespace
                 .AsSingle().NonLazy();
         }
 
-        public void InjectPools()
+        public void BindPools()
         {
             Container.BindMemoryPool<Tile, Tile.Pool>()
                 .WithInitialSize(_tilePoolInitialSize)

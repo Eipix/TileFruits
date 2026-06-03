@@ -19,12 +19,14 @@ namespace Presenters__Controllers
         {
             _tileTray.Added += _tileTrayView.Insert;
             _tileTray.MatchCleared += _tileTrayView.Match;
+            _tileTray.Cleared += _tileTrayView.Clear;
         }
 
         public void Dispose()
         {
             _tileTray.Added -= _tileTrayView.Insert;
             _tileTray.MatchCleared -= _tileTrayView.Match;
+            _tileTray.Cleared -= _tileTrayView.Clear;
         }
     }
 }

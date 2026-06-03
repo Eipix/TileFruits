@@ -19,32 +19,6 @@ namespace Commons.Extensions
             void Setter(float value) => target.weight = value;
         }
 
-        /// <summary>Only for lit shaders</summary>
-        public static Tween DOLitFade(this Renderer target, float endValue, float duration)
-        {
-            endValue = Mathf.Clamp(endValue, 0.0f, 1.0f);
-
-            if (duration <= 0f)
-                duration = 0f;
-
-            return DOTween.To(Getter, Setter, endValue, duration);
-
-            float Getter() => target.material.color.a;
-            void Setter(float value) => target.SetLitAlpha(value);
-        }
-
-        /// <summary>Only for AutodeskInteractiveMasked shaders</summary>
-        public static Tween DOAutodeskMaskedFade(this Renderer target, float endValue, float duration)
-        {
-            if (duration < 0f)
-                duration = 0f;
-
-            return DOTween.To(Getter, Setter, endValue, duration);
-
-            float Getter() => target.material.GetFloat(RendererExtensions.OpacityThreshold);
-            void Setter(float value) => target.SetAutodeskMaskedAlpha(value);
-        }
-
         public static Tween DOFade(this DecalProjector target, float endValue, float duration)
         {
             endValue = Mathf.Clamp(endValue, 0.0f, 1.0f);
@@ -62,12 +36,6 @@ namespace Commons.Extensions
         {
             if (tween.IsActive())
                 tween.Complete(withCallbacks);
-        }
-
-        public static void KillIfActive(this Tween tween, bool complete = false)
-        {
-            if (tween is not null && tween.IsActive())
-                tween.Kill(complete);
         }
     }
 }

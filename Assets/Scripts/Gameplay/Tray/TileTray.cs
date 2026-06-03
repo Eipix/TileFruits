@@ -11,6 +11,7 @@ namespace Gameplay.Tray
         public event Action<TileConfig, int> Added;
         public event Action<TileConfig> MatchCleared;
         public event Action Filled;
+        public event Action Cleared;
         
         private TileTraySettings _settings;
         
@@ -90,6 +91,12 @@ namespace Gameplay.Tray
             }
             
             return false;
+        }
+
+        public void Clear()
+        {
+            _tiles.Clear();
+            Cleared?.Invoke();
         }
     }
 }

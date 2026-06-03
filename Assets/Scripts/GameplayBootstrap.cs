@@ -6,6 +6,7 @@ using Constants;
 using Cysharp.Threading.Tasks;
 using Gameplay.Levels;
 using UnityEngine;
+using View.Windows.Collection;
 using Zenject;
 
 public class GameplayBootstrap : IInitializable
@@ -15,10 +16,11 @@ public class GameplayBootstrap : IInitializable
     private ISaveSystem _saveSystem;
     private SaveManager _saveManager;
     private LevelManager _levelManager;
-    
+
     [Inject]
     private void Construct(SDK sdk, AudioManager audioManager,
-        ISaveSystem saveSystem, SaveManager saveManager, LevelManager levelManager)
+        ISaveSystem saveSystem, SaveManager saveManager,
+        LevelManager levelManager)
     {
         _sdk = sdk;
         _audioManager = audioManager;
@@ -46,8 +48,8 @@ public class GameplayBootstrap : IInitializable
     private async UniTask LoadData()
     {
         var (muteSounds, muteMusic) = await UniTask.WhenAll(
-            _saveSystem.Load(SaveKeys.MuteSoundBool, false),
-            _saveSystem.Load(SaveKeys.MuteMusicBool, false)
+            _saveSystem.Load(SaveKeys.MuteSound_Bool, false),
+            _saveSystem.Load(SaveKeys.MuteMusic_Bool, false)
         );
         
         _audioManager.MuteSounds = muteSounds;

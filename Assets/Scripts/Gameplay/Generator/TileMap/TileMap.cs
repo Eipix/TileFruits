@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace Generator
 {
-    public class TileMap : ITileMap, IEnumerable<KeyValuePair<Vector3Int, Slot>>
+    public class TileMap : ITileMap, IEnumerable<KeyValuePair<Vector3Int, Slot>>, IDisposable
     {
         private readonly Dictionary<Vector3Int, Slot> _slots = new();
         
-        public event Action<Vector3Int> Taken;
+        public event Action<Vector3Int> TileTaken;
 
         public IEnumerable<Vector3Int> Positions => _slots.Keys;
         public IEnumerable<Slot> Slots => _slots.Values;
@@ -69,12 +69,14 @@ namespace Generator
         public bool TryGet(Vector3Int position, out Slot slot)
             => _slots.TryGetValue(position, out slot);
 
+        public bool Contains(Vector3Int position) => _slots.ContainsKey(position);
+
         public bool TryTakeTile(Vector3Int position)
         {
             if(CanTakeTile(position))
             {
                 Remove(position);
-                Taken?.Invoke(position);
+                TileTaken?.Invoke(position);
                 return true;
             }
             
@@ -83,17 +85,30 @@ namespace Generator
 
         public bool CanTakeTile(Vector3Int position)
         {
+            return IsBlockedByAbove(position) is false;
+            
+            /*if(_slots.ContainsKey(position) is false)
+                return false;
+            
             if (HasSlotInDirection(position, TileMapUtils.Left)
                 && HasSlotInDirection(position, TileMapUtils.Right))
                 return false;
 
-            if (IsBlockedByAbove(position))
+            if (IsBlockedByAboveInternal(position))
                 return false;
             
-            return true;
+            return true;*/
         }
 
         public bool IsBlockedByAbove(Vector3Int position)
+        {
+            if(_slots.ContainsKey(position) is false)
+                return true;
+            
+            return IsBlockedByAboveInternal(position);
+        }
+
+        public bool IsBlockedByAboveInternal(Vector3Int position)
         {
             if (HasSlotInDirection(position, TileMapUtils.UpLayer))
                 return true;
@@ -192,5 +207,11 @@ namespace Generator
         public IEnumerator<KeyValuePair<Vector3Int, Slot>> GetEnumerator() => _slots.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public void Dispose()
+        {
+            _slots.Clear();
+            TileTaken = null;
+        }
     }
 }

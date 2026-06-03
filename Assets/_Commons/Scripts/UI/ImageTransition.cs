@@ -23,7 +23,7 @@ namespace Commons.UI
         private float Alpha
         {
             get => _sourceImage.color.a;
-            set => _sourceImage.Fade(value);
+            set => _sourceImage.SetAlpha(value);
         }
 
         private void Awake() => Alpha = _exitAlpha;
