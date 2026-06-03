@@ -69,7 +69,7 @@ namespace Gameplay.Levels
         public void StartLevel()
         {
             _tileMap = _tileMapGenerator.GenerateGrid(CurrentLevel.GeneratorConfig);
-            _mapVisualizer.CreateTiles(_tileMap);
+            _mapVisualizer.SpawnTiles(_tileMap);
 
             SubscribeOnLevelResult();
             LevelStarted?.Invoke();
@@ -88,13 +88,13 @@ namespace Gameplay.Levels
         private void SetNextLevel()
         {
             CurrentLevel = _enumerationStrategy.Next();
-            int index = _levelData.LevelIndex;
-            var difficulty = GetDifficultyByLevel(index);
+            int nextLevelIndex = _levelData.LevelIndex + 1;
+            var difficulty = GetDifficultyByLevel(nextLevelIndex);
 
             if (_levelData.Difficulty != difficulty)
                 _enumerationStrategy = _levelList.ConfigByDifficulty[difficulty].GetStrategy();
             
-            _levelData = new(index, difficulty, CurrentLevel.Id);
+            _levelData = new(nextLevelIndex, difficulty, CurrentLevel.Id);
             Save();
         }
 
@@ -123,20 +123,20 @@ namespace Gameplay.Levels
         public void Dispose()
         {
             _saveLoadRegistry.Unregister(this);
-            _tileMap.Taken -= OnVictoryIfTileZero;
+            _tileMap.TileTaken -= OnVictoryIfTileZero;
             LevelStarted = null;
             LevelFinished = null;
         }
 
         private void SubscribeOnLevelResult()
         {
-            _tileMap.Taken += OnVictoryIfTileZero;
+            _tileMap.TileTaken += OnVictoryIfTileZero;
             _tileTray.Filled += OnDefeat;
         }
 
         private void UnsubscribeFromLevelResult()
         {
-            _tileMap.Taken -= OnVictoryIfTileZero;
+            _tileMap.TileTaken -= OnVictoryIfTileZero;
             _tileTray.Filled -= OnDefeat;
         }
     }

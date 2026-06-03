@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 747c2b1add464b24ab3ff09299849a84, type: 3}
-  m_Name: Level_Test_Tiles3
+  m_Name: TileList 2
   m_EditorClassIdentifier: 
   _configs:
   - {fileID: 11400000, guid: 17cfe47a2bcdfca42b8f83b9b7479eaf, type: 2}
@@ -18,4 +18,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3a6c1ab1c16087847bd28a240ab676aa, type: 2}
   - {fileID: 11400000, guid: 77442dd9480ee3e439b95dc2bfc62083, type: 2}
   - {fileID: 11400000, guid: c49e41486649ab44cbd43bb24922fbc7, type: 2}
-  - {fileID: 11400000, guid: 0562efa2d0eea8d4eae10514fd655764, type: 2}
+  - {fileID: 11400000, guid: 74aa420f0372cd6429868c3c0db7ce5b, type: 2}

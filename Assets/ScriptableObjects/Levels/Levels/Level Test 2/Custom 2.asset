@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa528782fe064488a5281d0fe5b0412f, type: 3}
-  m_Name: Custom
+  m_Name: Custom 2
   m_EditorClassIdentifier: 
-  <Size>k__BackingField: {x: 15, y: 15}
+  <Size>k__BackingField: {x: 1, y: 1}
   _positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
   - {x: 0, y: 0, z: 2}
+  - {x: 0, y: 0, z: 3}
+  - {x: 0, y: 0, z: 4}
+  - {x: 0, y: 0, z: 5}

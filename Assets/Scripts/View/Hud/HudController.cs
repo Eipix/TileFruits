@@ -24,8 +24,7 @@ namespace UI
             var settingsWindow = _uiManager.GetWindow<SettingsWindow>();
             var collectionWindow = _uiManager.GetWindow<CollectionWindow>();
             
-            _hud.Setup(settingsWindow.Open,
-                collectionWindow.Open);
+            _hud.Setup(settingsWindow.Open, collectionWindow.Open);
 
             _levelManager.LevelStarted += SetLevelNumber;
         }

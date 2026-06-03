@@ -8,11 +8,25 @@ namespace Gameplay
     {
         [SerializeField] private SpriteRenderer _bone;
         [SerializeField] private SpriteRenderer _symbol;
+
+        private Color _color;
+
+        public Color Color
+        {
+            get => _color;
+            set
+            {
+                _color = value;
+                _bone.color = value;
+                _symbol.color = value;
+            }
+        }
         
         public TileConfig Config { get; private set; }
         public Vector3Int GridPosition { get; private set; }
 
         public int SortingOrder => _bone.sortingOrder;
+        public Vector2 Size => _bone.sprite.bounds.size;
 
         private void SetLayer(int layer)
         {
@@ -32,7 +46,7 @@ namespace Gameplay
                 tile.GridPosition = gridPosition;
                 tile.transform.position = position;
                 tile.transform.SetParent(transform);
-
+                tile.Color = Color.white;
                 tile.name = $"Tile {gridPosition}";
             }
         }

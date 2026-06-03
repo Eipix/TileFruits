@@ -12,16 +12,38 @@ namespace Generator.GenerationStrategies.Implementations.Custom
     [CreateAssetMenu(menuName = "Generator/GenerationStrategies/Custom")]
     public class CustomStrategyConfig : GenerationStrategyConfig<CustomStrategy>
     {
+        [ShowNativeProperty] private Vector2Int ExpectedSize => Size;
+        
         [SerializeField] private List<Vector3Int> _positions;
         
         public IReadOnlyList<Vector3Int> Positions => _positions;
+
+        protected override bool HideSize => true;
+
+        private void OnValidate() => Size = FindSize();
         
+        private Vector2Int FindSize()
+        {
+            Vector2Int size = Vector2Int.one;
+            
+            foreach (var position in _positions)
+            {
+                if (position.x > size.x)
+                    size.x = position.x;
+                
+                if (position.y > size.y)
+                    size.y = position.y;
+            }
+            
+            return size;
+        }
+
         [Button]
         public bool IsValid()
         {
-            if (IsValid(Size, out var error))
+            if (IsValid(out var error))
             {
-                Debug.Log("<color=green>Strategy is valid!</color>");
+                Debug.Log($"<color=green>{name} strategy is valid!</color>");
                 return true;
             }
             
@@ -29,7 +51,7 @@ namespace Generator.GenerationStrategies.Implementations.Custom
             return false;
         }
         
-        private bool IsValid(Vector2Int size, out string errorMessage)
+        private bool IsValid(out string errorMessage)
         {
             errorMessage = string.Empty;
             
@@ -55,24 +77,18 @@ namespace Generator.GenerationStrategies.Implementations.Custom
             
             foreach (var position in _positions)
             {
-                if(IsValidPosition(size, position, out errorMessage) is false)
+                if(IsValidPosition(position, out errorMessage) is false)
                     return false;
             }
 
             return true;
         }
 
-        private bool IsValidPosition(Vector2Int size, Vector3Int position, out string errorMessage)
+        private bool IsValidPosition(Vector3Int position, out string errorMessage)
         {
             if(position.x < 0 || position.y < 0)
             {
                 errorMessage = $"Position cannot be negative {position}";
-                return false;
-            }
-            
-            if (position.x > size.x || position.y > size.y)
-            {
-                errorMessage = $"Slot position {position} out of range {size}";
                 return false;
             }
             

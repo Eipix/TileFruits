@@ -40,7 +40,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base
         {
             var lastSlotPosition = Map.Positions.Last();
 
-            Debug.LogWarning($"Slots count ({Map.Count}) must be even. Removing {lastSlotPosition} slot");
+            Debug.LogWarning($"Slots count ({Map.Count}) must be divided by {TilesPerMatch}. Removing {lastSlotPosition} slot");
             Map.Remove(lastSlotPosition);
         }
 
