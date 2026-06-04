@@ -27,8 +27,8 @@ namespace Generator
             
             foreach (var (position, slot) in tileMap)
             {
-                bool shiftUp = CanShiftUp(position, tileMap);
-                Spawn(position, slot, shiftUp);
+                float positionY = GetPositionY(position, tileMap);
+                Spawn(position, slot, positionY);
             }
             
             Center();
@@ -60,12 +60,19 @@ namespace Generator
             }
         }
 
-        private bool CanShiftUp(Vector3Int position, ITileMap tileMap)
+        private float GetPositionY(Vector3Int position, ITileMap tileMap)
         {
+            float positionY = 0f;
             var tileUnderPosition = position;
             tileUnderPosition.z--;
-                
-            return tileMap.Contains(tileUnderPosition);
+            
+            if (tileMap.Contains(tileUnderPosition))
+            {
+                var tileUnder = _tiles[tileUnderPosition];
+                positionY = tileUnder.transform.position.y + _layerOffset;
+            }
+            
+            return positionY;
         }
 
         private void RepaintBlockedTiles(ITileMap tileMap)
@@ -84,12 +91,12 @@ namespace Generator
             _tiles.Remove(gridPosition);
         }
 
-        private void Spawn(Vector3Int gridPosition, IReadOnlySlot slot, bool shiftUp)
+        private void Spawn(Vector3Int gridPosition, IReadOnlySlot slot, float positionY)
         {
             Vector2 spawnPosition = (Vector3)gridPosition * _paddingBetweenTiles;
             
-            if(shiftUp)
-                spawnPosition.y += gridPosition.z * _layerOffset;
+            if(positionY > 0)
+                spawnPosition.y = positionY;
             
             var layer = (gridPosition.z * LayerPriority) - gridPosition.y;
             
