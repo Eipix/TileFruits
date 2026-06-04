@@ -39,7 +39,7 @@ namespace Generator.GenerationStrategies.Implementations.Custom
         }
 
         [Button]
-        public bool IsValid()
+        private bool IsValid()
         {
             if (IsValid(out var error))
             {
@@ -51,7 +51,7 @@ namespace Generator.GenerationStrategies.Implementations.Custom
             return false;
         }
         
-        private bool IsValid(out string errorMessage)
+        public bool IsValid(out string errorMessage)
         {
             errorMessage = string.Empty;
             
@@ -69,55 +69,62 @@ namespace Generator.GenerationStrategies.Implementations.Custom
                 return false;
             }
                 
-            if (_positions.HasDuplicate(p => p))
+            HashSet<Vector3Int> positionsLookup = new(_positions.Count);
+            
+            foreach (var position in _positions)
             {
-                errorMessage = "Duplicate positions are not allowed";
-                return false;
+                if (positionsLookup.Add(position) is false) 
+                {
+                    errorMessage = $"Duplicate positions are not allowed: {position}";
+                    return false;
+                }
+                
+                if(position.x < 0 || position.y < 0 || position.z < 0)
+                {
+                    errorMessage = $"Position cannot be negative {position}";
+                    return false;
+                }
             }
             
             foreach (var position in _positions)
             {
-                if(IsValidPosition(position, out errorMessage) is false)
+                if (HasPositionAround(position, positionsLookup))
+                {
+                    errorMessage = $"position offset must be 2 - {position}";
                     return false;
+                }
+
+                var lowerLayerPosition = position;
+                lowerLayerPosition.z--;
+
+                if (lowerLayerPosition.z < 0)
+                    continue;
+
+                if (positionsLookup.Contains(lowerLayerPosition) is false
+                    && HasPositionAround(lowerLayerPosition, positionsLookup) is false)
+                {
+                    errorMessage = $"position {position} must have support from below";
+                    return false;
+                }
             }
 
             return true;
         }
 
-        private bool IsValidPosition(Vector3Int position, out string errorMessage)
-        {
-            if(position.x < 0 || position.y < 0)
-            {
-                errorMessage = $"Position cannot be negative {position}";
-                return false;
-            }
-            
-            if(HasPositionInDirections(position, TileMapUtils.DirectionsAround))
-            {
-                errorMessage = $"position offset must be 2 - {position}";
-                return false;
-            }
-            
-            errorMessage = null;
-            return true;
-        }
+        private bool HasPositionAround(Vector3Int center, HashSet<Vector3Int> lookup) =>
+            HasPositionInDirections(center, TileMapUtils.DirectionsAround, lookup);
         
-        private bool HasPositionInDirections(Vector3Int center, ReadOnlySpan<Vector3Int> directions)
+        private bool HasPositionInDirections(Vector3Int center, ReadOnlySpan<Vector3Int> directions, HashSet<Vector3Int> lookup)
         {
             foreach (var direction in directions)
             {
-                if(HasPositionInDirection(center, direction))
+                var targetPosition = center + direction;
+                
+                if (lookup.Contains(targetPosition))
                     return true;
             }
 
             return false;
-        }
-
-        private bool HasPositionInDirection(Vector3Int center, Vector3Int direction)
-        {
-            var targetPosition = center + direction;
-            
-            return _positions.Contains(targetPosition);
         }
     }
 }

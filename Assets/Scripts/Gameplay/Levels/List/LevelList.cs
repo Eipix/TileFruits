@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Commons.Extensions;
+using Generator.GenerationStrategies.Implementations.Custom;
 using NaughtyAttributes;
 using UnityEngine;
 using Zenject;
@@ -31,6 +32,32 @@ namespace Gameplay.Levels
         {
             if(_difficultyConfigs.Count is 0)
                 InitList();
+
+            foreach (var config in _difficultyConfigs)
+            {
+                var levels = config.Levels;
+                
+                for (int i = levels.Count - 1; i >= 0; i--)
+                {
+                    var level = levels[i];
+
+                    if (level == null)
+                    {
+                        levels.Remove(level);
+                        Debug.LogError("Can't add null levels");
+                        continue;
+                    }
+                    
+                    var strategy = level.GeneratorConfig.GenerationStrategy;
+                    
+                    if (strategy is CustomStrategyConfig customConfig
+                        && customConfig.IsValid(out string error) is false)
+                    {
+                        levels.Remove(level);
+                        Debug.LogError($"Can't add levels with invalid strategies. Invalid level {level.name}\n Error {error}");
+                    }
+                }
+            }
         }
 
         private void InitList()
