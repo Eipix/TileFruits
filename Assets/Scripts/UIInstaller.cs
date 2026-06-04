@@ -1,9 +1,11 @@
+using _Commons.Scripts.Effects.Shakers;
 using _Commons.Scripts.UI;
 using Commons;
 using Gameplay;
 using Presenters__Controllers;
 using UI.Settings;
 using UnityEngine;
+using View.Animations;
 using View.Windows.Collection;
 using Zenject;
 
@@ -11,6 +13,8 @@ namespace UI
 {
     public class UIInstaller : MonoInstaller
     {
+        [SerializeField] private ShakerConfig _tileShakerConfig;
+        
         [SerializeField] private CollectionItem _collectionItemPrefab;
         
         [SerializeField] private Hud _hud;
@@ -32,6 +36,8 @@ namespace UI
             BindWindow<CollectionWindow, CollectionController>(_collectionWindow);
             
             Container.BindInterfacesAndSelfTo<UIManager>().AsSingle().NonLazy();
+            
+            BindAnimations();
         }
 
         private void BindFactories()
@@ -47,6 +53,14 @@ namespace UI
                 .FromInstance(windowPrefab).AsCached();
             
             Container.BindInterfacesAndSelfTo<TController>().AsSingle().NonLazy();
+        }
+
+        private void BindAnimations()
+        {
+            Container.BindInterfacesAndSelfTo<TileShaker>()
+                .AsSingle()
+                .WithArguments(_tileShakerConfig)
+                .NonLazy();
         }
     }
 }
