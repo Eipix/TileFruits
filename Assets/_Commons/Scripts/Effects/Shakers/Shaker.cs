@@ -1,3 +1,4 @@
+using _Commons.Scripts.Effects.Shakers;
 using Commons.Extensions;
 using DG.Tweening;
 using NaughtyAttributes;
@@ -8,22 +9,22 @@ namespace Commons.TweenEffects
     public class Shaker : MonoBehaviour
     {
         [SerializeField] private Transform _transform;
-        [SerializeField] private float _duration = 1f;
-        [SerializeField] private Vector3 _strength = new(1f, 1f, 3f);
-        [SerializeField] private int _vibrato = 20;
-        [SerializeField] private float _randomness = 40f;
-        [SerializeField] private bool _fadeOut = true;
-        [SerializeField] private ShakeRandomnessMode _randomnessMode = ShakeRandomnessMode.Full;
+        [SerializeField] private ShakerConfig _config;
 
         private Tween _shaking;
 
-        public bool IsActive => _shaking.IsActive();
-
         [Button(enabledMode: EButtonEnableMode.Playmode)]
-        public void Shake()
+        public Tween Shake()
         {
             _shaking.CompleteIfActive(true);
-            _shaking = _transform.DOShakeRotation(_duration, _strength, _vibrato, _randomness, _fadeOut, _randomnessMode);
+            _shaking = _transform.DOShakeRotation(_config.Duration,
+                _config.Strength,
+                _config.Vibrato,
+                _config.Randomness,
+                _config.FadeOut,
+                _config.RandomnessMode);
+
+            return _shaking;
         }
 
         public Tween Shake(
@@ -37,12 +38,6 @@ namespace Commons.TweenEffects
             _shaking.CompleteIfActive(true);
             _shaking = _transform.DOShakeRotation(duration, strength, vibrato, randomness, fadeOut, randomnessMode);
             return _shaking;
-        }
-
-        public void Complete()
-        {
-            if (IsActive)
-                _shaking.Complete(true);
         }
     }
 }
