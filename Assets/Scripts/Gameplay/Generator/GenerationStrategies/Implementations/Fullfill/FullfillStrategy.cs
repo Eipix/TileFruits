@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Generator.GenerationStrategies.Implementations.Fullfill
 {
-    public class FullfillStrategy : GenerationStrategy<FulfillStrategyConfig>
+    public class FullfillStrategy : GenerationStrategy<FullfillStrategyConfig>
     {
-        public FullfillStrategy(FulfillStrategyConfig config, Vector2Int size) : base(config, size)
+        public FullfillStrategy(FullfillStrategyConfig config, Vector2Int size) : base(config, size)
         {
         }
 
