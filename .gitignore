@@ -109,3 +109,5 @@ InitTestScene*.unity*
 # TexMeshPro
 /[Aa]ssets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
 /BreakingOut.slnx
+
+/[Aa]ssets/Resources/ApiKeyConfig.txt

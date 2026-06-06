@@ -2,6 +2,7 @@ using _Commons.Scripts.Effects.Shakers;
 using _Commons.Scripts.UI;
 using Commons;
 using Gameplay;
+using NaughtyAttributes;
 using Presenters__Controllers;
 using UI.Settings;
 using UnityEngine;
@@ -13,7 +14,11 @@ namespace UI
 {
     public class UIInstaller : MonoInstaller
     {
-        [SerializeField] private ShakerConfig _tileShakerConfig;
+        [SerializeField, Foldout("Animations")]
+        private CollectAnimationConfig _collectAnimationConfig;
+        
+        [SerializeField, Foldout("Animations")]
+        private ShakerConfig _tileShakerConfig;
         
         [SerializeField] private CollectionItem _collectionItemPrefab;
         
@@ -61,6 +66,11 @@ namespace UI
                 .AsSingle()
                 .WithArguments(_tileShakerConfig)
                 .NonLazy();
+            
+            /*Container.BindInterfacesAndSelfTo<TileTrayAnimations>()
+                .AsSingle()
+                .WithArguments(_collectAnimationConfig)
+                .NonLazy();*/
         }
     }
 }

@@ -51,6 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 834078a2641149dc97994477876194c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _insertAnimation: {fileID: 0}
   _content: {fileID: 5354278593264212681}
   _separatorPrefab: {fileID: 5785912794998723189, guid: 3656c140b730bf74c989d900a0f38d31, type: 3}
   _separatorPoolCapacity: 4
@@ -150,7 +151,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
