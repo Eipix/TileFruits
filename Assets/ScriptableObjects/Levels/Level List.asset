@@ -24,6 +24,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 2571b4dbd13281f4f8012d0ed0555142, type: 2}
     - {fileID: 11400000, guid: 4f2deb6de8bec1145a935cf9761fd9df, type: 2}
     - {fileID: 11400000, guid: 9da3815cab9cf83468ca32c8dbad4e75, type: 2}
+    - {fileID: 11400000, guid: a2f3d564033fb9244aae5704442d2e05, type: 2}
     <HideLevelsForNextDifficulty>k__BackingField: 0
   - <LevelsForNextDifficulty>k__BackingField: 20
     <Mode>k__BackingField: 2
