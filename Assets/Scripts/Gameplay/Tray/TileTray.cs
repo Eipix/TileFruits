@@ -42,12 +42,20 @@ namespace Gameplay.Tray
 
         private int FindInsertIndex(TileConfig tile)
         {
-            for (int i = 0; i < _tiles.Count; i++)
+            int count = _tiles.Count;
+            int lastInsertIndex = _tiles.Count;
+            
+            for (int i = 0; i < count; i++)
             {
-                if (_tiles[i] == tile)
-                    return i;
+                var trayTile = _tiles[i];
+                
+                if (trayTile != tile && lastInsertIndex == i - 1)
+                    return lastInsertIndex;
+                
+                if (trayTile == tile)
+                    lastInsertIndex = i;
             }
-            return _tiles.Count;
+            return lastInsertIndex;
         }
 
         private bool TryMatch()

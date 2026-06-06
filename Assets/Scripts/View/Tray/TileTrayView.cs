@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using Commons.Pools;
+using Effects;
 using UI.Tray;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
+using IInitializable = Zenject.IInitializable;
 
 namespace Gameplay.Tray
 {
@@ -12,14 +15,17 @@ namespace Gameplay.Tray
         private readonly List<TileTrayItem> _items = new();
         private readonly List<Image> _separators = new();
 
+        [SerializeField] private UIAnimation _insertAnimation;
         [SerializeField] private RectTransform _content;
         [SerializeField] private Image _separatorPrefab;
         [SerializeField, Min(0)] private int _separatorPoolCapacity = 4;
+
+        public event Action<TileTrayItem> Added;
         
         [Inject] private TileTrayItem.Pool _itemPool;
         
-        private RectTransform _separatorsPoolParent;
         private ComponentPool<Image> _separatorPool;
+        private RectTransform _separatorsPoolParent;
 
         public void Initialize()
         {
@@ -46,6 +52,8 @@ namespace Gameplay.Tray
             
             UpdateSeparatorsCount();
             Reorder();
+            
+            Added?.Invoke(item);
         }
 
         public void Match(TileConfig config)

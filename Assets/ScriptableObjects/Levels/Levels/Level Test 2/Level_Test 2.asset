@@ -15,5 +15,5 @@ MonoBehaviour:
   <Id>k__BackingField: ec88e4b890c378245806fa6ba1c1759d
   <GeneratorConfig>k__BackingField:
     <TileList>k__BackingField: {fileID: 11400000, guid: 541ef13cbb0cc9e409af0e5c5b193235, type: 2}
-    <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: 01063e825ce7a18408140db1a3ff906e, type: 2}
+    <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: 4ecb16326a9a96442a73eb382f6ce219, type: 2}
     <DistributionStrategy>k__BackingField: {fileID: 11400000, guid: 716c097c00456a54dbfc033c82075a3f, type: 2}

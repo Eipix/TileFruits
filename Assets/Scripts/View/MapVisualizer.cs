@@ -17,6 +17,8 @@ namespace Generator
         [SerializeField] private float _layerOffset = 0.16f;
         [SerializeField] private float _paddingBetweenTiles = 0.6f;
         
+        public event Action<Tile> TileTaken;
+        
         [Inject] private Tile.Pool _tilePool;
 
         public void SpawnTiles(ITileMap tileMap)
@@ -26,10 +28,7 @@ namespace Generator
             tileMap.TileTaken += OnTileTaken;
             
             foreach (var (position, slot) in tileMap)
-            {
-                float positionY = GetPositionY(position, tileMap);
-                Spawn(position, slot, positionY);
-            }
+                Spawn(position, slot);
             
             Center();
             RepaintBlockedTiles(tileMap);
@@ -60,21 +59,6 @@ namespace Generator
             }
         }
 
-        private float GetPositionY(Vector3Int position, ITileMap tileMap)
-        {
-            float positionY = 0f;
-            var tileUnderPosition = position;
-            tileUnderPosition.z--;
-            
-            if (tileMap.Contains(tileUnderPosition))
-            {
-                var tileUnder = _tiles[tileUnderPosition];
-                positionY = tileUnder.transform.position.y + _layerOffset;
-            }
-            
-            return positionY;
-        }
-
         private void RepaintBlockedTiles(ITileMap tileMap)
         {
             foreach (var (position, tile) in _tiles)
@@ -89,14 +73,16 @@ namespace Generator
             var tile = _tiles[gridPosition];
             _tilePool.Despawn(tile);
             _tiles.Remove(gridPosition);
+
+            TileTaken?.Invoke(tile);
         }
 
-        private void Spawn(Vector3Int gridPosition, IReadOnlySlot slot, float positionY)
+        private void Spawn(Vector3Int gridPosition, IReadOnlySlot slot)
         {
             Vector2 spawnPosition = (Vector3)gridPosition * _paddingBetweenTiles;
             
-            if(positionY > 0)
-                spawnPosition.y = positionY;
+            if(gridPosition.z > 0)
+                spawnPosition.y += _layerOffset * gridPosition.z;
             
             var layer = (gridPosition.z * LayerPriority) - gridPosition.y;
             

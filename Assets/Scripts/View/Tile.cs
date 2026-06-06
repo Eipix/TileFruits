@@ -47,7 +47,10 @@ namespace Gameplay
                 tile.transform.position = position;
                 tile.transform.SetParent(transform);
                 tile.Color = Color.white;
+                
+#if UNITY_EDITOR
                 tile.name = $"Tile {gridPosition}";
+#endif
             }
         }
     }

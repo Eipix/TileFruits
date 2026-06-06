@@ -63,7 +63,9 @@ namespace Gameplay
         private void OnTileClicked(Tile tile)
         {
             if (Map.TryTakeTile(tile.GridPosition))
+            {
                 _tray.Add(tile.Config);
+            }
         }
     }
 }

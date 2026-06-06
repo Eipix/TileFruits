@@ -3,6 +3,7 @@ using _Commons.Scripts.UI;
 using Commons.Systems;
 using Commons.Systems.PauseManager;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using Zenject;
 
@@ -14,7 +15,8 @@ namespace Gameplay
     {
         public event Action<Tile> TileClicked;
         
-        private PlayerInput _playerInput;
+        private InputAction _playerClick;
+        private InputAction _uiPoint;
         private IRegistry<IPausable> _pausableRegistry;
         private UIManager _uiManager;
         private Camera _mainCamera;
@@ -26,9 +28,12 @@ namespace Gameplay
             IRegistry<IPausable> pausableRegistry,
             UIManager uiManager)
         {
-            _playerInput = playerInput;
+            _playerClick = playerInput.Player.Click;
+            _uiPoint = playerInput.UI.Point;
+            
             _pausableRegistry = pausableRegistry;
             _uiManager = uiManager;
+            _mainCamera = Camera.main;
         }
         
         public void Initialize()
@@ -36,20 +41,35 @@ namespace Gameplay
             _uiManager.InputBlockRequired += OnInputBlockRequired;
             _pausableRegistry.Register(this);
             SubscribeToClick();
-            _mainCamera = Camera.main;
+        }
+
+        public void Dispose()
+        {
+            _uiManager.InputBlockRequired -= OnInputBlockRequired;
+            _pausableRegistry.Unregister(this);
+            
+            if(_playerClick == null || _uiPoint == null)
+                return;
+            
+            UnsubscribeToClick();
+            _playerClick = null;
+            _uiPoint = null;
         }
 
         private void OnInputBlockRequired(bool block) => Enabled = block is false;
 
-        private void SubscribeToClick() =>  _playerInput.UI.Click.performed += OnClick;
-        private void UnsubscribeToClick() =>  _playerInput.UI.Click.performed -= OnClick;
+        private void SubscribeToClick() =>  _playerClick.performed += OnClick;
+        private void UnsubscribeToClick() =>  _playerClick.performed -= OnClick;
 
         private void OnClick(InputAction.CallbackContext ctx)
         {
+            if(EventSystem.current.IsPointerOverGameObject())
+                return;
+            
             if (Enabled is false)
                 return;
             
-            var clickPosition = _playerInput.UI.Point.ReadValue<Vector2>();
+            var clickPosition = _uiPoint.ReadValue<Vector2>();
 
             Ray ray = _mainCamera.ScreenPointToRay(clickPosition);
             var hits = Physics2D.RaycastAll(ray.origin, ray.direction);
@@ -57,11 +77,11 @@ namespace Gameplay
             if (hits.Length == 0)
                 return;
 
-            if (TryGetHighest(hits, out Tile tile))
+            if (TryGetHighestLayer(hits, out Tile tile))
                 TileClicked?.Invoke(tile);
         }
 
-        private bool TryGetHighest(RaycastHit2D[] hits, out Tile topTile)
+        private bool TryGetHighestLayer(RaycastHit2D[] hits, out Tile topTile)
         {
             topTile = null;
             float maxZ = float.MinValue;
@@ -81,18 +101,6 @@ namespace Gameplay
             }
             
             return topTile != null;
-        }
-
-        public void Dispose()
-        {
-            _uiManager.InputBlockRequired -= OnInputBlockRequired;
-            _pausableRegistry.Unregister(this);
-            
-            if(_playerInput == null)
-                return;
-            
-            UnsubscribeToClick();
-            _playerInput = null;
         }
 
         public void Pause() => UnsubscribeToClick();

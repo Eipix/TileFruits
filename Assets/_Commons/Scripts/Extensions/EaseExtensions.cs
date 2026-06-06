@@ -48,11 +48,19 @@ namespace Commons.Extensions
                 Ease.InOutBack => CurveInOut(4f),
 
                 Ease.InElastic or Ease.OutElastic or Ease.InOutElastic =>
-                    new(new(0, 0), new(0.7f, -0.1f), new(0.85f, 1.15f), new(1, 1)),
+                    new(
+                        new (0f, 0f, 0f, 0f),
+                        new (0.2f, -0.04f, -0.6f, -0.6f),
+                        new (0.4f, 0.12f, 1.8f, 1.8f),
+                        new (0.6f, -0.3f, -2.5f, -2.5f),
+                        new (0.75f, 1.25f, 4.0f, 4.0f),
+                        new (0.9f, 0.95f, -1.2f, -1.2f),
+                        new (1f, 1f, 0.5f, 0f)
+                    ),
 
                 Ease.InBounce or Ease.OutBounce or Ease.InOutBounce =>
                     new(new(0, 0), new(0.35f, 0.8f), new(0.65f, 1f), new(1, 1)),
-
+                
                 Ease.Flash or Ease.InFlash or Ease.OutFlash or Ease.InOutFlash =>
                     new(new(0, 0), new(0.25f, 1), new(0.5f, 0), new(0.75f, 1), new(1, 0)),
 
