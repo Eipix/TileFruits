@@ -13,13 +13,19 @@ MonoBehaviour:
   m_Name: Level List
   m_EditorClassIdentifier: 
   _difficultyConfigs:
-  - <LevelsForNextDifficulty>k__BackingField: 6
+  - <LevelsForNextDifficulty>k__BackingField: 10
     <Mode>k__BackingField: 0
     <Difficulty>k__BackingField: 0
     <Levels>k__BackingField:
-    - {fileID: 11400000, guid: ec88e4b890c378245806fa6ba1c1759d, type: 2}
+    - {fileID: 11400000, guid: 495bbb809b3142241a4041635f5bb849, type: 2}
+    - {fileID: 11400000, guid: f1dabb1cc527266449463cbb768793fc, type: 2}
+    - {fileID: 11400000, guid: 6d8953c252bcd894fb629848a8990520, type: 2}
+    - {fileID: 11400000, guid: 07439f32e4f9fb747aed7842e06542f7, type: 2}
+    - {fileID: 11400000, guid: 2571b4dbd13281f4f8012d0ed0555142, type: 2}
+    - {fileID: 11400000, guid: 4f2deb6de8bec1145a935cf9761fd9df, type: 2}
+    - {fileID: 11400000, guid: 9da3815cab9cf83468ca32c8dbad4e75, type: 2}
     <HideLevelsForNextDifficulty>k__BackingField: 0
-  - <LevelsForNextDifficulty>k__BackingField: 1
+  - <LevelsForNextDifficulty>k__BackingField: 20
     <Mode>k__BackingField: 2
     <Difficulty>k__BackingField: 1
     <Levels>k__BackingField:
@@ -29,5 +35,5 @@ MonoBehaviour:
     <Mode>k__BackingField: 2
     <Difficulty>k__BackingField: 2
     <Levels>k__BackingField:
-    - {fileID: 11400000, guid: 4e12f75d4e132074aad316926581edb0, type: 2}
+    - {fileID: 11400000, guid: 495bbb809b3142241a4041635f5bb849, type: 2}
     <HideLevelsForNextDifficulty>k__BackingField: 1
