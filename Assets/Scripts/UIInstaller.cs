@@ -67,10 +67,10 @@ namespace UI
                 .WithArguments(_tileShakerConfig)
                 .NonLazy();
             
-            Container.BindInterfacesAndSelfTo<TileTrayAnimations>()
+            /*Container.BindInterfacesAndSelfTo<TileTrayAnimations>()
                 .AsSingle()
                 .WithArguments(_collectAnimationConfig)
-                .NonLazy();
+                .NonLazy();*/
         }
     }
 }
