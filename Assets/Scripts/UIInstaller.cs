@@ -3,8 +3,8 @@ using _Commons.Scripts.UI;
 using Commons;
 using Gameplay;
 using NaughtyAttributes;
-using Presenters__Controllers;
 using UI.Settings;
+using UI.Tray;
 using UnityEngine;
 using View.Animations;
 using View.Windows.Collection;
@@ -19,6 +19,12 @@ namespace UI
         
         [SerializeField, Foldout("Animations")]
         private ShakerConfig _tileShakerConfig;
+        
+        [SerializeField, Foldout("Animations")]
+        private ShakerConfig _collectionShakerConfig;
+        
+        [SerializeField, Foldout("Animations")]
+        private HideAnimationConfig _hideAnimationConfig;
         
         [SerializeField] private CollectionItem _collectionItemPrefab;
         
@@ -62,15 +68,29 @@ namespace UI
 
         private void BindAnimations()
         {
+            Container.Bind<ShakerConfig>()
+                .FromInstance(_collectionShakerConfig)
+                .AsSingle()
+                .WhenInjectedInto<CollectionItemShaker>();
+            
             Container.BindInterfacesAndSelfTo<TileShaker>()
                 .AsSingle()
                 .WithArguments(_tileShakerConfig)
                 .NonLazy();
-            
-            /*Container.BindInterfacesAndSelfTo<TileTrayAnimations>()
+
+            Container.Bind<CollectAnimationConfig>()
+                .FromInstance(_collectAnimationConfig)
                 .AsSingle()
-                .WithArguments(_collectAnimationConfig)
-                .NonLazy();*/
+                .WhenInjectedInto<TileTrayItem>();
+            
+            Container.Bind<HideAnimationConfig>()
+                .FromInstance(_hideAnimationConfig)
+                .AsSingle()
+                .WhenInjectedInto<TileTrayItem>();
+            
+            Container.Bind<TileTrayAnimationsPresenter>()
+                .AsSingle()
+                .NonLazy();
         }
     }
 }

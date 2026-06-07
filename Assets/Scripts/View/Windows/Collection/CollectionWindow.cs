@@ -14,13 +14,21 @@ namespace View.Windows.Collection
         
         [SerializeField] private Button _close;
         [SerializeField] private RectTransform _itemsParent;
-
+        [SerializeField] private LayoutGroup _group;
+        
         [Inject] private CollectionItem.Factory _itemsFactory;
-
+        
         public void Add(TileConfig config)
         {
             var item = _itemsFactory.Create(config, _itemsParent);
             _items.Add(item);
+        }
+        
+        public void ForceRebuildLayoutImmediate()
+        {
+            _group.enabled = true;
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_group.transform as RectTransform);
+            _group.enabled = false;
         }
 
         public void Unlock(TileConfig config)

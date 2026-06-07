@@ -71,7 +71,7 @@ namespace DefaultNamespace
             Container.BindInterfacesAndSelfTo<LevelManager>().AsSingle().NonLazy();
             Container.Bind<GameManager>().AsSingle().NonLazy();
 
-            Container.BindInterfacesAndSelfTo<GameplayController>().AsSingle().NonLazy();
+            Container.Bind<GameplayController>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<TileTrayPresenter>().AsSingle().NonLazy();
         }
 

@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Gameplay
 {
-    public class GameplayController : IInitializable, IDisposable
+    public class GameplayController : IDisposable
     {
         private readonly TileClickDetector _tileClickDetector;
         private readonly UIManager _uiManager;

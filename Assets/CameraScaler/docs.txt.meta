@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6ab06ce81251a03408d47022352ef027
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 228305
+  packageName: Camera Scaler
+  packageVersion: 1.0.0
+  assetPath: Assets/CameraScaler/docs.txt
+  uploadId: 520242
