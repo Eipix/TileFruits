@@ -47,6 +47,7 @@ GameObject:
   m_Component:
   - component: {fileID: 210383116566630245}
   - component: {fileID: 1182193463743071245}
+  - component: {fileID: 8551511945554002550}
   m_Layer: 5
   m_Name: CollectionItem
   m_TagString: Untagged
@@ -91,6 +92,18 @@ MonoBehaviour:
   _tile: {fileID: 1298687901135986219}
   _tileIcon: {fileID: 5354914602595004625}
   _lock: {fileID: 776513934237392157}
+--- !u!114 &8551511945554002550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954098946558426662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3031334677c44e1a635f9ff5edc9c28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1293509902910092593
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,9 +7,6 @@ using Constants;
 using Cysharp.Threading.Tasks;
 using Gameplay;
 using Gameplay.Levels;
-using Generator;
-using Generator.Provider;
-using UnityEngine;
 using Zenject;
 
 namespace View.Windows.Collection
@@ -44,6 +41,8 @@ namespace View.Windows.Collection
             foreach (var config in _tileDatabase)
                 _window.Add(config);
 
+            _window.ForceRebuildLayoutImmediate();
+            
             _levelManager.LevelStarted += ExploreTiles;
             _saveLoadRegistry.Register(this);
         }

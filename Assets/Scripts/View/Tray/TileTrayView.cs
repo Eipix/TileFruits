@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Commons.Pools;
-using Effects;
+using Constants;
+using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UI.Tray;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,27 +14,38 @@ namespace Gameplay.Tray
 {
     public class TileTrayView : MonoBehaviour, IInitializable
     {
-        private readonly List<TileTrayItem> _items = new();
+        private readonly List<TileTrayItem> _tiles = new();
         private readonly List<Image> _separators = new();
 
-        [SerializeField] private UIAnimation _insertAnimation;
         [SerializeField] private RectTransform _content;
+        [SerializeField] private RectTransform _separatorContent;
         [SerializeField] private Image _separatorPrefab;
         [SerializeField, Min(0)] private int _separatorPoolCapacity = 4;
-
+        
         public event Action<TileTrayItem> Added;
         
-        [Inject] private TileTrayItem.Pool _itemPool;
+        private TileTrayItem.Pool _itemPool;
+        private TileTraySettings _settings;
         
         private ComponentPool<Image> _separatorPool;
         private RectTransform _separatorsPoolParent;
+        
+        public IReadOnlyList<TileTrayItem> Tiles => _tiles;
 
+        [Inject]
+        private void Construct(TileTrayItem.Pool itemsPool, TileTraySettings settings)
+        {
+            _itemPool = itemsPool;
+            _settings = settings;
+        }
+        
         public void Initialize()
         {
             var go = new GameObject();
             _separatorsPoolParent = go.AddComponent<RectTransform>();
             _separatorsPoolParent.SetParent(transform);
             _separatorsPoolParent.localScale = Vector3.one;
+            _separatorsPoolParent.anchoredPosition3D = Vector3.zero;
             _separatorsPoolParent.name = "SeparatorsPool";
 
             _separatorPool = new(_separatorPrefab,
@@ -41,16 +54,15 @@ namespace Gameplay.Tray
                 defaultCapacity: _separatorPoolCapacity);
             
             _separatorPool.Prewarm();
+            UpdateSeparatorsCount(_settings.Capacity);
             
-            void OnGet(Image separator) => separator.rectTransform.SetParent(_content);
+            void OnGet(Image separator) => separator.rectTransform.SetParent(_separatorContent);
         }
 
         public void Insert(TileConfig config, int index)
         {
             var item = _itemPool.Spawn(config, _content);
-            _items.Insert(index, item);
-            
-            UpdateSeparatorsCount();
+            _tiles.Insert(index, item);
             Reorder();
             
             Added?.Invoke(item);
@@ -58,19 +70,36 @@ namespace Gameplay.Tray
 
         public void Match(TileConfig config)
         {
-            for (int i = _items.Count - 1; i >= 0; i--)
+            List<TileTrayItem> tilesToDespawn = new(MahjongConstants.TilesPerMatch);
+            
+            for (int i = _tiles.Count - 1; i >= 0; i--)
             {
-                var item = _items[i];
+                var item = _tiles[i];
 
                 if (item.Config == config)
-                {
-                    _items.RemoveAt(i);
-                    _itemPool.Despawn(item);
-                }
+                    tilesToDespawn.Add(item);
+            }
+            
+            Reorder();
+            WaitToDespawn(tilesToDespawn).Forget();
+        }
+
+        private async UniTask WaitToDespawn(List<TileTrayItem> tilesToDespawn)
+        {
+            foreach (var tile in tilesToDespawn)
+            {
+                var sequence = tile.ReturningToTray;
+
+                if (sequence.IsActive())
+                    await sequence.AsyncWaitForCompletion().AsUniTask();
             }
 
-            UpdateSeparatorsCount();
-            Reorder();
+            foreach (var tile in tilesToDespawn)
+                tile.Hide().OnComplete(() =>
+                {
+                    _tiles.Remove(tile);
+                    _itemPool.Despawn(tile);
+                });
         }
 
         public void Clear()
@@ -80,24 +109,21 @@ namespace Gameplay.Tray
             
             _separators.Clear();
             
-            foreach (var item in _items)
+            foreach (var item in _tiles)
                 _itemPool.Despawn(item);
             
-            _items.Clear();
+            _tiles.Clear();
         }
         
         private void Reorder()
         {
-            for (int i = 0; i < _items.Count; i++)
-                _items[i].transform.SetSiblingIndex(2 * i);
-            
-            for (int i = 0; i < _separators.Count; i++)
-                _separators[i].transform.SetSiblingIndex(2 * i + 1);
+            for (int i = 0; i < _tiles.Count; i++)
+                _tiles[i].transform.SetSiblingIndex(i);
         }
 
-        private void UpdateSeparatorsCount()
+        private void UpdateSeparatorsCount(int count)
         {
-            int requiredCount = _items.Count >= 2 ? _items.Count - 1 : 0;
+            int requiredCount = count >= 2 ? count - 1 : 0;
     
             while (_separators.Count != requiredCount)
             {

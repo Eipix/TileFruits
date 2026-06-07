@@ -6,6 +6,8 @@ namespace Gameplay.Tray
 {
     public class TileTray
     {
+        private const int NotFound = -1;
+        
         private readonly List<TileConfig> _tiles;
         
         public event Action<TileConfig, int> Added;
@@ -43,19 +45,19 @@ namespace Gameplay.Tray
         private int FindInsertIndex(TileConfig tile)
         {
             int count = _tiles.Count;
-            int lastInsertIndex = _tiles.Count;
-            
+            int lastMatchIndex = NotFound;
+
             for (int i = 0; i < count; i++)
             {
-                var trayTile = _tiles[i];
-                
-                if (trayTile != tile && lastInsertIndex == i - 1)
-                    return lastInsertIndex;
-                
-                if (trayTile == tile)
-                    lastInsertIndex = i;
+                if (_tiles[i] == tile)
+                    lastMatchIndex = i;
+                else if (lastMatchIndex != NotFound)
+                    break;
             }
-            return lastInsertIndex;
+
+            return lastMatchIndex == NotFound
+                ? count
+                : lastMatchIndex + 1;
         }
 
         private bool TryMatch()

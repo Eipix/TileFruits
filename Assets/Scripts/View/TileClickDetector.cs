@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using _Commons.Scripts.UI;
 using Commons.Systems;
 using Commons.Systems.PauseManager;
@@ -63,13 +64,13 @@ namespace Gameplay
 
         private void OnClick(InputAction.CallbackContext ctx)
         {
-            if(EventSystem.current.IsPointerOverGameObject())
-                return;
-            
             if (Enabled is false)
                 return;
             
             var clickPosition = _uiPoint.ReadValue<Vector2>();
+            
+            if(IsPointerOverUI(clickPosition))
+                return;
 
             Ray ray = _mainCamera.ScreenPointToRay(clickPosition);
             var hits = Physics2D.RaycastAll(ray.origin, ray.direction);
@@ -79,6 +80,21 @@ namespace Gameplay
 
             if (TryGetHighestLayer(hits, out Tile tile))
                 TileClicked?.Invoke(tile);
+        }
+        
+        private bool IsPointerOverUI(Vector2 point)
+        {
+            if (EventSystem.current == null)
+                return false;
+
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            
+            eventData.position = point;
+
+            List<RaycastResult> results = new();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            return results.Count > 0;
         }
 
         private bool TryGetHighestLayer(RaycastHit2D[] hits, out Tile topTile)
