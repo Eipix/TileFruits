@@ -13,9 +13,15 @@ MonoBehaviour:
   m_Name: Level List
   m_EditorClassIdentifier: 
   _difficultyConfigs:
+  - <LevelsForNextDifficulty>k__BackingField: 20
+    <Mode>k__BackingField: 2
+    <Difficulty>k__BackingField: 0
+    <Levels>k__BackingField:
+    - {fileID: 11400000, guid: 665ca5037a0c5fe4baa524622f5c3c05, type: 2}
+    <HideLevelsForNextDifficulty>k__BackingField: 0
   - <LevelsForNextDifficulty>k__BackingField: 10
     <Mode>k__BackingField: 0
-    <Difficulty>k__BackingField: 0
+    <Difficulty>k__BackingField: 1
     <Levels>k__BackingField:
     - {fileID: 11400000, guid: 495bbb809b3142241a4041635f5bb849, type: 2}
     - {fileID: 11400000, guid: f1dabb1cc527266449463cbb768793fc, type: 2}
@@ -25,12 +31,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 4f2deb6de8bec1145a935cf9761fd9df, type: 2}
     - {fileID: 11400000, guid: 9da3815cab9cf83468ca32c8dbad4e75, type: 2}
     - {fileID: 11400000, guid: a2f3d564033fb9244aae5704442d2e05, type: 2}
-    <HideLevelsForNextDifficulty>k__BackingField: 0
-  - <LevelsForNextDifficulty>k__BackingField: 20
-    <Mode>k__BackingField: 2
-    <Difficulty>k__BackingField: 1
-    <Levels>k__BackingField:
-    - {fileID: 11400000, guid: 4e12f75d4e132074aad316926581edb0, type: 2}
+    - {fileID: 11400000, guid: 6d3ff2e179ada35488fcaf69967d423b, type: 2}
+    - {fileID: 11400000, guid: f6a8cefd66c958a4c9998d7fa491f1df, type: 2}
     <HideLevelsForNextDifficulty>k__BackingField: 0
   - <LevelsForNextDifficulty>k__BackingField: 0
     <Mode>k__BackingField: 2
