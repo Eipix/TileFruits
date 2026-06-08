@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Commons.Extensions;
 using Commons.Pools;
 using Constants;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using NaughtyAttributes;
 using UI.Tray;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,9 +20,18 @@ namespace Gameplay.Tray
         private readonly List<Image> _separators = new();
 
         [SerializeField] private RectTransform _content;
-        [SerializeField] private RectTransform _separatorContent;
+        [SerializeField] private LayoutGroup _separatorsLayoutGroup;
         [SerializeField] private Image _separatorPrefab;
         [SerializeField, Min(0)] private int _separatorPoolCapacity = 4;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        private float _startXOffset = -300f;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        private float _spacing = 5f;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        private float _width = 130f;
         
         public event Action<TileTrayItem> Added;
         
@@ -30,8 +41,10 @@ namespace Gameplay.Tray
         private ComponentPool<Image> _separatorPool;
         private RectTransform _separatorsPoolParent;
         
-        public IReadOnlyList<TileTrayItem> Tiles => _tiles;
+        private RectTransform SeparatorsContent => (RectTransform)_separatorsLayoutGroup.transform;
 
+        private void UpdateLayout() => UpdateLayout(false);
+        
         [Inject]
         private void Construct(TileTrayItem.Pool itemsPool, TileTraySettings settings)
         {
@@ -41,12 +54,10 @@ namespace Gameplay.Tray
         
         public void Initialize()
         {
-            var go = new GameObject();
-            _separatorsPoolParent = go.AddComponent<RectTransform>();
-            _separatorsPoolParent.SetParent(transform);
-            _separatorsPoolParent.localScale = Vector3.one;
+            _separatorsPoolParent = InstantiateExtensions
+                .Instantiate<RectTransform>(transform, "SeparatorsPool");
+            
             _separatorsPoolParent.anchoredPosition3D = Vector3.zero;
-            _separatorsPoolParent.name = "SeparatorsPool";
 
             _separatorPool = new(_separatorPrefab,
                 _separatorsPoolParent,
@@ -55,16 +66,21 @@ namespace Gameplay.Tray
             
             _separatorPool.Prewarm();
             UpdateSeparatorsCount(_settings.Capacity);
-            
-            void OnGet(Image separator) => separator.rectTransform.SetParent(_separatorContent);
+            void OnGet(Image separator) => separator.rectTransform.SetParent(SeparatorsContent);
         }
+
+        private void Start() => _separatorsLayoutGroup.RebuildAndDisable();
 
         public void Insert(TileConfig config, int index)
         {
             var item = _itemPool.Spawn(config, _content);
             _tiles.Insert(index, item);
-            Reorder();
+
+            var tileRect = item.RectTransform;
+            float startX = GetTileTargetX(index);
+            tileRect.anchoredPosition = new Vector2(startX, 0); 
             
+            UpdateLayout(true);
             Added?.Invoke(item);
         }
 
@@ -72,15 +88,12 @@ namespace Gameplay.Tray
         {
             List<TileTrayItem> tilesToDespawn = new(MahjongConstants.TilesPerMatch);
             
-            for (int i = _tiles.Count - 1; i >= 0; i--)
+            foreach (var tile in _tiles)
             {
-                var item = _tiles[i];
-
-                if (item.Config == config)
-                    tilesToDespawn.Add(item);
+                if (tile.Config == config)
+                    tilesToDespawn.Add(tile);
             }
             
-            Reorder();
             WaitToDespawn(tilesToDespawn).Forget();
         }
 
@@ -88,10 +101,10 @@ namespace Gameplay.Tray
         {
             foreach (var tile in tilesToDespawn)
             {
-                var sequence = tile.ReturningToTray;
+                var returning = tile.ReturningToTray;
 
-                if (sequence.IsActive())
-                    await sequence.AsyncWaitForCompletion().AsUniTask();
+                if (returning.IsActive())
+                    await returning.AsyncWaitForCompletion().AsUniTask();
             }
 
             foreach (var tile in tilesToDespawn)
@@ -100,25 +113,49 @@ namespace Gameplay.Tray
                     _tiles.Remove(tile);
                     _itemPool.Despawn(tile);
                 });
+            
+            foreach (var tile in tilesToDespawn)
+            {
+                var hiding = tile.Hiding;
+
+                if (hiding.IsActive())
+                    await hiding.AsyncWaitForCompletion().AsUniTask();
+            }
+            
+            UpdateLayout(true);
         }
 
         public void Clear()
         {
-            foreach (var separator in _separators)
-                _separatorPool.Release(separator);
-            
-            _separators.Clear();
-            
             foreach (var item in _tiles)
                 _itemPool.Despawn(item);
             
             _tiles.Clear();
         }
-        
-        private void Reorder()
+
+        private void UpdateLayout(bool animate)
         {
             for (int i = 0; i < _tiles.Count; i++)
-                _tiles[i].transform.SetSiblingIndex(i);
+            {
+                var tileRect = _tiles[i].RectTransform;
+                float targetX = GetTileTargetX(i);
+
+                if (animate)
+                {
+                    tileRect.DOAnchorPosX(targetX, 0.2f).SetEase(Ease.OutQuad);
+                }
+                else
+                {
+                    var position = tileRect.anchoredPosition;
+                    position.x = targetX;
+                    tileRect.anchoredPosition = position;
+                }
+            }
+        }
+        
+        private float GetTileTargetX(int index)
+        {
+            return _startXOffset + (index * (_width + _spacing));
         }
 
         private void UpdateSeparatorsCount(int count)
