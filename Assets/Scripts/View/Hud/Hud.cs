@@ -30,6 +30,7 @@ namespace UI
             _collectionButton.onClick.AddListener(_onCollectionClick);
         }
 
-        public void SetLevel(int levelNumber) => _levelNumber.SetText("{0}", levelNumber);
+        public void SetLevel(int levelNumber) =>
+            _levelNumber.SetText("Уровень {0}", levelNumber);
     }
 }

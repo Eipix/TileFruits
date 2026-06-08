@@ -1,4 +1,3 @@
-using System;
 using Gameplay.Tray;
 using NaughtyAttributes;
 using UnityEngine;
