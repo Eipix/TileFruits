@@ -165,7 +165,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 986648399}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
@@ -2408,10 +2408,34 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3416467858620118314, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
+      propertyPath: _width
+      value: 122.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
+      propertyPath: _spacing
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
+      propertyPath: _tileWidth
+      value: 130
+      objectReference: {fileID: 0}
     - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
       propertyPath: _layoutGroup
       value: 
       objectReference: {fileID: 33824936}
+    - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
+      propertyPath: _leftPadding
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
+      propertyPath: _startXOffset
+      value: -394.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5779464380213094842, guid: 66d5eca9e18805b4488e6b2830cd8c75, type: 3}
       propertyPath: _separatorsLayoutGroup
       value: 

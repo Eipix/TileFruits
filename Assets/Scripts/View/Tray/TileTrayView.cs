@@ -5,6 +5,7 @@ using Commons.Pools;
 using Constants;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using NaughtyAttributes;
 using UI.Tray;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,10 +19,19 @@ namespace Gameplay.Tray
         private readonly List<TileTrayItem> _tiles = new();
         private readonly List<Image> _separators = new();
 
-        [SerializeField] private LayoutGroup _layoutGroup;
+        [SerializeField] private RectTransform _content;
         [SerializeField] private LayoutGroup _separatorsLayoutGroup;
         [SerializeField] private Image _separatorPrefab;
         [SerializeField, Min(0)] private int _separatorPoolCapacity = 4;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        private float _startXOffset = -300f;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        private float _spacing = 5f;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        private float _width = 130f;
         
         public event Action<TileTrayItem> Added;
         
@@ -31,10 +41,10 @@ namespace Gameplay.Tray
         private ComponentPool<Image> _separatorPool;
         private RectTransform _separatorsPoolParent;
         
-        public IReadOnlyList<TileTrayItem> Tiles => _tiles;
-        private RectTransform Content => (RectTransform)_layoutGroup.transform;
         private RectTransform SeparatorsContent => (RectTransform)_separatorsLayoutGroup.transform;
 
+        private void UpdateLayout() => UpdateLayout(false);
+        
         [Inject]
         private void Construct(TileTrayItem.Pool itemsPool, TileTraySettings settings)
         {
@@ -44,10 +54,10 @@ namespace Gameplay.Tray
         
         public void Initialize()
         {
-            _layoutGroup.enabled = false;
-
             _separatorsPoolParent = InstantiateExtensions
                 .Instantiate<RectTransform>(transform, "SeparatorsPool");
+            
+            _separatorsPoolParent.anchoredPosition3D = Vector3.zero;
 
             _separatorPool = new(_separatorPrefab,
                 _separatorsPoolParent,
@@ -56,17 +66,21 @@ namespace Gameplay.Tray
             
             _separatorPool.Prewarm();
             UpdateSeparatorsCount(_settings.Capacity);
-            _separatorsLayoutGroup.RebuildAndDisable();
             void OnGet(Image separator) => separator.rectTransform.SetParent(SeparatorsContent);
         }
 
+        private void Start() => _separatorsLayoutGroup.RebuildAndDisable();
+
         public void Insert(TileConfig config, int index)
         {
-            var item = _itemPool.Spawn(config, Content);
+            var item = _itemPool.Spawn(config, _content);
             _tiles.Insert(index, item);
+
+            var tileRect = item.RectTransform;
+            float startX = GetTileTargetX(index);
+            tileRect.anchoredPosition = new Vector2(startX, 0); 
             
-            ReorderAndRebuild();
-            
+            UpdateLayout(true);
             Added?.Invoke(item);
         }
 
@@ -108,28 +122,40 @@ namespace Gameplay.Tray
                     await hiding.AsyncWaitForCompletion().AsUniTask();
             }
             
-            ReorderAndRebuild();
+            UpdateLayout(true);
         }
 
         public void Clear()
         {
-            foreach (var separator in _separators)
-                _separatorPool.Release(separator);
-            
-            _separators.Clear();
-            
             foreach (var item in _tiles)
                 _itemPool.Despawn(item);
             
             _tiles.Clear();
         }
-        
-        private void ReorderAndRebuild()
+
+        private void UpdateLayout(bool animate)
         {
             for (int i = 0; i < _tiles.Count; i++)
-                _tiles[i].transform.SetSiblingIndex(i);
-            
-            _layoutGroup.RebuildAndDisable();
+            {
+                var tileRect = _tiles[i].RectTransform;
+                float targetX = GetTileTargetX(i);
+
+                if (animate)
+                {
+                    tileRect.DOAnchorPosX(targetX, 0.2f).SetEase(Ease.OutQuad);
+                }
+                else
+                {
+                    var position = tileRect.anchoredPosition;
+                    position.x = targetX;
+                    tileRect.anchoredPosition = position;
+                }
+            }
+        }
+        
+        private float GetTileTargetX(int index)
+        {
+            return _startXOffset + (index * (_width + _spacing));
         }
 
         private void UpdateSeparatorsCount(int count)
