@@ -5,7 +5,7 @@ using Gameplay.Tray;
 using Generator;
 using Generator.Provider;
 using UI;
-using Zenject;
+using View.Animations;
 
 namespace Gameplay
 {
@@ -16,6 +16,7 @@ namespace Gameplay
         private readonly LevelManager _levelManager;
         private readonly ITileMapProvider _tileMapProvider;
         private readonly TileTray _tray;
+        private readonly TileShaker _tileShaker;
 
         private ITileMap Map => _tileMapProvider.ActiveMap;
 
@@ -24,13 +25,15 @@ namespace Gameplay
             UIManager uiManager,
             LevelManager levelManager,
             ITileMapProvider tileMapProvider,
-            TileTray tray)
+            TileTray tray,
+            TileShaker tileShaker)
         {
             _tileClickDetector = tileClickDetector;
             _uiManager = uiManager;
             _levelManager = levelManager;
             _tileMapProvider = tileMapProvider;
             _tray = tray;
+            _tileShaker = tileShaker;
         }
 
         public void Initialize()
@@ -65,6 +68,10 @@ namespace Gameplay
             if (Map.TryTakeTile(tile.GridPosition))
             {
                 _tray.Add(tile.Config);
+            }
+            else
+            {
+                _tileShaker.Shake(tile);
             }
         }
     }

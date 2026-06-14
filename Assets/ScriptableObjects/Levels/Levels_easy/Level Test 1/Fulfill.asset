@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c246f6c9e64840a7e32ce18b25a163, type: 3}
   m_Name: Fulfill
   m_EditorClassIdentifier: 
-  <Size>k__BackingField: {x: 15, y: 5}
-  <Layers>k__BackingField: 10
+  <Size>k__BackingField: {x: 3, y: 3}
+  <Layers>k__BackingField: 20

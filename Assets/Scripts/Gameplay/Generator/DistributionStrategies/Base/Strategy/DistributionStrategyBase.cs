@@ -1,5 +1,6 @@
 using System;
 using Gameplay;
+using Generator.DistributionStrategies.Base;
 using Generator.DistributionStrategies.Base.Config;
 
 namespace Generator.DistributionStrategies
@@ -9,14 +10,15 @@ namespace Generator.DistributionStrategies
         protected DistributionStrategyConfigBase Config { get; }
         protected TileMap Map { get; }
         protected TileList TileList { get; }
+        protected int TrayCapacity { get; }
         
         public DistributionStrategyBase(DistributionStrategyConfigBase config,
-            TileMap map,
-            TileList tileList)
+            DistributionSettings settings)
         {
             Config = config;
-            Map = map;
-            TileList = tileList;
+            Map = settings.TileMap;
+            TileList = settings.TileList;
+            TrayCapacity = settings.TraySettings.Capacity;
         }
 
         public void Distribute()

@@ -2,13 +2,13 @@ using System.Collections.Generic;
 using Commons.Extensions;
 using Constants;
 using Gameplay;
+using Generator.DistributionStrategies.Base;
 
 namespace Generator.DistributionStrategies.Implementations.Random
 {
     public class RandomStrategy : DistributionStrategy<RandomSrategyConfig>
     {
-        public RandomStrategy(RandomSrategyConfig config, TileMap map, TileList tileList)
-            : base(config, map, tileList)
+        public RandomStrategy(RandomSrategyConfig config, DistributionSettings settings) : base(config, settings)
         {
         }
 

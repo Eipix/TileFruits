@@ -48,7 +48,7 @@ namespace DefaultNamespace
                 .FromMethod(ctx => (TileMapProvider)ctx.Container.Resolve<ITileMapProvider>())
                 .WhenInjectedInto<TileMapGenerator>();
             
-            Container.BindInterfacesAndSelfTo<TileClickDetector>().AsSingle().NonLazy();
+            Container.Bind<TileClickDetector>().AsSingle().NonLazy();
             
             Container.Bind<TileMapGenerator>().AsSingle().NonLazy();
 
@@ -72,7 +72,7 @@ namespace DefaultNamespace
             Container.Bind<GameManager>().AsSingle().NonLazy();
 
             Container.Bind<GameplayController>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<TileTrayPresenter>().AsSingle().NonLazy();
+            Container.Bind<TileTrayPresenter>().AsSingle().NonLazy();
         }
 
         public void BindSystems()

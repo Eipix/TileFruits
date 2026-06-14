@@ -12,3 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b1f0f703e0944819678b36e97962eb8, type: 3}
   m_Name: Reverse Traversal
   m_EditorClassIdentifier: 
+  <MaxVirtualTrayCapacity>k__BackingField: 1

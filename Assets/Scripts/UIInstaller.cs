@@ -73,7 +73,7 @@ namespace UI
                 .AsSingle()
                 .WhenInjectedInto<CollectionItemShaker>();
             
-            Container.BindInterfacesAndSelfTo<TileShaker>()
+            Container.Bind<TileShaker>()
                 .AsSingle()
                 .WithArguments(_tileShakerConfig)
                 .NonLazy();
@@ -87,10 +87,6 @@ namespace UI
                 .FromInstance(_hideAnimationConfig)
                 .AsSingle()
                 .WhenInjectedInto<TileTrayItem>();
-            
-            Container.Bind<TileTrayAnimationsPresenter>()
-                .AsSingle()
-                .NonLazy();
         }
     }
 }

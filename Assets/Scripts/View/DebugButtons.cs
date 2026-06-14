@@ -8,6 +8,9 @@ namespace View
 {
     public class DebugButtons : MonoBehaviour
     {
+        [SerializeField, Range(0, 1), OnValueChanged(nameof(ChangeTimeScale))]
+        private float _timeScale;
+        
         private LevelManager _levelManager;
         private GameManager _gameManager;
 
@@ -16,6 +19,11 @@ namespace View
         {
             _levelManager = levelManager;
             _gameManager = gameManager;
+        }
+
+        private void ChangeTimeScale()
+        {
+            Time.timeScale = _timeScale;
         }
         
         [Button]
