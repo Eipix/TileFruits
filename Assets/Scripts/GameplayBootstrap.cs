@@ -6,6 +6,7 @@ using Constants;
 using Cysharp.Threading.Tasks;
 using Gameplay;
 using Gameplay.Levels;
+using Presenters__Controllers;
 using UnityEngine;
 using View.Animations;
 using View.Windows.Collection;
@@ -19,14 +20,16 @@ public class GameplayBootstrap : IInitializable, IDisposable
     private SaveManager _saveManager;
     private LevelManager _levelManager;
     private GameplayController _gameplayController;
-    private TileTrayAnimationsPresenter _tileTrayAnimations;
+    private TileTrayPresenter _trayPresenter;
+    private TileClickDetector _tileClickDetector;
 
     [Inject]
     private void Construct(SDK sdk, AudioManager audioManager,
         ISaveSystem saveSystem, SaveManager saveManager,
         LevelManager levelManager,
         GameplayController gameplayController,
-        TileTrayAnimationsPresenter tileTrayAnimations)
+        TileTrayPresenter trayPresenter,
+        TileClickDetector tileClickDetector)
     {
         _sdk = sdk;
         _audioManager = audioManager;
@@ -34,7 +37,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
         _saveManager = saveManager;
         _levelManager = levelManager;
         _gameplayController = gameplayController;
-        _tileTrayAnimations = tileTrayAnimations;
+        _trayPresenter = trayPresenter;
+        _tileClickDetector = tileClickDetector;
     }
 
     public async void Initialize()
@@ -44,7 +48,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
             await LoadData();
             _sdk.Setup();
         
-            _tileTrayAnimations.Initialize();
+            _tileClickDetector.Initialize();
+            _trayPresenter.Initialize();
             _gameplayController.Initialize();
             _levelManager.StartLevel();
             Debug.Log("Initialized Gameplay Bootstrap");
@@ -70,7 +75,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
 
     public void Dispose()
     {
-        _tileTrayAnimations.Dispose();
+        _tileClickDetector.Dispose();
+        _trayPresenter.Dispose();
         _gameplayController.Dispose();
     }
 }

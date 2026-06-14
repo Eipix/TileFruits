@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using Commons.Extensions;
 using Commons.Pools;
 using Constants;
@@ -18,28 +19,37 @@ namespace Gameplay.Tray
     {
         private readonly List<TileTrayItem> _tiles = new();
         private readonly List<Image> _separators = new();
+        private readonly HashSet<TileTrayItem> _despawningTiles = new();
 
         [SerializeField] private RectTransform _content;
         [SerializeField] private LayoutGroup _separatorsLayoutGroup;
         [SerializeField] private Image _separatorPrefab;
         [SerializeField, Min(0)] private int _separatorPoolCapacity = 4;
         
-        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        [SerializeField, Min(0f), BoxGroup("ItemsShift")]
+        private float _itemsShiftDuration = 0.2f;
+        
+        [SerializeField, BoxGroup("ItemsShift")]
+        private Ease _shiftEase = Ease.OutQuad;
+        
+        [SerializeField, OnValueChanged(nameof(UpdateLayout)), BoxGroup("Layout")]
         private float _startXOffset = -300f;
         
-        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        [SerializeField, OnValueChanged(nameof(UpdateLayout)), BoxGroup("Layout")]
         private float _spacing = 5f;
         
-        [SerializeField, OnValueChanged(nameof(UpdateLayout))]
+        [SerializeField, OnValueChanged(nameof(UpdateLayout)), BoxGroup("Layout")]
         private float _width = 130f;
         
         public event Action<TileTrayItem> Added;
         
-        private TileTrayItem.Pool _itemPool;
+        private TileTrayItem.Pool _tilePool;
         private TileTraySettings _settings;
         
         private ComponentPool<Image> _separatorPool;
         private RectTransform _separatorsPoolParent;
+
+        private CancellationTokenSource _waitForDespawnSource = new();
         
         private RectTransform SeparatorsContent => (RectTransform)_separatorsLayoutGroup.transform;
 
@@ -48,7 +58,7 @@ namespace Gameplay.Tray
         [Inject]
         private void Construct(TileTrayItem.Pool itemsPool, TileTraySettings settings)
         {
-            _itemPool = itemsPool;
+            _tilePool = itemsPool;
             _settings = settings;
         }
         
@@ -71,17 +81,50 @@ namespace Gameplay.Tray
 
         private void Start() => _separatorsLayoutGroup.RebuildAndDisable();
 
-        public void Insert(TileConfig config, int index)
+        public void Insert(TileConfig config, int modelIndex, Vector2 lastClickedTilePosition)
         {
-            var item = _itemPool.Spawn(config, _content);
-            _tiles.Insert(index, item);
-
+            var item = _tilePool.Spawn(config, _content);
+            int viewIndex = GetAdjustedIndex(modelIndex, config);
+            
+            _tiles.Insert(viewIndex, item);
+            
             var tileRect = item.RectTransform;
-            float startX = GetTileTargetX(index);
+            float startX = GetTileTargetX(viewIndex);
             tileRect.anchoredPosition = new Vector2(startX, 0); 
             
             UpdateLayout(true);
             Added?.Invoke(item);
+            
+            item.SetWorldPosition(lastClickedTilePosition);
+            item.ReturnToTray();
+        }
+        
+        private int GetAdjustedIndex(int modelIndex, TileConfig newConfig)
+        {
+            int validCount = 0;
+            TileConfig lastValidConfig = null;
+        
+            for (int i = 0; i < _tiles.Count; i++)
+            {
+                if (validCount == modelIndex)
+                {
+                    if (lastValidConfig != newConfig)
+                    {
+                        while (i < _tiles.Count && _despawningTiles.Contains(_tiles[i]))
+                            i++;
+                    }
+            
+                    return i;
+                }
+                
+                if (_despawningTiles.Contains(_tiles[i]) is false)
+                {
+                    lastValidConfig = _tiles[i].Config;
+                    validCount++;
+                }
+            }
+        
+            return _tiles.Count;
         }
 
         public void Match(TileConfig config)
@@ -90,36 +133,50 @@ namespace Gameplay.Tray
             
             foreach (var tile in _tiles)
             {
-                if (tile.Config == config)
+                if (tile.Config == config && !_despawningTiles.Contains(tile))
+                {
                     tilesToDespawn.Add(tile);
+                    _despawningTiles.Add(tile);
+                }
             }
             
-            WaitToDespawn(tilesToDespawn).Forget();
+            WaitForDespawn(tilesToDespawn).Forget();
         }
 
-        private async UniTask WaitToDespawn(List<TileTrayItem> tilesToDespawn)
+        private async UniTask WaitForDespawn(List<TileTrayItem> tilesToDespawn)
         {
-            foreach (var tile in tilesToDespawn)
-            {
-                var returning = tile.ReturningToTray;
-
-                if (returning.IsActive())
-                    await returning.AsyncWaitForCompletion().AsUniTask();
-            }
-
-            foreach (var tile in tilesToDespawn)
-                tile.Hide().OnComplete(() =>
-                {
-                    _tiles.Remove(tile);
-                    _itemPool.Despawn(tile);
-                });
+            List<UniTask> returnTasks = new();
             
             foreach (var tile in tilesToDespawn)
             {
-                var hiding = tile.Hiding;
+                if (tile.ReturningToTray.IsActive())
+                    returnTasks.Add(tile.ReturningToTray.ToUniTask());
+            }
+            
+            bool isCanceled = await UniTask.WhenAll(returnTasks)
+                .AttachExternalCancellation(_waitForDespawnSource.Token)
+                .SuppressCancellationThrow();
+            
+            if (isCanceled)
+                return;
 
-                if (hiding.IsActive())
-                    await hiding.AsyncWaitForCompletion().AsUniTask();
+            List<UniTask> hideTasks = new();
+            
+            foreach (var tile in tilesToDespawn)
+                hideTasks.Add(tile.Hide().ToUniTask());
+            
+            bool ishidingCanceled = await UniTask.WhenAll(hideTasks)
+                .AttachExternalCancellation(_waitForDespawnSource.Token)
+                .SuppressCancellationThrow();;
+
+            if (ishidingCanceled)
+                return;
+            
+            foreach (var tile in tilesToDespawn)
+            {
+                _tiles.Remove(tile);
+                _despawningTiles.Remove(tile);
+                _tilePool.Despawn(tile);
             }
             
             UpdateLayout(true);
@@ -127,22 +184,31 @@ namespace Gameplay.Tray
 
         public void Clear()
         {
+            _waitForDespawnSource.Cancel();
+            _waitForDespawnSource.Dispose();
+            _waitForDespawnSource = new();
+            
             foreach (var item in _tiles)
-                _itemPool.Despawn(item);
+                _tilePool.Despawn(item);
             
             _tiles.Clear();
+            _despawningTiles.Clear();
         }
 
         private void UpdateLayout(bool animate)
         {
             for (int i = 0; i < _tiles.Count; i++)
             {
-                var tileRect = _tiles[i].RectTransform;
+                var tile = _tiles[i];
+                var tileRect = tile.RectTransform;
+                
                 float targetX = GetTileTargetX(i);
-
+                
+                tile.Shifting?.Kill();
+                
                 if (animate)
                 {
-                    tileRect.DOAnchorPosX(targetX, 0.2f).SetEase(Ease.OutQuad);
+                    tile.ShiftTo(targetX, _itemsShiftDuration, _shiftEase);
                 }
                 else
                 {
@@ -176,6 +242,15 @@ namespace Gameplay.Tray
                     _separators.RemoveAt(lastIndex);
                     _separatorPool.Release(last);
                 }
+            }
+        }
+        
+        private void OnDestroy()
+        {
+            if (_waitForDespawnSource != null)
+            {
+                _waitForDespawnSource.Cancel();
+                _waitForDespawnSource.Dispose();
             }
         }
     }

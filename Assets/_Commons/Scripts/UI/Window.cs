@@ -67,6 +67,8 @@ namespace Commons
             if (silent is false)
                 Closing?.Invoke();
 
+            _canvasGroup.blocksRaycasts = false;
+            
             if (_windowAnimation != null)
                 _windowAnimation.Close().OnComplete(_canvasGroup.Hide);
             else

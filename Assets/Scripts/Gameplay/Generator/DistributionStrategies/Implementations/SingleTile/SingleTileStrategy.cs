@@ -1,10 +1,11 @@
 using Gameplay;
+using Generator.DistributionStrategies.Base;
 
 namespace Generator.DistributionStrategies.Implementations.SingleTile
 {
     public class SingleTileStrategy : DistributionStrategy<SingleTileStrategyConfig>
     {
-        public SingleTileStrategy(SingleTileStrategyConfig config, TileMap map, TileList tileList) : base(config, map, tileList)
+        public SingleTileStrategy(SingleTileStrategyConfig config, DistributionSettings settings) : base(config, settings)
         {
         }
 

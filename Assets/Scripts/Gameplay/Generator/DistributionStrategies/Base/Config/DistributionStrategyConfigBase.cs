@@ -5,6 +5,6 @@ namespace Generator.DistributionStrategies.Base.Config
 {
     public abstract class DistributionStrategyConfigBase : ScriptableObject
     {
-        public abstract IDistributionStrategy GetStrategy(TileMap tileMap, TileList tileList);
+        public abstract IDistributionStrategy GetStrategy(DistributionSettings settings);
     }
 }

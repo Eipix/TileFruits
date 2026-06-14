@@ -1,4 +1,4 @@
-using Gameplay;
+using Generator.DistributionStrategies.Base;
 using Generator.DistributionStrategies.Base.Config;
 
 namespace Generator.DistributionStrategies
@@ -8,7 +8,7 @@ namespace Generator.DistributionStrategies
     {
         protected new T Config { get; }
 
-        public DistributionStrategy(T config, TileMap map, TileList tileList) : base(config, map, tileList)
+        public DistributionStrategy(T config, DistributionSettings settings) : base(config, settings)
         {
             Config = config;
         }
