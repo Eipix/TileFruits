@@ -20,6 +20,19 @@ namespace Generator
         public int Count => _slots.Count;
         
         public TileMap(Vector2Int size) => Size = size;
+
+        public List<Vector3Int> GetPositionsFromLayer(int layer)
+        {
+            List<Vector3Int> positions = new(_slots.Count);
+            
+            foreach (var position in _slots.Keys)
+            {
+                if(position.z == layer)
+                    positions.Add(position);
+            }
+
+            return positions;
+        }
         
         public void CoverLayer(int layer, out int slotsAdded)
         {
@@ -110,10 +123,10 @@ namespace Generator
 
         public bool IsBlockedByAboveInternal(Vector3Int position)
         {
-            if (HasSlotInDirection(position, TileMapUtils.UpLayer))
+            if (HasPositionInDirection(position, TileMapUtils.UpLayer))
                 return true;
             
-            if (HasSlotInDirections(position, TileMapUtils.UpperDirectionsAround))
+            if (HasPositionInDirections(position, TileMapUtils.UpperDirectionsAround))
                 return true;
 
             return false;
@@ -127,7 +140,7 @@ namespace Generator
             _slots.Clear();
         }
         
-        public bool HasFreePosition(int layer)
+        public bool HasFreePositionOnLayer(int layer)
         {
             if(layer < 0)
                 throw new ArgumentOutOfRangeException(nameof(layer));
@@ -146,7 +159,9 @@ namespace Generator
             return false;
         }
 
-        private bool IsValidPosition(Vector3Int position, out string errorMessage)
+        public bool CanAdd(Vector3Int position) => IsValidPosition(position, out _);
+        
+        public bool IsValidPosition(Vector3Int position, out string errorMessage)
         {
             if(position.x < 0 || position.y < 0)
             {
@@ -160,7 +175,7 @@ namespace Generator
                 return false;
             }
             
-            if(HasSlotInDirections(position, TileMapUtils.DirectionsAround))
+            if(HasPositionInDirections(position, TileMapUtils.DirectionsAround))
             {
                 errorMessage = $"Can't add a slot to a position {position}";
                 return false;
@@ -171,25 +186,32 @@ namespace Generator
                 errorMessage = $"Slot in position ({position}) has already been added";
                 return false;
             }
+
+            if (position.z > 0 && HasPositionInDirection(position, TileMapUtils.DownLayer) is false
+                && HasPositionInDirections(position, TileMapUtils.LowerDirectionsAround) is false)
+            {
+                errorMessage = $"Has no support under position {position}";
+                return false;
+            }
             
             errorMessage = null;
             return true;
         }
         
-        private bool HasSlotInDirections(Vector3Int slotPosition, ReadOnlySpan<Vector3Int> directions)
+        private bool HasPositionInDirections(Vector3Int slotPosition, ReadOnlySpan<Vector3Int> directions)
         {
             foreach (var direction in directions)
             {
-                if(HasSlotInDirection(slotPosition, direction))
+                if(HasPositionInDirection(slotPosition, direction))
                     return true;
             }
 
             return false;
         }
 
-        private bool HasSlotInDirection(Vector3Int slotPosition, Vector3Int direction)
+        private bool HasPositionInDirection(Vector3Int slotPosition, Vector3Int direction)
         {
-            return _slots.TryGetValue(slotPosition + direction, out var slot) && slot != null;
+            return _slots.ContainsKey(slotPosition + direction);
         }
         
         private void SetLayerIfHigher(Vector3Int position)
@@ -210,7 +232,7 @@ namespace Generator
 
         public void Dispose()
         {
-            _slots.Clear();
+            Clear();
             TileTaken = null;
         }
     }

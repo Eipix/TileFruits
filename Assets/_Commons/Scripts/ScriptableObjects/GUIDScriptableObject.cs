@@ -9,7 +9,8 @@ namespace Commons.ScriptableObjects
 {
     public class GUIDScriptableObject : ScriptableObject
     {
-        [field: SerializeField, ReadOnly] public string Id { get; private set; }
+        [field: SerializeField, HideInInspector]
+        public string Id { get; private set; }
 
 #if UNITY_EDITOR
         private void OnValidate()

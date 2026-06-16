@@ -12,37 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa528782fe064488a5281d0fe5b0412f, type: 3}
   m_Name: AITest 1
   m_EditorClassIdentifier: 
-  <Size>k__BackingField: {x: 14, y: 7}
-  _positions:
-  - {x: 0, y: 4, z: 0}
-  - {x: 2, y: 4, z: 0}
-  - {x: 4, y: 2, z: 0}
-  - {x: 4, y: 4, z: 0}
-  - {x: 4, y: 6, z: 0}
-  - {x: 6, y: 2, z: 0}
-  - {x: 6, y: 4, z: 0}
-  - {x: 6, y: 6, z: 0}
-  - {x: 8, y: 2, z: 0}
-  - {x: 8, y: 4, z: 0}
-  - {x: 8, y: 6, z: 0}
-  - {x: 10, y: 4, z: 0}
-  - {x: 12, y: 4, z: 0}
-  - {x: 14, y: 4, z: 0}
-  - {x: 2, y: 4, z: 1}
-  - {x: 4, y: 4, z: 1}
-  - {x: 6, y: 2, z: 1}
-  - {x: 6, y: 4, z: 1}
-  - {x: 6, y: 6, z: 1}
-  - {x: 8, y: 4, z: 1}
-  - {x: 10, y: 4, z: 1}
-  - {x: 12, y: 4, z: 1}
-  - {x: 14, y: 4, z: 1}
-  - {x: 6, y: 1, z: 2}
-  - {x: 6, y: 7, z: 2}
-  - {x: 12, y: 4, z: 2}
-  - {x: 14, y: 4, z: 2}
-  _model: gemini-3-flash-preview
-  _prompt: "\u0421\u0434\u0435\u043B\u0430\u0439 \u0432 \u0444\u043E\u0440\u043C\u0435
-    \u0418\u0418"
-  _preferredTilesCountMin: 9
-  _preferredTilesCountMax: 33
+  <Size>k__BackingField: {x: 14, y: 14}
+  _positions: []

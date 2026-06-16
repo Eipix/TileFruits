@@ -11,7 +11,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base
     public abstract class GenerationStrategyBase : IGenerationStrategy
     {
         protected GenerationStrategyConfigBase Config { get; }
-        protected global::Generator.TileMap Map { get; private set; }
+        protected TileMap Map { get; private set; }
         protected Vector2Int Size { get; private set; }
         
         protected bool IsSlotsCountSolvable => Map.Count % TilesPerMatch == 0;
@@ -22,7 +22,7 @@ namespace Gameplay.Generator.GenerationStrategies.Base
             Size = size;
         }
 
-        public global::Generator.TileMap GenerateMap()
+        public TileMap GenerateMap()
         {
             Map = new(Size);
             OnGenerateShape();

@@ -24,7 +24,6 @@ MonoBehaviour:
     <Mode>k__BackingField: 0
     <Difficulty>k__BackingField: 1
     <Levels>k__BackingField:
-    - {fileID: 11400000, guid: 4e12f75d4e132074aad316926581edb0, type: 2}
     - {fileID: 11400000, guid: 495bbb809b3142241a4041635f5bb849, type: 2}
     - {fileID: 11400000, guid: f1dabb1cc527266449463cbb768793fc, type: 2}
     - {fileID: 11400000, guid: 6d8953c252bcd894fb629848a8990520, type: 2}
