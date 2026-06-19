@@ -9,8 +9,7 @@ namespace Generator.GenerationStrategies.Implementations.Custom
         
         protected override void OnGenerateShape()
         {
-            foreach (var position in Config.Positions)
-                Map.Add(position);
+            Map.AddRange(Config.Positions);
         }
     }
 }
