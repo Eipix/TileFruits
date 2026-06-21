@@ -51,7 +51,7 @@ namespace Gameplay.Levels
                     var strategy = level.GeneratorConfig.ShapeStrategy;
                     
                     if (strategy is CustomStrategy customConfig
-                        && customConfig.IsValid(out string error) is false)
+                        && customConfig.IsValidAll(out string error) is false)
                     {
                         levels.Remove(level);
                         Debug.LogError($"Can't add levels with invalid strategies. Invalid level {level.name}\n Error {error}");
