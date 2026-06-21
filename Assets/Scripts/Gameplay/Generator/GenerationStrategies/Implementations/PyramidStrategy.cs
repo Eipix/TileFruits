@@ -1,22 +1,26 @@
-using Gameplay.Generator.GenerationStrategies.Base.Strategy;
+using System;
+using Generator.GenerationStrategies.Base;
+using NaughtyAttributes;
 using UnityEngine;
 
 namespace Generator.GenerationStrategies.PyramidStrategy
 {
-    public class PyramidStrategy : GenerationStrategy<PyramidStrategyConfig>
+    [Serializable]
+    public class PyramidStrategy : GenerationStrategy
     {
         private const int TileGridSize = 2;
         
-        public PyramidStrategy(PyramidStrategyConfig config, Vector2Int size) : base(config, size) { }
-
+        [field: SerializeField] public bool UnlimitedLayers { get; private set; }
+        
+        [field: SerializeField, Min(1), HideIf(nameof(UnlimitedLayers))]
+        public int MaxLayers { get; private set; } = 5;
+        
         protected override void OnGenerateShape()
         {
-            if (Config.UnlimitedLayers)
+            if (UnlimitedLayers)
                 FillMap();
-            
-            int maxLayers = Config.MaxLayers;
 
-            for (int layer = 0; layer < maxLayers; layer++)
+            for (int layer = 0; layer < MaxLayers; layer++)
             {
                 if (TryCoverLayer(layer) is false)
                     break;

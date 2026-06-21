@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Commons.Extensions;
-using Generator.GenerationStrategies.Implementations.Custom;
+using Generator.GenerationStrategies.Implementations;
 using NaughtyAttributes;
 using UnityEngine;
 using Zenject;
@@ -48,9 +48,9 @@ namespace Gameplay.Levels
                         continue;
                     }
                     
-                    var strategy = level.GeneratorConfig.GenerationStrategy;
+                    var strategy = level.GeneratorConfig.ShapeStrategy;
                     
-                    if (strategy is CustomStrategyConfig customConfig
+                    if (strategy is CustomStrategy customConfig
                         && customConfig.IsValid(out string error) is false)
                     {
                         levels.Remove(level);
