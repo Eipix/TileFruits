@@ -19,35 +19,24 @@ namespace Generator.GenerationStrategies.Implementations
             _positions = positions;
         }
         
-        public bool IsValid()
+        public bool IsValidAll()
         {
-            if (IsValid(out var error))
+            if (IsValidAll(out var message))
             {
-                Debug.Log($"<color=green>{GetType().Name} strategy is valid!</color>");
+                Debug.Log(message);
                 return true;
             }
             
-            Debug.LogError(error);
+            Debug.LogError(message);
             return false;
         }
         
-        public bool IsValid(out string errorMessage)
+        public bool IsValidAll(out string message)
         {
-            errorMessage = string.Empty;
-            
-            if (_positions.Count is 0)
-            {
-                errorMessage = "No positions have been generated";
-                return false;
-            }
+            message = string.Empty;
 
-            bool isSolvable = _positions.Count % MahjongConstants.TilesPerMatch is 0;
-
-            if (isSolvable is false)
-            {
-                errorMessage = $"Invalid positions count (must be divided by {MahjongConstants.TilesPerMatch})";
+            if (IsSolvable(out message) is false)
                 return false;
-            }
                 
             HashSet<Vector3Int> positionsLookup = new(_positions.Count);
             
@@ -55,13 +44,13 @@ namespace Generator.GenerationStrategies.Implementations
             {
                 if (positionsLookup.Add(position) is false) 
                 {
-                    errorMessage = $"Duplicate positions are not allowed: {position}";
+                    message = $"Duplicate positions are not allowed: {position}";
                     return false;
                 }
                 
                 if(position.x < 0 || position.y < 0 || position.z < 0)
                 {
-                    errorMessage = $"Position cannot be negative {position}";
+                    message = $"Position cannot be negative {position}";
                     return false;
                 }
             }
@@ -70,7 +59,7 @@ namespace Generator.GenerationStrategies.Implementations
             {
                 if (HasPositionAround(position, positionsLookup))
                 {
-                    errorMessage = $"position offset must be 2 - {position}";
+                    message = $"position offset must be 2 - {position}";
                     return false;
                 }
 
@@ -83,11 +72,34 @@ namespace Generator.GenerationStrategies.Implementations
                 if (positionsLookup.Contains(lowerLayerPosition) is false
                     && HasPositionAround(lowerLayerPosition, positionsLookup) is false)
                 {
-                    errorMessage = $"position {position} must have support from below";
+                    message = $"position {position} must have support from below";
                     return false;
                 }
             }
 
+            message = $"<color=green>{GetType().Name} strategy is valid!</color>";
+            return true;
+        }
+        
+        public bool IsSolvable(out string message)
+        {
+            message = string.Empty;
+            
+            if (_positions.Count is 0)
+            {
+                message = "No positions have been generated";
+                return false;
+            }
+
+            bool isSolvable = _positions.Count % MahjongConstants.TilesPerMatch is 0;
+
+            if (isSolvable is false)
+            {
+                message = $"Invalid positions count (must be divided by {MahjongConstants.TilesPerMatch})";
+                return false;
+            }
+            
+            message = "Strategy is solvable!";
             return true;
         }
 
