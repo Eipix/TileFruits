@@ -32,7 +32,9 @@ namespace Editor
         private const float LayerOffset = 0.16f;
         private const float GridYOffset = 0.07f;
         private const int GridMargin = 1;
-        
+
+        private List<TileMock> _tiles = new();
+        private readonly Color _blockedColor = Color.gray;
         private readonly Vector2 GridSize = new(0.6f, 0.6f);
         
         [SerializeField] private TileMock _tileMock;
@@ -107,6 +109,7 @@ namespace Editor
                 DestroyImmediate(_rootTransform.gameObject);
                 _rootTransform = null;
             }
+            _tiles.Clear();
             _tileMap?.Dispose();
             _tileMap = null;
         }
@@ -180,6 +183,7 @@ namespace Editor
                     for (int i = _rootTransform.childCount - 1; i >= 0; i--)
                         DestroyImmediate(_rootTransform.GetChild(i).gameObject);
                 
+                _tiles.Clear();
                 _tileMap?.Clear();
                 listVectors.ClearArray();
                 SceneView.RepaintAll();
@@ -219,7 +223,7 @@ namespace Editor
 
             serializedObject.ApplyModifiedProperties();
         }
-
+        
         private SerializedProperty GetSerializedPositionsProperty()
         {
             var serializedGeneratorConfig = serializedObject.FindProperty(GeneratorConfigName);
@@ -249,6 +253,19 @@ namespace Editor
                 savedPos.y += LayerOffset * cellIndex.z;
                 var tile = CreateMockTile(savedPos, cellIndex);
                 tile.transform.parent = _rootTransform;
+            }
+
+            RepaintTiles();
+        }
+        
+        private void RepaintTiles()
+        {
+            foreach (var tile in _tiles)
+            {
+                if(_tileMap.IsBlockedByAbove(tile.GridPosition))
+                    tile.Color = _blockedColor;
+                else
+                    tile.Color = Color.white;
             }
         }
 
@@ -378,6 +395,7 @@ namespace Editor
                             throw new ArgumentOutOfRangeException();
                     }
                     e.Use();
+                    RepaintTiles();
                 }
                 else if (e.type is EventType.MouseDrag)
                 {
@@ -399,12 +417,16 @@ namespace Editor
                             throw new ArgumentOutOfRangeException();
                     }
                     e.Use();
+                    RepaintTiles();
                 }
             }
         }
 
         private bool RemoveTile(int cellX, int cellY, int targetLayer)
         {
+            if (cellX < 0 || cellY < 0 || targetLayer < 0)
+                return false;
+            
             Vector3Int tileGridPosition = new(cellX, cellY, targetLayer);
 
             if (_tileMap.TryTakeTile(tileGridPosition) is false)
@@ -418,18 +440,16 @@ namespace Editor
                 
                 if(vector3Int == tileGridPosition)
                 {
+                    var tile = _tiles[i];
+                    
+                    if(tile.GridPosition != tileGridPosition)
+                        Debug.LogError($"Deleted wrong tile in {tileGridPosition}. Deleted {tile.GridPosition}");
+                    
+                    _tiles.RemoveAt(i);
+                    DestroyImmediate(tile.gameObject);
+                    
                     listVectors.DeleteArrayElementAtIndex(i);
                     serializedObject.ApplyModifiedProperties();
-                    break;
-                }
-            }
-            
-            foreach (Transform child in _rootTransform)
-            {
-                if(child.TryGetComponent(out TileMock tileMock)
-                   && tileMock.GridPosition == tileGridPosition)
-                {
-                    DestroyImmediate(tileMock.gameObject);
                     break;
                 }
             }
@@ -440,7 +460,7 @@ namespace Editor
         private bool TryRaycastTile(Ray ray, out Vector3Int gridPosition, out Vector3Int originalPosition)
         {
             gridPosition = default;
-            originalPosition = default;
+            originalPosition = Vector3Int.one * -1;
             
             var hits = Physics2D.RaycastAll(ray.origin, ray.direction);
 
@@ -527,6 +547,7 @@ namespace Editor
             var layer = (gridPosition.z * MapVisualizer.LayerPriority) - gridPosition.y;
             tile.SortingOrder = layer;
             tile.name = $"tile {gridPosition}";
+            _tiles.Add(tile);
             return tile;
         }
         
