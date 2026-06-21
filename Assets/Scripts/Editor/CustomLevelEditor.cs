@@ -49,6 +49,7 @@ namespace Editor
         private bool _isGenerationProcessing;
         private bool _isEditing;
         private bool _drawGrid = true;
+        private string _solvableMessage;
         
         private CustomStrategy CustomShapeConfig => _config.GeneratorConfig.ShapeStrategy as CustomStrategy;
         private Vector2 Size => ShapeStrategy.Size;
@@ -121,26 +122,28 @@ namespace Editor
                 DrawDefaultInspector();
                 return;
             }
-            
+
             serializedObject.Update();
             DrawDefaultInspector();
 
             var listVectors = GetSerializedPositionsProperty();
-            
+
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.PropertyField(listVectors, true);
             EditorGUI.EndDisabledGroup();
-            
+
             EditorGUILayout.Space(15);
+
+            bool isSolvable = CustomShapeConfig.IsSolvable(out _solvableMessage);
+            EditorGUILayout.HelpBox(_solvableMessage, isSolvable ? MessageType.Info : MessageType.Error);
             
             GUI.backgroundColor = _isEditing ? Color.green : Color.white;
-            
             string buttonText = _isEditing ? "Exit From Edit Mode" : "Enter Edit Mode";
-            
+
             if (GUILayout.Button(buttonText, GUILayout.Height(40)))
             {
                 _isEditing = !_isEditing;
-                
+
                 if (_isEditing)
                 {
                     CreateRoot();
@@ -150,45 +153,43 @@ namespace Editor
                 {
                     Clear();
                 }
-                
+
                 SceneView.RepaintAll();
             }
+
             GUI.backgroundColor = Color.white;
-            
-            if(_isEditing)
+
+            if (_isEditing)
             {
                 EditorGUI.BeginChangeCheck();
                 _drawGrid = GUILayout.Toggle(_drawGrid, "Show Grid", "Button");
 
                 var names = Enum.GetNames(typeof(DrawMode));
                 _drawMode = (DrawMode)GUILayout.Toolbar((int)_drawMode, names);
-                 
+
                 if (EditorGUI.EndChangeCheck())
                 {
                     EditorPrefs.SetBool(nameof(_drawGrid), _drawGrid);
                     SceneView.RepaintAll();
                 }
             }
-            
-            if (_isEditing)
-                EditorGUILayout.HelpBox("Edit mode is active!\nHold down Shift + Click in " +
-                                        "Scene window to place a 2x2 prefab", MessageType.Info);
 
-            if (GUILayout.Button("IsValid", GUILayout.Height(30)))
-                CustomShapeConfig.IsValid();
-            
+            if (_isEditing)
+                EditorGUILayout.HelpBox("Edit mode is active!\nClick in " +
+                                        "Scene window to place a tile", MessageType.Info);
+
             if (GUILayout.Button("Clear", GUILayout.Height(30)))
             {
-                if(_rootTransform != null)
+                if (_rootTransform != null)
                     for (int i = _rootTransform.childCount - 1; i >= 0; i--)
                         DestroyImmediate(_rootTransform.GetChild(i).gameObject);
-                
+
                 _tiles.Clear();
                 _tileMap?.Clear();
                 listVectors.ClearArray();
                 SceneView.RepaintAll();
             }
-            
+
             GUILayout.Space(50);
             GUILayout.Label("AI");
             
@@ -197,9 +198,9 @@ namespace Editor
                 if (_isGenerationProcessing is false)
                     RequestNewLayoutFromAI().Forget();
             }
-            
+
             EditorGUI.BeginChangeCheck();
-            
+
             GUILayout.Label("Prompt");
             _prompt = GUILayout.TextArea(_prompt, GUILayout.MinHeight(60), GUILayout.ExpandHeight(true));
 
@@ -207,7 +208,7 @@ namespace Editor
 
             if (index == -1)
                 index = 0;
-            
+
             index = EditorGUILayout.Popup(index, Models);
             _model = Models[index];
 
@@ -223,7 +224,7 @@ namespace Editor
 
             serializedObject.ApplyModifiedProperties();
         }
-        
+
         private SerializedProperty GetSerializedPositionsProperty()
         {
             var serializedGeneratorConfig = serializedObject.FindProperty(GeneratorConfigName);
@@ -338,15 +339,15 @@ namespace Editor
 
             int cellX;
             int cellY;
-            
+
             bool autoFindLayer = false;
             int targetLayer = 0;
-            
+
             if (TryRaycastTile(ray, out var hitGridPosition, out var original))
             {
                 cellX = hitGridPosition.x;
                 cellY = hitGridPosition.y;
-                
+
                 targetLayer = hitGridPosition.z + 1;
             }
             else
@@ -357,67 +358,78 @@ namespace Editor
                 var hitPoint = ray.GetPoint(enter);
                 cellX = Mathf.RoundToInt((hitPoint.x - origin.x) / GridSize.x);
                 cellY = Mathf.RoundToInt((hitPoint.y - origin.y) / GridSize.y);
-                
+
                 cellX = Mathf.Clamp(cellX, 0, (int)Size.x);
                 cellY = Mathf.Clamp(cellY, 0, (int)Size.y);
-                
-                autoFindLayer = true; 
+
+                autoFindLayer = true;
             }
-            
+
             float x = cellX * GridSize.x;
             float y = cellY * GridSize.y;
 
             var position = origin + new Vector3(x, y, 0f);
             Vector2Int gridPosition = new(cellX, cellY);
-            
+
             DrawPreviewRect(position, gridPosition, autoFindLayer, targetLayer);
 
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            HandleUtility.AddDefaultControl(controlID);
 
-            if (e.modifiers is EventModifiers.Shift)
+            if (e.alt || e.button != 0)
+                return;
+
+            if (e.type is EventType.MouseDown)
             {
-                HandleUtility.AddDefaultControl(controlID);
+                GUIUtility.hotControl = controlID;
+                
+                switch (_drawMode)
+                {
+                    case DrawMode.Draw:
+                        PlaceTile(cellX, cellY, autoFindLayer, targetLayer);
+                        break;
+                    case DrawMode.Erase:
+                        RemoveTile(original.x, original.y, original.z);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
 
-                if (e.button != 0)
+                e.Use();
+                RepaintTiles();
+            }
+            else if (e.type is EventType.MouseDrag)
+            {
+                if (GUIUtility.hotControl != controlID)
                     return;
                 
-                if (e.type is EventType.MouseDown)
+                switch (_drawMode)
                 {
-                    switch (_drawMode)
-                    {
-                        case DrawMode.Draw:
-                            PlaceTile(cellX, cellY, autoFindLayer, targetLayer);
-                            break;
-                        case DrawMode.Erase:
-                            RemoveTile(original.x, original.y, original.z);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                    e.Use();
-                    RepaintTiles();
+                    case DrawMode.Draw:
+                        var listVectors = GetSerializedPositionsProperty();
+                        int lastIndex = listVectors.arraySize - 1;
+                        int lastPlacedLayer = lastIndex < 0
+                            ? 0
+                            : listVectors.GetArrayElementAtIndex(lastIndex).vector3IntValue.z;
+
+                        PlaceTile(cellX, cellY, defaultLayer: lastPlacedLayer);
+                        break;
+                    case DrawMode.Erase:
+                        RemoveTile(original.x, original.y, original.z);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
-                else if (e.type is EventType.MouseDrag)
+
+                e.Use();
+                RepaintTiles();
+            }
+            else if (e.type is EventType.MouseUp)
+            {
+                if (GUIUtility.hotControl == controlID)
                 {
-                    switch (_drawMode)
-                    {
-                        case DrawMode.Draw:
-                            var listVectors = GetSerializedPositionsProperty();
-                            int lastIndex = listVectors.arraySize - 1;
-                            int lastPlacedLayer = lastIndex < 0
-                                ? 0
-                                : listVectors.GetArrayElementAtIndex(lastIndex).vector3IntValue.z;
-                    
-                            PlaceTile(cellX, cellY, defaultLayer: lastPlacedLayer);
-                            break;
-                        case DrawMode.Erase:
-                            RemoveTile(original.x, original.y, original.z);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    GUIUtility.hotControl = 0;
                     e.Use();
-                    RepaintTiles();
                 }
             }
         }
@@ -453,7 +465,6 @@ namespace Editor
                     break;
                 }
             }
-
             return true;
         }
 
@@ -642,7 +653,7 @@ Rules:
                         }
                         
                         serializedObject.ApplyModifiedProperties();
-                        CustomShapeConfig.IsValid();
+                        CustomShapeConfig.IsValidAll();
                         Debug.Log($"Layout updated! Tiles count: {count}");
                     }
                 }
