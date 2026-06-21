@@ -59,18 +59,15 @@ namespace Generator
             if (currentHighestLayer == tileMap.HighestLayer) 
                 return currentHighestLayer;
 
-            var directions = TileMapUtils.DirectionsAround;
-            int length = directions.Length;
-
-            for (int i = 0; i < length; i++)
+            foreach (Vector3Int dir3 in TileMapUtils.DirectionsAround)
             {
-                Vector2Int direction = position + (Vector2Int)directions[i];
+                Vector2Int direction = position + (Vector2Int)dir3;
                 int highestLayer = tileMap.GetHighestLayer(direction);
 
                 if (highestLayer > currentHighestLayer)
                 {
                     currentHighestLayer = highestLayer;
-            
+    
                     if (currentHighestLayer == tileMap.HighestLayer) 
                         break; 
                 }
