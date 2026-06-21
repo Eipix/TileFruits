@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Constants;
@@ -18,9 +19,18 @@ namespace Editor
     [CustomEditor(typeof(CustomStrategyConfig))]
     public class CustomStrategyEditor : Editor
     {
+        public enum DrawMode
+        {
+            Draw,
+            Erase
+        }
+        
         private const string PositionsPropertyName = "_positions";
         private const float LayerOffset = 0.16f;
-        private const float GridSize = 0.7f;
+        private const float GridYOffset = 0.07f;
+        private const int GridMargin = 1;
+        
+        private readonly Vector2 GridSize = new(0.6f, 0.6f);
         
         [SerializeField] private TileMock _tileMock;
         
@@ -29,32 +39,26 @@ namespace Editor
         private TileMap _tileMap;
 
         private CancellationTokenSource _cancellationTokenSource = new();
-        private UniTask _aiGenerating;
+        
         private bool _isGenerationProcessing;
+        private bool _isEditing;
+        private bool _drawGrid = true;
+        private DrawMode _drawMode;
         
         private Vector2 Size => _config.Size;
         private string RootName => $"[CustomStrategyEditor] {_config.name}]";
 
-        private Vector3 Origin
-        {
-            get
-            {
-                float width = Size.x * GridSize;
-                float height = Size.y * GridSize;
-                return -new Vector3(width / 2f, height / 2f, 0f);
-            }
-        }
-
-        private bool _isEditing;
+        private Vector3 Origin => - Size * GridSize / 2f;
 
         private void OnEnable()
         {
+            _drawGrid = EditorPrefs.GetBool(nameof(_drawGrid), true);
             _prompt = EditorPrefs.GetString(nameof(_prompt));
             _model = EditorPrefs.GetString(nameof(_model));
             
-            int rx = EditorPrefs.GetInt(nameof(_range) + "X", 0);
-            int ry = EditorPrefs.GetInt(nameof(_range) + "Y", rx + 100);
-            _range = new Vector2Int(rx, ry);
+            int rx = EditorPrefs.GetInt(nameof(_minMaxTilesCount) + "X", 0);
+            int ry = EditorPrefs.GetInt(nameof(_minMaxTilesCount) + "Y", rx + 100);
+            _minMaxTilesCount = new Vector2Int(rx, ry);
             
             _config = (CustomStrategyConfig)target;
             SceneView.duringSceneGui += OnSceneGUI;
@@ -76,9 +80,15 @@ namespace Editor
             if (_isEditing && _config != null)
             {
                 Clear();
-                _rootTransform = new GameObject(RootName).transform;
+                CreateRoot();
                 LoadExistingTiles();
             }
+        }
+
+        private void CreateRoot()
+        {
+            _rootTransform = new GameObject(RootName).transform;
+            _rootTransform.gameObject.hideFlags = HideFlags.DontSave;
         }
 
         private void Clear()
@@ -104,6 +114,7 @@ namespace Editor
             EditorGUI.EndDisabledGroup();
             
             EditorGUILayout.Space(15);
+            
             GUI.backgroundColor = _isEditing ? Color.green : Color.white;
             
             string buttonText = _isEditing ? "Exit From Edit Mode" : "Enter Edit Mode";
@@ -114,7 +125,7 @@ namespace Editor
                 
                 if (_isEditing)
                 {
-                    _rootTransform = new GameObject(RootName).transform;
+                    CreateRoot();
                     LoadExistingTiles();
                 }
                 else
@@ -124,8 +135,26 @@ namespace Editor
                 
                 SceneView.RepaintAll();
             }
-            
             GUI.backgroundColor = Color.white;
+            
+            if(_isEditing)
+            {
+                EditorGUI.BeginChangeCheck();
+                _drawGrid = GUILayout.Toggle(_drawGrid, "Show Grid", "Button");
+
+                var names = Enum.GetNames(typeof(DrawMode));
+                _drawMode = (DrawMode)GUILayout.Toolbar((int)_drawMode, names);
+                 
+                if (EditorGUI.EndChangeCheck())
+                {
+                    EditorPrefs.SetBool(nameof(_drawGrid), _drawGrid);
+                    SceneView.RepaintAll();
+                }
+            }
+            
+            if (_isEditing)
+                EditorGUILayout.HelpBox("Edit mode is active!\nHold down Shift + Click in " +
+                                        "Scene window to place a 2x2 prefab", MessageType.Info);
 
             if (GUILayout.Button("IsValid", GUILayout.Height(30)))
                 _config.IsValid();
@@ -142,11 +171,8 @@ namespace Editor
                 SceneView.RepaintAll();
             }
             
-            if (GUILayout.Button("RequestNewLayoutFromAI", GUILayout.Height(30)))
-            {
-                if (_isGenerationProcessing is false)
-                    _aiGenerating = RequestNewLayoutFromAI();
-            }
+            GUILayout.Space(50);
+            GUILayout.Label("AI");
             
             EditorGUI.BeginChangeCheck();
             _prompt = GUILayout.TextArea(_prompt, GUILayout.MinHeight(60), GUILayout.ExpandHeight(true));
@@ -159,19 +185,21 @@ namespace Editor
             index = EditorGUILayout.Popup(index, Models);
             _model = Models[index];
 
-            _range = EditorGUILayout.Vector2IntField(nameof(_range), _range);
+            _minMaxTilesCount = EditorGUILayout.Vector2IntField(nameof(_minMaxTilesCount), _minMaxTilesCount);
 
             if (EditorGUI.EndChangeCheck())
             {
                 EditorPrefs.SetString(nameof(_prompt), _prompt);
                 EditorPrefs.SetString(nameof(_model), _model);
-                EditorPrefs.SetInt(nameof(_range) + "X", _range.x);
-                EditorPrefs.SetInt(nameof(_range) + "Y", _range.y);
+                EditorPrefs.SetInt(nameof(_minMaxTilesCount) + "X", _minMaxTilesCount.x);
+                EditorPrefs.SetInt(nameof(_minMaxTilesCount) + "Y", _minMaxTilesCount.y);
             }
             
-            if (_isEditing)
-                EditorGUILayout.HelpBox("Edit mode is active!\nHold down Shift + Click in " +
-                                        "Scene window to place a 2x2 prefab", MessageType.Info);
+            if (GUILayout.Button("RequestNewLayoutFromAI", GUILayout.Height(30)))
+            {
+                if (_isGenerationProcessing is false)
+                    RequestNewLayoutFromAI().Forget();
+            }
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -194,9 +222,9 @@ namespace Editor
                 Vector3Int cellIndex = listVectors.GetArrayElementAtIndex(i).vector3IntValue;
                 _tileMap.Add(cellIndex);
                 
-                Vector3 savedPos = Origin + new Vector3(cellIndex.x * GridSize, cellIndex.y * GridSize, 0f);
+                Vector3 savedPos = Origin + new Vector3(cellIndex.x * GridSize.x, cellIndex.y * GridSize.y, 0f);
                 savedPos.y += LayerOffset * cellIndex.z;
-                var tile = CreateMockTile(savedPos, cellIndex.z);
+                var tile = CreateMockTile(savedPos, cellIndex);
                 tile.transform.parent = _rootTransform;
             }
         }
@@ -225,25 +253,39 @@ namespace Editor
         private void DrawGrid()
         {
             Handles.color = Color.green;
-            
-            Vector3 origin = Origin;
-            float width = Size.x * GridSize;
-            float height = Size.y * GridSize;
 
-            for (int x = 0; x <= Size.x; x++)
+            Vector3 origin = Origin;
+            int minX = -GridMargin;
+            int maxX = (int)Size.x + GridMargin;
+            int minY = -GridMargin;
+            int maxY = (int)Size.y + GridMargin;
+
+            for (int x = minX; x <= maxX; x++)
             {
-                Vector3 start = origin + new Vector3(x * GridSize, 0);
-                Vector3 end = start + new Vector3(0, height);
+                float worldX = origin.x + x * GridSize.x;
+                float worldYMin = origin.y + minY * GridSize.y + GridYOffset;
+                float worldYMax = origin.y + maxY * GridSize.y + GridYOffset;
+
+                if (_drawGrid is false && x > minX && x < maxX)
+                    continue;
                 
-                Handles.DrawLine(start, end);
+                Handles.DrawLine(
+                    new Vector3(worldX, worldYMin, 0),
+                    new Vector3(worldX, worldYMax, 0));
             }
-            
-            for (int y = 0; y <= Size.y; y++)
+
+            for (int y = minY; y <= maxY; y++)
             {
-                Vector3 start = origin + new Vector3(0, y * GridSize);
-                Vector3 end = start + new Vector3(width, 0);
+                float worldY = origin.y + y * GridSize.y + GridYOffset;
+                float worldXMin = origin.x + minX * GridSize.x;
+                float worldXMax = origin.x + maxX * GridSize.x;
+
+                if (_drawGrid is false && y > minY && y < maxY)
+                    continue;
                 
-                Handles.DrawLine(start, end);
+                Handles.DrawLine(
+                    new Vector3(worldXMin, worldY, 0),
+                    new Vector3(worldXMax, worldY, 0));
             }
         }
 
@@ -254,23 +296,41 @@ namespace Editor
             Plane groundPlane = new Plane(Vector3.back, origin);
             var ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
 
-            if (groundPlane.Raycast(ray, out float enter) is false)
-                return;
+            int cellX;
+            int cellY;
+            
+            bool autoFindLayer = false;
+            int targetLayer = 0;
+            
+            if (TryRaycastTile(ray, out var hitGridPosition, out var original))
+            {
+                cellX = hitGridPosition.x;
+                cellY = hitGridPosition.y;
+                
+                targetLayer = hitGridPosition.z + 1;
+            }
+            else
+            {
+                if (groundPlane.Raycast(ray, out float enter) is false)
+                    return;
 
-            var hitPoint = ray.GetPoint(enter);
+                var hitPoint = ray.GetPoint(enter);
+                cellX = Mathf.RoundToInt((hitPoint.x - origin.x) / GridSize.x);
+                cellY = Mathf.RoundToInt((hitPoint.y - origin.y) / GridSize.y);
+                
+                cellX = Mathf.Clamp(cellX, 0, (int)Size.x);
+                cellY = Mathf.Clamp(cellY, 0, (int)Size.y);
+                
+                autoFindLayer = true; 
+            }
+            
+            float x = cellX * GridSize.x;
+            float y = cellY * GridSize.y;
 
-            int cellX = Mathf.RoundToInt((hitPoint.x - origin.x) / GridSize);
-            int cellY = Mathf.RoundToInt((hitPoint.y - origin.y) / GridSize);
-
-            cellX = Mathf.Clamp(cellX, 1, (int)Size.x - 1);
-            cellY = Mathf.Clamp(cellY, 1, (int)Size.y - 1);
-
-            float x = cellX * GridSize;
-            float y = cellY * GridSize;
-
-            var gridPosition = origin + new Vector3(x, y, 0f);
-
-            DrawPreviewRect(gridPosition);
+            var position = origin + new Vector3(x, y, 0f);
+            Vector2Int gridPosition = new(cellX, cellY);
+            
+            DrawPreviewRect(position, gridPosition, autoFindLayer, targetLayer);
 
             int controlID = GUIUtility.GetControlID(FocusType.Passive);
 
@@ -278,35 +338,125 @@ namespace Editor
             {
                 HandleUtility.AddDefaultControl(controlID);
 
-                if (e is { button: 0, type: EventType.MouseDown })
+                if (e.button != 0)
+                    return;
+                
+                if (e.type is EventType.MouseDown)
                 {
-                    PlaceTile(cellX, cellY, true);
+                    switch (_drawMode)
+                    {
+                        case DrawMode.Draw:
+                            PlaceTile(cellX, cellY, autoFindLayer, targetLayer);
+                            break;
+                        case DrawMode.Erase:
+                            RemoveTile(original.x, original.y, original.z);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                     e.Use();
                 }
-                else if (e is { button: 0, type: EventType.MouseDrag })
+                else if (e.type is EventType.MouseDrag)
                 {
-                    var listVectors = serializedObject.FindProperty(PositionsPropertyName);
-                    int lastIndex = listVectors.arraySize - 1;
-                    int lastPlacedLayer = lastIndex < 0
-                        ? 0
-                        : listVectors.GetArrayElementAtIndex(lastIndex).vector3IntValue.z;
+                    switch (_drawMode)
+                    {
+                        case DrawMode.Draw:
+                            var listVectors = serializedObject.FindProperty(PositionsPropertyName);
+                            int lastIndex = listVectors.arraySize - 1;
+                            int lastPlacedLayer = lastIndex < 0
+                                ? 0
+                                : listVectors.GetArrayElementAtIndex(lastIndex).vector3IntValue.z;
                     
-                    PlaceTile(cellX, cellY, defaultLayer: lastPlacedLayer);
+                            PlaceTile(cellX, cellY, defaultLayer: lastPlacedLayer);
+                            break;
+                        case DrawMode.Erase:
+                            RemoveTile(original.x, original.y, original.z);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                     e.Use();
                 }
             }
         }
 
-        private void DrawPreviewRect(Vector3 center)
+        private bool RemoveTile(int cellX, int cellY, int targetLayer)
         {
+            Vector3Int tileGridPosition = new(cellX, cellY, targetLayer);
+
+            if (_tileMap.TryTakeTile(tileGridPosition) is false)
+                return false;
+            
+            var listVectors = serializedObject.FindProperty(PositionsPropertyName);
+
+            for (int i = listVectors.arraySize - 1; i >= 0; i--)
+            {
+                var vector3Int = listVectors.GetArrayElementAtIndex(i).vector3IntValue;
+                
+                if(vector3Int == tileGridPosition)
+                {
+                    listVectors.DeleteArrayElementAtIndex(i);
+                    serializedObject.ApplyModifiedProperties();
+                    break;
+                }
+            }
+            
+            foreach (Transform child in _rootTransform)
+            {
+                if(child.TryGetComponent(out TileMock tileMock)
+                   && tileMock.GridPosition == tileGridPosition)
+                {
+                    DestroyImmediate(tileMock.gameObject);
+                    break;
+                }
+            }
+
+            return true;
+        }
+
+        private bool TryRaycastTile(Ray ray, out Vector3Int gridPosition, out Vector3Int originalPosition)
+        {
+            gridPosition = default;
+            originalPosition = default;
+            
+            var hits = Physics2D.RaycastAll(ray.origin, ray.direction);
+
+            if (hits.Length < 1)
+                return false;
+            
+            int highestLayer = int.MinValue;
+            
+            foreach (var hit in hits)
+            {
+                if (hit.collider.TryGetComponent(out TileMock tileMock)
+                    && tileMock.GridPosition.z > highestLayer)
+                {
+                    highestLayer = tileMock.GridPosition.z;
+                    originalPosition = tileMock.GridPosition;
+                    gridPosition = tileMock.GetGridSideByWorldPosition(hit.point);
+                }
+            }
+
+            return highestLayer != int.MinValue;
+        }
+
+        private void DrawPreviewRect(Vector3 center, Vector2Int gridPosition, bool autoFindLayer, int targetLayer)
+        {
+            int layer = autoFindLayer
+                ? _tileMap.GetLowestValidLayer(gridPosition)
+                : targetLayer;
+            
+            layer = Mathf.Max(layer - 1, 0);
+            
+            float totalGridYOffset = GridYOffset + LayerOffset * layer;
             Vector3[] verts =
             {
-                center + new Vector3(-GridSize, -GridSize, 0),
-                center + new Vector3(-GridSize, GridSize, 0),
-                center + new Vector3(GridSize, GridSize, 0),
-                center + new Vector3(GridSize, -GridSize, 0)
+                center + new Vector3(-GridSize.x, -GridSize.y + totalGridYOffset, 0),
+                center + new Vector3(-GridSize.x, GridSize.y + totalGridYOffset, 0),
+                center + new Vector3(GridSize.x, GridSize.y + totalGridYOffset, 0),
+                center + new Vector3(GridSize.x, -GridSize.y + totalGridYOffset, 0)
             };
-
+            
             Handles.DrawSolidRectangleWithOutline(
                 verts, 
                 new Color(0, 1, 0, 0.15f), 
@@ -314,69 +464,46 @@ namespace Editor
             );
         }
 
-        private void PlaceTile(int cellX, int cellY, bool allowAutoJumpLayer = false, int defaultLayer = 0)
+        private void PlaceTile(int cellX, int cellY, bool autoFindLayer = false, int defaultLayer = 0)
         {
-            int highestLayer = -1;
-            int supportRadius = 1; 
-
-            foreach (Vector3Int pos in _tileMap.Positions)
-            {
-                if (Mathf.Abs(pos.x - cellX) <= supportRadius
-                    && Mathf.Abs(pos.y - cellY) <= supportRadius)
-                {
-                    if (pos.z > highestLayer)
-                        highestLayer = pos.z;
-                }
-            }
+            int layer = autoFindLayer
+                ? _tileMap.GetLowestValidLayer(new Vector2Int(cellX, cellY))
+                : defaultLayer;
             
-            int layer = defaultLayer;
-            
-            Vector3 position = Origin + new Vector3(cellX * GridSize, cellY * GridSize, 0f);
-
-            if (highestLayer >= 0)
-            {
-                if (allowAutoJumpLayer)
-                {
-                    layer = highestLayer + 1;
-                }
-            }
-
+            Vector3 position = Origin + new Vector3(cellX * GridSize.x, cellY * GridSize.y, 0f);
             position.y += LayerOffset * layer;
 
             serializedObject.Update();
             SerializedProperty listVectors = serializedObject.FindProperty(PositionsPropertyName);
 
-            if (listVectors != null)
-            {
-                Vector3Int cellIndex = new Vector3Int(cellX, cellY, layer);
+            Vector3Int cellIndex = new Vector3Int(cellX, cellY, layer);
 
-                if (_tileMap.TryAdd(cellIndex) is false)
-                    return;
+            if (_tileMap.TryAdd(cellIndex) is false)
+                return;
 
-                Undo.RecordObject(_config, "Place Tile");
+            Undo.RecordObject(_config, "Place Tile");
 
-                int index = listVectors.arraySize;
-                listVectors.InsertArrayElementAtIndex(index);
-                SerializedProperty newElement = listVectors.GetArrayElementAtIndex(index);
-                newElement.vector3IntValue = cellIndex;
+            int index = listVectors.arraySize;
+            listVectors.InsertArrayElementAtIndex(index);
+            SerializedProperty newElement = listVectors.GetArrayElementAtIndex(index);
+            newElement.vector3IntValue = cellIndex;
 
-                serializedObject.ApplyModifiedProperties();
-                EditorUtility.SetDirty(_config);
-            }
+            serializedObject.ApplyModifiedProperties();
+            EditorUtility.SetDirty(_config);
 
-            if (_tileMock != null)
-            {
-                var tile = CreateMockTile(position, layer);
-                Undo.RegisterCreatedObjectUndo(tile.gameObject, "Place Tile Visual");
-                Undo.SetTransformParent(tile.transform, _rootTransform, "Place Tile Visual");
-            }
+            var tile = CreateMockTile(position, cellIndex);
+            Undo.RegisterCreatedObjectUndo(tile.gameObject, "Place Tile Visual");
+            Undo.SetTransformParent(tile.transform, _rootTransform, "Place Tile Visual");
         }
 
-        private TileMock CreateMockTile(Vector3 position, int sortingOrder)
+        private TileMock CreateMockTile(Vector3 position, Vector3Int gridPosition)
         {
             var tile = (TileMock)PrefabUtility.InstantiatePrefab(_tileMock);
             tile.transform.position = position;
-            tile.SortingOrder = sortingOrder;
+            tile.GridPosition = gridPosition;
+            var layer = (gridPosition.z * MapVisualizer.LayerPriority) - gridPosition.y;
+            tile.SortingOrder = layer;
+            tile.name = $"tile {gridPosition}";
             return tile;
         }
         
@@ -398,14 +525,14 @@ namespace Editor
         private string _model;
         private string _prompt;
         
-        private Vector2Int _range = new(33, 99);
+        private Vector2Int _minMaxTilesCount = new(33, 99);
         
         private bool ValidateCount(int count) =>
             count % MahjongConstants.TilesPerMatch is 0;
 
         private async UniTask RequestNewLayoutFromAI()
         {
-            if (ValidateCount(_range.x) is false || ValidateCount(_range.y) is false)
+            if (ValidateCount(_minMaxTilesCount.x) is false || ValidateCount(_minMaxTilesCount.y) is false)
             {
                 Debug.LogError("Invalid preferred tiles count");
                 return;
@@ -413,7 +540,7 @@ namespace Editor
 
             _cancellationTokenSource = new();
             _isGenerationProcessing = true;
-            string prompt = $@"{_prompt}. Generate a list of approximately {_range.x}-{_range.y} objects in JSON format, each being an object with 'x', 'y', 'z' integer fields.  
+            string prompt = $@"{_prompt}. Generate a list of approximately {_minMaxTilesCount.x}-{_minMaxTilesCount.y} objects in JSON format, each being an object with 'x', 'y', 'z' integer fields.  
 Rules:
 1. Coordinates must be non-negative.
 2. Total count must be a multiple of {MahjongConstants.TilesPerMatch}.

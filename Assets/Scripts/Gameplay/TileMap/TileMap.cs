@@ -21,39 +21,10 @@ namespace Generator
         
         public TileMap(Vector2Int size) => Size = size;
 
-        public List<Vector3Int> GetPositionsFromLayer(int layer)
+        public bool Remove(Vector3Int position)
         {
-            List<Vector3Int> positions = new(_slots.Count);
-            
-            foreach (var position in _slots.Keys)
-            {
-                if(position.z == layer)
-                    positions.Add(position);
-            }
-
-            return positions;
+            return _slots.Remove(position);
         }
-        
-        public void CoverLayer(int layer, out int slotsAdded)
-        {
-            slotsAdded = 0;
-            
-            int endX = Size.x;
-            int endY = Size.y;
-            
-            for (int x = 0; x < endX; x++)
-            {
-                for (int y = 0; y < endY; y++)
-                {
-                    Vector3Int position = new(x, y, layer);
-                    
-                    if(TryAdd(position))
-                        slotsAdded++;
-                }
-            }
-        }
-
-        public bool Remove(Vector3Int position) => _slots.Remove(position);
 
         public bool TryAdd(Vector3Int position)
         {
@@ -67,6 +38,12 @@ namespace Generator
             return false;
         }
 
+        public void AddRange(IEnumerable<Vector3Int> positions)
+        {
+            foreach (var position in positions)
+                Add(position);
+        }
+        
         public void Add(Vector3Int position)
         {
             if (IsValidPosition(position, out var errorMessage) is false)
@@ -139,27 +116,8 @@ namespace Generator
 
             _slots.Clear();
         }
-        
-        public bool HasFreePositionOnLayer(int layer)
-        {
-            if(layer < 0)
-                throw new ArgumentOutOfRangeException(nameof(layer));
-            
-            for (int x = 0; x < Size.x; x++)
-            {
-                for (int y = 0; y < Size.y; y++)
-                {
-                    Vector3Int testPosition = new(x, y, layer);
-            
-                    if (IsValidPosition(testPosition, out _))
-                        return true;
-                }
-            }
-    
-            return false;
-        }
 
-        public bool CanAdd(Vector3Int position) => IsValidPosition(position, out _);
+        public bool IsValidPosition(Vector3Int position) => IsValidPosition(position, out _);
         
         public bool IsValidPosition(Vector3Int position, out string errorMessage)
         {

@@ -9,7 +9,7 @@ namespace Generator
 {
     public class MapVisualizer : MonoBehaviour
     {
-        private const int LayerPriority = 10;
+        public const int LayerPriority = 10;
         
         private readonly Dictionary<Vector3Int, Tile> _tiles = new();
 
