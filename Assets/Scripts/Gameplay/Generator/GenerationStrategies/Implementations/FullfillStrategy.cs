@@ -1,17 +1,17 @@
-using Gameplay.Generator.GenerationStrategies.Base.Strategy;
+using System;
+using Generator.GenerationStrategies.Base;
 using UnityEngine;
 
 namespace Generator.GenerationStrategies.Implementations.Fullfill
 {
-    public class FullfillStrategy : GenerationStrategy<FullfillStrategyConfig>
+    [Serializable]
+    public class FullfillStrategy : GenerationStrategy
     {
-        public FullfillStrategy(FullfillStrategyConfig config, Vector2Int size) : base(config, size)
-        {
-        }
+        [field: SerializeField, Min(1)] public int Layers { get; private set; }
 
         protected override void OnGenerateShape()
         {
-            int layers = Config.Layers;
+            int layers = Layers;
             
             for (int i = 0; i < layers; i++)
             {

@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.alexeytaranov.serializereferencedropdown": {
+      "version": "https://github.com/AlexeyTaranov/SerializeReferenceDropdown.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.0"
+      },
+      "hash": "6d66c2406b4192535d4b1a67e49a772cc2b86ff3"
+    },
     "com.coffee.ui-effect": {
       "version": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
       "depth": 0,
@@ -211,6 +220,13 @@
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.6",
       "depth": 3,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

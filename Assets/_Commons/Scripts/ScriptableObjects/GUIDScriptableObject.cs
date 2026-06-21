@@ -12,9 +12,9 @@ namespace Commons.ScriptableObjects
         [field: SerializeField, HideInInspector]
         public string Id { get; private set; }
 
-#if UNITY_EDITOR
         private void OnValidate()
         {
+#if UNITY_EDITOR
             string path = AssetDatabase.GetAssetPath(this);
 
             if (string.IsNullOrEmpty(path))
@@ -27,7 +27,10 @@ namespace Commons.ScriptableObjects
                 Id = guid;
                 EditorUtility.SetDirty(this);
             }
-        }
 #endif
+            Validate();
+        }
+
+        protected virtual void Validate() { }
     }
 }

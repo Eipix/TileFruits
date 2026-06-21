@@ -8,5 +8,10 @@ namespace Gameplay.Levels
     public class Level : GUIDScriptableObject
     {
         [field: SerializeField] public GeneratorConfig GeneratorConfig { get; private set; }
+
+        protected override void Validate()
+        {
+            GeneratorConfig.MigrateCustomStrategyIfNull();
+        }
     }
 }

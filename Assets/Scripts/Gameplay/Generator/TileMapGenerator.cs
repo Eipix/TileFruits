@@ -17,8 +17,7 @@ namespace Generator
         
         public ITileMap GenerateGrid(GeneratorConfig config)
         {
-            var generationStrategy = config.GenerationStrategy.GetStrategy();
-            var map = generationStrategy.GenerateMap();
+            var map = config.ShapeStrategy.GenerateMap();
 
             DistributionSettings settings = new(map, config.TileList, _traySettings);
             var distributionStrategy = config.DistributionStrategy.GetStrategy(settings);

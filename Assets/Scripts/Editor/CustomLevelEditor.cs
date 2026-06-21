@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Constants;
 using Cysharp.Threading.Tasks;
 using Gameplay;
+using Gameplay.Levels;
 using Generator;
-using Generator.GenerationStrategies.Implementations.Custom;
+using Generator.GenerationStrategies.Base;
+using Generator.GenerationStrategies.Implementations;
 using ModestTree;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -16,8 +17,8 @@ namespace Editor
 {
     using UnityEditor;
     
-    [CustomEditor(typeof(CustomStrategyConfig))]
-    public class CustomStrategyEditor : Editor
+    [CustomEditor(typeof(Level))]
+    public class CustomLevelEditor : Editor
     {
         public enum DrawMode
         {
@@ -25,6 +26,8 @@ namespace Editor
             Erase
         }
         
+        private const string GeneratorConfigName = "<GeneratorConfig>k__BackingField";
+        private const string ShapePropertyName = "<ShapeStrategy>k__BackingField";
         private const string PositionsPropertyName = "_positions";
         private const float LayerOffset = 0.16f;
         private const float GridYOffset = 0.07f;
@@ -33,21 +36,23 @@ namespace Editor
         private readonly Vector2 GridSize = new(0.6f, 0.6f);
         
         [SerializeField] private TileMock _tileMock;
-        
-        private CustomStrategyConfig _config;
+
+        private Level _config;
         private Transform _rootTransform;
         private TileMap _tileMap;
 
         private CancellationTokenSource _cancellationTokenSource = new();
         
+        private DrawMode _drawMode;
         private bool _isGenerationProcessing;
         private bool _isEditing;
         private bool _drawGrid = true;
-        private DrawMode _drawMode;
         
-        private Vector2 Size => _config.Size;
+        private CustomStrategy CustomShapeConfig => _config.GeneratorConfig.ShapeStrategy as CustomStrategy;
+        private Vector2 Size => ShapeStrategy.Size;
         private string RootName => $"[CustomStrategyEditor] {_config.name}]";
 
+        private GenerationStrategy ShapeStrategy => _config.GeneratorConfig.ShapeStrategy;
         private Vector3 Origin => - Size * GridSize / 2f;
 
         private void OnEnable()
@@ -60,7 +65,11 @@ namespace Editor
             int ry = EditorPrefs.GetInt(nameof(_minMaxTilesCount) + "Y", rx + 100);
             _minMaxTilesCount = new Vector2Int(rx, ry);
             
-            _config = (CustomStrategyConfig)target;
+            _config = (Level)target;
+
+            if (CustomShapeConfig == null)
+                return;
+            
             SceneView.duringSceneGui += OnSceneGUI;
             Undo.undoRedoPerformed += OnUndoRedo;
         }
@@ -77,7 +86,7 @@ namespace Editor
         
         private void OnUndoRedo()
         {
-            if (_isEditing && _config != null)
+            if (_isEditing)
             {
                 Clear();
                 CreateRoot();
@@ -104,10 +113,16 @@ namespace Editor
 
         public override void OnInspectorGUI()
         {
-            serializedObject.Update();
+            if (CustomShapeConfig == null)
+            {
+                DrawDefaultInspector();
+                return;
+            }
             
-            DrawPropertiesExcluding(serializedObject, PositionsPropertyName);
-            SerializedProperty listVectors = serializedObject.FindProperty(PositionsPropertyName);
+            serializedObject.Update();
+            DrawDefaultInspector();
+
+            var listVectors = GetSerializedPositionsProperty();
             
             EditorGUI.BeginDisabledGroup(true);
             EditorGUILayout.PropertyField(listVectors, true);
@@ -157,7 +172,7 @@ namespace Editor
                                         "Scene window to place a 2x2 prefab", MessageType.Info);
 
             if (GUILayout.Button("IsValid", GUILayout.Height(30)))
-                _config.IsValid();
+                CustomShapeConfig.IsValid();
             
             if (GUILayout.Button("Clear", GUILayout.Height(30)))
             {
@@ -166,15 +181,22 @@ namespace Editor
                         DestroyImmediate(_rootTransform.GetChild(i).gameObject);
                 
                 _tileMap?.Clear();
-                var positions = serializedObject.FindProperty(PositionsPropertyName);
-                positions.ClearArray();
+                listVectors.ClearArray();
                 SceneView.RepaintAll();
             }
             
             GUILayout.Space(50);
             GUILayout.Label("AI");
             
+            if (GUILayout.Button("RequestNewAILayout", GUILayout.Height(30)))
+            {
+                if (_isGenerationProcessing is false)
+                    RequestNewLayoutFromAI().Forget();
+            }
+            
             EditorGUI.BeginChangeCheck();
+            
+            GUILayout.Label("Prompt");
             _prompt = GUILayout.TextArea(_prompt, GUILayout.MinHeight(60), GUILayout.ExpandHeight(true));
 
             int index = Models.IndexOf(_model);
@@ -185,7 +207,7 @@ namespace Editor
             index = EditorGUILayout.Popup(index, Models);
             _model = Models[index];
 
-            _minMaxTilesCount = EditorGUILayout.Vector2IntField(nameof(_minMaxTilesCount), _minMaxTilesCount);
+            _minMaxTilesCount = EditorGUILayout.Vector2IntField("MinMaxTilesCount", _minMaxTilesCount);
 
             if (EditorGUI.EndChangeCheck())
             {
@@ -194,14 +216,15 @@ namespace Editor
                 EditorPrefs.SetInt(nameof(_minMaxTilesCount) + "X", _minMaxTilesCount.x);
                 EditorPrefs.SetInt(nameof(_minMaxTilesCount) + "Y", _minMaxTilesCount.y);
             }
-            
-            if (GUILayout.Button("RequestNewLayoutFromAI", GUILayout.Height(30)))
-            {
-                if (_isGenerationProcessing is false)
-                    RequestNewLayoutFromAI().Forget();
-            }
 
             serializedObject.ApplyModifiedProperties();
+        }
+
+        private SerializedProperty GetSerializedPositionsProperty()
+        {
+            var serializedGeneratorConfig = serializedObject.FindProperty(GeneratorConfigName);
+            var serializedShapeStrategy = serializedGeneratorConfig.FindPropertyRelative(ShapePropertyName);
+            return serializedShapeStrategy.FindPropertyRelative(PositionsPropertyName);
         }
         
         private void LoadExistingTiles()
@@ -210,12 +233,12 @@ namespace Editor
                 return;
 
             serializedObject.Update();
-            SerializedProperty listVectors = serializedObject.FindProperty(PositionsPropertyName);
+            SerializedProperty listVectors = GetSerializedPositionsProperty();
 
             if (listVectors == null) 
                 return;
 
-            _tileMap = new TileMap(_config.Size);
+            _tileMap = new TileMap(CustomShapeConfig.Size);
             
             for (int i = 0; i < listVectors.arraySize; i++)
             {
@@ -231,7 +254,7 @@ namespace Editor
 
         private void OnSceneGUI(SceneView sceneView)
         {
-            if (_isEditing is false || _config == null)
+            if (_isEditing is false)
                 return;
 
             if (Event.current.type is EventType.MouseMove or EventType.MouseDrag)
@@ -361,7 +384,7 @@ namespace Editor
                     switch (_drawMode)
                     {
                         case DrawMode.Draw:
-                            var listVectors = serializedObject.FindProperty(PositionsPropertyName);
+                            var listVectors = GetSerializedPositionsProperty();
                             int lastIndex = listVectors.arraySize - 1;
                             int lastPlacedLayer = lastIndex < 0
                                 ? 0
@@ -387,7 +410,7 @@ namespace Editor
             if (_tileMap.TryTakeTile(tileGridPosition) is false)
                 return false;
             
-            var listVectors = serializedObject.FindProperty(PositionsPropertyName);
+            var listVectors = GetSerializedPositionsProperty();
 
             for (int i = listVectors.arraySize - 1; i >= 0; i--)
             {
@@ -474,7 +497,7 @@ namespace Editor
             position.y += LayerOffset * layer;
 
             serializedObject.Update();
-            SerializedProperty listVectors = serializedObject.FindProperty(PositionsPropertyName);
+            SerializedProperty listVectors = GetSerializedPositionsProperty();
 
             Vector3Int cellIndex = new Vector3Int(cellX, cellY, layer);
 
@@ -598,7 +621,7 @@ Rules:
                         }
                         
                         serializedObject.ApplyModifiedProperties();
-                        _config.IsValid();
+                        CustomShapeConfig.IsValid();
                         Debug.Log($"Layout updated! Tiles count: {count}");
                     }
                 }
