@@ -8,15 +8,5 @@ namespace Gameplay.Levels
     public class Level : GUIDScriptableObject
     {
         [field: SerializeField] public GeneratorConfig GeneratorConfig { get; private set; }
-
-        protected override void Validate()
-        {
-            if (GeneratorConfig.MigrateCustomStrategyIfNull())
-            {
-#if UNITY_EDITOR
-                UnityEditor.EditorUtility.SetDirty(this);
-#endif
-            }
-        }
     }
 }
