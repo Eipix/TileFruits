@@ -38,12 +38,10 @@ namespace Generator
             
             tileMap.TileTaken += OnTileTaken;
 
-            int i = 0;
             foreach (var (position, slot) in tileMap)
             {
                 var tile = Spawn(position, slot);
                 tile.StartShowing(_showTileConfig, _showTileConfig.StepDelay * position.z);
-                i++;
             }
             
             Center();

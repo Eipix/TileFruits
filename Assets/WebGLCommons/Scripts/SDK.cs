@@ -1,5 +1,4 @@
 using Playgama;
-using System.Collections;
 using Playgama.Modules.Platform;
 using Playgama.Modules.Advertisement;
 using System;
@@ -10,6 +9,8 @@ using Zenject;
 public class SDK : IInitializable
 {
     private AudioManager _audioManager;
+
+    public string Language => Bridge.platform.language;
 
     [Inject]
     private void Construct(AudioManager audioManager)
@@ -22,8 +23,6 @@ public class SDK : IInitializable
 
     public void Setup()
     {
-        //TODO setup language
-        //Language.Instance.ChangeLanguage(Bridge.platform.language);
         #if !UNITY_EDITOR
         ShowBanner();
 #endif

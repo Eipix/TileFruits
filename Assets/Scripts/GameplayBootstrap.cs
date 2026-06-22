@@ -1,4 +1,5 @@
 using System;
+using Assets.SimpleLocalization.Scripts;
 using Commons.Systems.AudioManager;
 using Commons.Systems.Save;
 using Commons.Systems.SaveManager;
@@ -47,7 +48,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
         {
             await LoadData();
             _sdk.Setup();
-        
+            LocalizationManager.Language = _sdk.Language;
+            
             _tileClickDetector.Initialize();
             _trayPresenter.Initialize();
             _gameplayController.Initialize();
