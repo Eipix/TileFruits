@@ -11,7 +11,12 @@ namespace Gameplay.Levels
 
         protected override void Validate()
         {
-            GeneratorConfig.MigrateCustomStrategyIfNull();
+            if (GeneratorConfig.MigrateCustomStrategyIfNull())
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorUtility.SetDirty(this);
+#endif
+            }
         }
     }
 }
