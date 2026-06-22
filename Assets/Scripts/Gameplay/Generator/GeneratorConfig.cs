@@ -27,14 +27,17 @@ namespace Generator
         [field: SerializeField, Expandable, AllowNesting]
         public DistributionStrategyConfigBase DistributionStrategy { get; private set; }
 
-        public void MigrateCustomStrategyIfNull()
+        public bool MigrateCustomStrategyIfNull()
         {
             if (ShapeStrategy == null
                 && GenerationStrategy is LegacyCustomStrategy customStrategy)
             {
                 ShapeStrategy = new CustomStrategy(customStrategy.Size,
                     (List<Vector3Int>)customStrategy.Positions);
+                return true;
             }
+
+            return false;
         }
     }
 }

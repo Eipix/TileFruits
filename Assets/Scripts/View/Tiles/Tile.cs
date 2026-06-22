@@ -26,7 +26,7 @@ namespace Gameplay
         public Vector3Int GridPosition { get; private set; }
 
         public int SortingOrder => _bone.sortingOrder;
-        public Vector2 Size => _bone.sprite.bounds.size;
+        public Vector2 Size => _bone.bounds.size;
 
         private void SetLayer(int layer)
         {

@@ -75,6 +75,13 @@ namespace Gameplay.Levels
             LevelStarted?.Invoke();
         }
 
+        public void StartNextLevel()
+        {
+            UnsubscribeFromLevelResult();
+            SetNextLevel();
+            StartLevel();
+        }
+
         private void OnVictoryIfTileZero(Vector3Int _)
         {
             if (_tileMap.Count is 0)

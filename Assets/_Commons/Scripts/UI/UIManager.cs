@@ -13,7 +13,7 @@ namespace _Commons.Scripts.UI
 
         public event Action<bool> InputBlockRequired;
         
-        public int OpenedWindowCount { get; private set; }
+        public int OpenedWindowsCount { get; private set; }
 
         public UIManager(List<Window> windows)
         {
@@ -32,17 +32,17 @@ namespace _Commons.Scripts.UI
 
         private void OnClose()
         {
-            OpenedWindowCount = Math.Max(0, OpenedWindowCount - 1);
+            OpenedWindowsCount = Math.Max(0, OpenedWindowsCount - 1);
             
-            if(OpenedWindowCount is 0)
+            if(OpenedWindowsCount is 0)
                 InputBlockRequired?.Invoke(false);
         }
 
         private void OnOpen()
         {
-            OpenedWindowCount++;
+            OpenedWindowsCount++;
             
-            if(OpenedWindowCount is 1)
+            if(OpenedWindowsCount is 1)
                 InputBlockRequired?.Invoke(true);
         }
 

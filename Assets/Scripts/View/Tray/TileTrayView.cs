@@ -81,7 +81,8 @@ namespace Gameplay.Tray
 
         private void Start() => _separatorsLayoutGroup.RebuildAndDisable();
 
-        public void Insert(TileConfig config, int modelIndex, Vector2 lastClickedTilePosition)
+        public void Insert(TileConfig config, int modelIndex,
+            Vector2 lastClickedTilePosition, Vector2 startScale)
         {
             var item = _tilePool.Spawn(config, _content);
             int viewIndex = GetAdjustedIndex(modelIndex, config);
@@ -96,7 +97,7 @@ namespace Gameplay.Tray
             Added?.Invoke(item);
             
             item.SetWorldPosition(lastClickedTilePosition);
-            item.ReturnToTray();
+            item.ReturnToTray(startScale);
         }
         
         private int GetAdjustedIndex(int modelIndex, TileConfig newConfig)
