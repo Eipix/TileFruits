@@ -15,5 +15,36 @@ MonoBehaviour:
   <Id>k__BackingField: 07439f32e4f9fb747aed7842e06542f7
   <GeneratorConfig>k__BackingField:
     <TileList>k__BackingField: {fileID: 11400000, guid: d63032b087d680449a9823e9bb6e9108, type: 2}
+    <ShapeStrategy>k__BackingField:
+      rid: 4620319893468479631
     <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: ae4c616effb4f6e42909b68d37e1fbaa, type: 2}
     <DistributionStrategy>k__BackingField: {fileID: 11400000, guid: 716c097c00456a54dbfc033c82075a3f, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4620319893468479631
+      type: {class: CustomStrategy, ns: Generator.GenerationStrategies.Implementations, asm: Assembly-CSharp}
+      data:
+        <Size>k__BackingField: {x: 8, y: 8}
+        _positions:
+        - {x: 4, y: 0, z: 0}
+        - {x: 2, y: 2, z: 0}
+        - {x: 4, y: 2, z: 0}
+        - {x: 6, y: 2, z: 0}
+        - {x: 2, y: 4, z: 0}
+        - {x: 4, y: 4, z: 0}
+        - {x: 6, y: 4, z: 0}
+        - {x: 2, y: 6, z: 0}
+        - {x: 4, y: 6, z: 0}
+        - {x: 6, y: 6, z: 0}
+        - {x: 0, y: 4, z: 0}
+        - {x: 8, y: 4, z: 0}
+        - {x: 4, y: 8, z: 0}
+        - {x: 4, y: 1, z: 1}
+        - {x: 3, y: 3, z: 1}
+        - {x: 5, y: 3, z: 1}
+        - {x: 3, y: 5, z: 1}
+        - {x: 5, y: 5, z: 1}
+        - {x: 4, y: 7, z: 1}
+        - {x: 1, y: 4, z: 1}
+        - {x: 7, y: 4, z: 1}
