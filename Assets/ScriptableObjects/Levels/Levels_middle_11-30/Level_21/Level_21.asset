@@ -15,5 +15,90 @@ MonoBehaviour:
   <Id>k__BackingField: 7e66c181cf5d5b748a3c416202fc8924
   <GeneratorConfig>k__BackingField:
     <TileList>k__BackingField: {fileID: 11400000, guid: 066226cee98551e438c8096b5190ad1e, type: 2}
+    <ShapeStrategy>k__BackingField:
+      rid: 4620319893468479635
     <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: cf5193a8709507f4ba97cf15abbed91c, type: 2}
     <DistributionStrategy>k__BackingField: {fileID: 11400000, guid: 716c097c00456a54dbfc033c82075a3f, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4620319893468479635
+      type: {class: CustomStrategy, ns: Generator.GenerationStrategies.Implementations, asm: Assembly-CSharp}
+      data:
+        <Size>k__BackingField: {x: 16, y: 12}
+        _positions:
+        - {x: 15, y: 6, z: 0}
+        - {x: 13, y: 6, z: 0}
+        - {x: 11, y: 6, z: 0}
+        - {x: 9, y: 6, z: 0}
+        - {x: 7, y: 6, z: 0}
+        - {x: 5, y: 6, z: 0}
+        - {x: 3, y: 6, z: 0}
+        - {x: 1, y: 6, z: 0}
+        - {x: 3, y: 4, z: 0}
+        - {x: 5, y: 4, z: 0}
+        - {x: 7, y: 4, z: 0}
+        - {x: 9, y: 4, z: 0}
+        - {x: 11, y: 4, z: 0}
+        - {x: 13, y: 4, z: 0}
+        - {x: 13, y: 8, z: 0}
+        - {x: 11, y: 8, z: 0}
+        - {x: 9, y: 8, z: 0}
+        - {x: 7, y: 8, z: 0}
+        - {x: 5, y: 8, z: 0}
+        - {x: 3, y: 8, z: 0}
+        - {x: 5, y: 10, z: 0}
+        - {x: 7, y: 10, z: 0}
+        - {x: 9, y: 10, z: 0}
+        - {x: 11, y: 10, z: 0}
+        - {x: 11, y: 2, z: 0}
+        - {x: 9, y: 2, z: 0}
+        - {x: 7, y: 2, z: 0}
+        - {x: 5, y: 2, z: 0}
+        - {x: 6, y: 9, z: 1}
+        - {x: 8, y: 9, z: 1}
+        - {x: 10, y: 9, z: 1}
+        - {x: 6, y: 3, z: 1}
+        - {x: 8, y: 3, z: 1}
+        - {x: 10, y: 3, z: 1}
+        - {x: 12, y: 5, z: 1}
+        - {x: 12, y: 7, z: 1}
+        - {x: 4, y: 7, z: 1}
+        - {x: 4, y: 5, z: 1}
+        - {x: 6, y: 5, z: 1}
+        - {x: 8, y: 5, z: 1}
+        - {x: 10, y: 5, z: 1}
+        - {x: 10, y: 7, z: 1}
+        - {x: 8, y: 7, z: 1}
+        - {x: 6, y: 7, z: 1}
+        - {x: 7, y: 4, z: 2}
+        - {x: 9, y: 4, z: 2}
+        - {x: 11, y: 6, z: 2}
+        - {x: 9, y: 6, z: 2}
+        - {x: 7, y: 6, z: 2}
+        - {x: 5, y: 6, z: 2}
+        - {x: 7, y: 8, z: 2}
+        - {x: 9, y: 8, z: 2}
+        - {x: 8, y: 7, z: 3}
+        - {x: 8, y: 5, z: 3}
+        - {x: 6, y: 6, z: 3}
+        - {x: 10, y: 6, z: 3}
+        - {x: 15, y: 11, z: 0}
+        - {x: 15, y: 1, z: 0}
+        - {x: 1, y: 11, z: 0}
+        - {x: 1, y: 1, z: 0}
+        - {x: 14, y: 6, z: 1}
+        - {x: 2, y: 6, z: 1}
+        - {x: 3, y: 6, z: 2}
+        - {x: 13, y: 6, z: 2}
+        - {x: 12, y: 6, z: 3}
+        - {x: 4, y: 6, z: 3}
+        - {x: 11, y: 6, z: 4}
+        - {x: 9, y: 6, z: 4}
+        - {x: 7, y: 6, z: 4}
+        - {x: 5, y: 6, z: 4}
+        - {x: 10, y: 6, z: 5}
+        - {x: 8, y: 6, z: 5}
+        - {x: 6, y: 6, z: 5}
+        - {x: 9, y: 6, z: 6}
+        - {x: 7, y: 6, z: 6}

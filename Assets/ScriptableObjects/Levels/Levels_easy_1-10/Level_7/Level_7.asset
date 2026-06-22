@@ -15,5 +15,63 @@ MonoBehaviour:
   <Id>k__BackingField: 9da3815cab9cf83468ca32c8dbad4e75
   <GeneratorConfig>k__BackingField:
     <TileList>k__BackingField: {fileID: 11400000, guid: 066226cee98551e438c8096b5190ad1e, type: 2}
+    <ShapeStrategy>k__BackingField:
+      rid: 4620319893468479637
     <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: e4cdfcb10011eca41971071eb6a0ecd1, type: 2}
     <DistributionStrategy>k__BackingField: {fileID: 11400000, guid: 716c097c00456a54dbfc033c82075a3f, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4620319893468479637
+      type: {class: CustomStrategy, ns: Generator.GenerationStrategies.Implementations, asm: Assembly-CSharp}
+      data:
+        <Size>k__BackingField: {x: 8, y: 8}
+        _positions:
+        - {x: 0, y: 0, z: 0}
+        - {x: 2, y: 0, z: 0}
+        - {x: 4, y: 0, z: 0}
+        - {x: 6, y: 0, z: 0}
+        - {x: 8, y: 0, z: 0}
+        - {x: 2, y: 2, z: 0}
+        - {x: 4, y: 2, z: 0}
+        - {x: 6, y: 2, z: 0}
+        - {x: 2, y: 4, z: 0}
+        - {x: 4, y: 4, z: 0}
+        - {x: 6, y: 4, z: 0}
+        - {x: 2, y: 6, z: 0}
+        - {x: 4, y: 6, z: 0}
+        - {x: 6, y: 6, z: 0}
+        - {x: 0, y: 8, z: 0}
+        - {x: 2, y: 8, z: 0}
+        - {x: 4, y: 8, z: 0}
+        - {x: 6, y: 8, z: 0}
+        - {x: 8, y: 8, z: 0}
+        - {x: 5, y: 1, z: 1}
+        - {x: 3, y: 1, z: 1}
+        - {x: 3, y: 3, z: 1}
+        - {x: 5, y: 3, z: 1}
+        - {x: 3, y: 5, z: 1}
+        - {x: 5, y: 5, z: 1}
+        - {x: 3, y: 7, z: 1}
+        - {x: 5, y: 7, z: 1}
+        - {x: 1, y: 1, z: 1}
+        - {x: 1, y: 3, z: 1}
+        - {x: 1, y: 5, z: 1}
+        - {x: 1, y: 7, z: 1}
+        - {x: 7, y: 3, z: 1}
+        - {x: 7, y: 5, z: 1}
+        - {x: 7, y: 1, z: 1}
+        - {x: 7, y: 7, z: 1}
+        - {x: 4, y: 2, z: 2}
+        - {x: 4, y: 4, z: 2}
+        - {x: 4, y: 6, z: 2}
+        - {x: 2, y: 2, z: 2}
+        - {x: 2, y: 4, z: 2}
+        - {x: 2, y: 6, z: 2}
+        - {x: 6, y: 2, z: 2}
+        - {x: 6, y: 4, z: 2}
+        - {x: 6, y: 6, z: 2}
+        - {x: 3, y: 5, z: 3}
+        - {x: 5, y: 3, z: 3}
+        - {x: 3, y: 3, z: 3}
+        - {x: 5, y: 5, z: 3}
