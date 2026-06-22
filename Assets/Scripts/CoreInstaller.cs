@@ -32,6 +32,8 @@ namespace DefaultNamespace
 
         public override void InstallBindings()
         {
+            Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
+            
             BindSystems();
             BindPools();
             BindPresenters();
