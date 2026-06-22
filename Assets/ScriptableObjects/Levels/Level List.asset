@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _difficultyConfigs:
   - <LevelsForNextDifficulty>k__BackingField: 20
-    <Mode>k__BackingField: 2
+    <Mode>k__BackingField: 0
     <Difficulty>k__BackingField: 0
     <Levels>k__BackingField:
     - {fileID: 11400000, guid: 495bbb809b3142241a4041635f5bb849, type: 2}
