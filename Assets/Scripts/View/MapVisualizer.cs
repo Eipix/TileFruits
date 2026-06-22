@@ -20,7 +20,9 @@ namespace Generator
         public event Action<Tile> TileTaken;
         
         [Inject] private Tile.Pool _tilePool;
-
+        
+        public Vector2 Size { get; private set; }
+        
         public void SpawnTiles(ITileMap tileMap)
         {
             Clear((() => tileMap.TileTaken -= OnTileTaken));
@@ -102,7 +104,10 @@ namespace Generator
         private void Center()
         {
             if (_tiles.Count == 0)
+            {
+                Size = Vector2.one;
                 return;
+            }
 
             float minX = float.MaxValue;
             float maxX = float.MinValue;
@@ -132,6 +137,7 @@ namespace Generator
                     maxY = tileMaxY;
             }
 
+            Size = new Vector2(maxX - minX, maxY - minY);
             Vector2 localCenter = new Vector2((minX + maxX) / 2f, (minY + maxY) / 2f);
             transform.position = -localCenter;
         }
