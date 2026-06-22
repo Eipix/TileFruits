@@ -1,4 +1,5 @@
 using Commons.Extensions;
+using Constants;
 using DG.Tweening;
 using Gameplay;
 using UnityEngine;
@@ -16,8 +17,8 @@ namespace UI.Tray
         private CollectAnimationConfig _collectAnimationConfig;
         private HideAnimationConfig _hideConfig;
         private RectTransform _outerLayoutTransform;
-
-        public RectTransform IconsParent => _iconsParent;
+        private Vector2 _initialScale;
+        
         public RectTransform RectTransform { get; private set; }
         public TileConfig Config { get; private set; }
         
@@ -31,6 +32,7 @@ namespace UI.Tray
             _collectAnimationConfig = config;
             _hideConfig = hideConfig;
             _outerLayoutTransform = transform.parent.parent as RectTransform;
+            _initialScale = _iconsParent.localScale;
         }
         
         public void Awake() => RectTransform = transform as RectTransform;
@@ -46,19 +48,21 @@ namespace UI.Tray
         
         public void SetWorldPosition(Vector2 worldPosition)
         {
-            IconsParent.SetParent(_outerLayoutTransform, false);
-            IconsParent.position = worldPosition;
-            IconsParent.SetParent(RectTransform, true);
+            _iconsParent.SetParent(_outerLayoutTransform, false);
+            _iconsParent.position = worldPosition;
+            _iconsParent.SetParent(RectTransform, true);
         }
         
-        public Sequence ReturnToTray()
+        public Sequence ReturnToTray(Vector2 startScale)
         {
             ReturningToTray.CompleteIfActive(true);
-            
+
             ReturningToTray = DOTween.Sequence()
-                .Append(IconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
+                .OnStart(() => _iconsParent.localScale = startScale)
+                .Append(_iconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
                     .SetEase(_collectAnimationConfig.MoveEase))
-                .Append(IconsParent.DOPunchScale(
+                .Join(_iconsParent.DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
+                .Append(_iconsParent.DOPunchScale(
                     _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
                     _collectAnimationConfig.Vibrato, _collectAnimationConfig.Elasticity));
             
@@ -93,7 +97,7 @@ namespace UI.Tray
                 
                 DOTween.Kill(item);
                 DOTween.Kill(item.RectTransform);
-                DOTween.Kill(item.IconsParent);
+                DOTween.Kill(item._iconsParent);
                 
                 item.ReturningToTray?.Kill();
                 item.RectTransform.localScale = Vector3.one;

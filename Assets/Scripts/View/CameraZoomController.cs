@@ -1,5 +1,7 @@
+using System;
 using EmeraldPowder.CameraScaler;
 using Generator;
+using NaughtyAttributes;
 using UnityEngine;
 using Zenject;
 
@@ -8,12 +10,14 @@ namespace View
     [RequireComponent(typeof(CameraScaler))]
     public class CameraZoomController : MonoBehaviour
     {
-        [SerializeField] private Vector2 _relativePadding = new Vector2(1.05f, 1.15f);
-        [SerializeField] private Vector2 _absolutePadding = new Vector2(2f, 5f);
+        [SerializeField] private Vector2 _relativePadding = new(1.05f, 1.15f);
+        [SerializeField] private Vector2 _absolutePadding = new(2f, 5f);
         
         private MapVisualizer _mapVisualizer;
         private CameraScaler _cameraScaler;
         private Camera _mainCamera;
+
+        [ShowNativeProperty] public float CameraZoom => _cameraScaler.CameraZoom;
 
         [Inject]
         private void Construct(
