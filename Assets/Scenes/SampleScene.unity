@@ -4735,6 +4735,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f2336761ec452a815a7578a5f5cb3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _showTileConfig:
+    <Duration>k__BackingField: 1
+    <StepDelay>k__BackingField: 0.3
+    <Ease>k__BackingField: 24
+    <OverShoot>k__BackingField: 1.1
   _collectAnimationConfig:
     <MoveDuration>k__BackingField: 0.2
     <MoveEase>k__BackingField: 1

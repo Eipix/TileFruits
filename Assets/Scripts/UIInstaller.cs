@@ -2,6 +2,7 @@ using _Commons.Scripts.Effects.Shakers;
 using _Commons.Scripts.UI;
 using Commons;
 using Gameplay;
+using Generator;
 using NaughtyAttributes;
 using UI.Settings;
 using UI.Tray;
@@ -14,6 +15,9 @@ namespace UI
 {
     public class UIInstaller : MonoInstaller
     {
+        [SerializeField, Foldout("Animations")]
+        private ShowTileAnimationConfig _showTileConfig;
+        
         [SerializeField, Foldout("Animations")]
         private CollectAnimationConfig _collectAnimationConfig;
         
@@ -68,6 +72,11 @@ namespace UI
 
         private void BindAnimations()
         {
+            Container.Bind<ShowTileAnimationConfig>()
+                .FromInstance(_showTileConfig)
+                .AsSingle()
+                .WhenInjectedInto<MapVisualizer>();
+            
             Container.Bind<ShakerConfig>()
                 .FromInstance(_collectionShakerConfig)
                 .AsSingle()

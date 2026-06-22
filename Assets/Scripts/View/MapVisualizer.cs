@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Commons.Utils;
 using UnityEngine;
+using View.Animations;
 using Zenject;
 using Tile = Gameplay.Tile;
 
@@ -19,18 +20,31 @@ namespace Generator
         
         public event Action<Tile> TileTaken;
         
-        [Inject] private Tile.Pool _tilePool;
-        
+        private Tile.Pool _tilePool;
+        private ShowTileAnimationConfig _showTileConfig;
+
         public Vector2 Size { get; private set; }
+
+        [Inject]
+        private void Construct(Tile.Pool tilePool, ShowTileAnimationConfig showTileConfig)
+        {
+            _tilePool = tilePool;
+            _showTileConfig = showTileConfig;
+        }
         
         public void SpawnTiles(ITileMap tileMap)
         {
             Clear((() => tileMap.TileTaken -= OnTileTaken));
             
             tileMap.TileTaken += OnTileTaken;
-            
+
+            int i = 0;
             foreach (var (position, slot) in tileMap)
-                Spawn(position, slot);
+            {
+                var tile = Spawn(position, slot);
+                tile.StartShowing(_showTileConfig, _showTileConfig.StepDelay * position.z);
+                i++;
+            }
             
             Center();
             RepaintBlockedTiles(tileMap);
@@ -79,7 +93,7 @@ namespace Generator
             TileTaken?.Invoke(tile);
         }
 
-        private void Spawn(Vector3Int gridPosition, IReadOnlySlot slot)
+        private Tile Spawn(Vector3Int gridPosition, IReadOnlySlot slot)
         {
             Vector2 spawnPosition = (Vector3)gridPosition * _paddingBetweenTiles;
             
@@ -90,6 +104,7 @@ namespace Generator
             
             var tile = _tilePool.Spawn(slot.Tile, gridPosition, spawnPosition, layer, transform);
             _tiles.Add(gridPosition, tile);
+            return tile;
         }
 
         private void Clear(Action onCleared)
