@@ -9,11 +9,14 @@ namespace Gameplay.Levels
     [Serializable]
     public class DifficultyConfig
     {
+        [field: SerializeField, ReadOnly, AllowNesting]
+        public Difficulty Difficulty { get; set; }
+        
         [field: SerializeField, Min(1f), HideIf(nameof(HideLevelsForNextDifficulty)), AllowNesting]
         public int LevelsForNextDifficulty { get; private set; }
         
         [field: SerializeField] public EnumerationMode Mode { get; private set; } = EnumerationMode.Shuffle;
-        [field: SerializeField, ReadOnly] public Difficulty Difficulty { get; private set; }
+        
         [field: SerializeField] public List<Level> Levels { get; private set; }
 
         [field: SerializeField, HideInInspector]
