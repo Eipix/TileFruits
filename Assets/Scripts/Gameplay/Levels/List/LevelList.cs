@@ -73,16 +73,22 @@ namespace Gameplay.Levels
 
         private bool ValidateConfigs()
         {
+            for (int i = 0; i < DifficultiesEnum.Length; i++)
+            {
+                _difficultyConfigs[i].Difficulty = DifficultiesEnum[i];
+                _difficultyConfigs[i].HideLevelsForNextDifficulty = false;
+            }
+            
+            _difficultyConfigs[^1].HideLevelsForNextDifficulty = true;
+            
             foreach (var config in _difficultyConfigs)
             {
                 if(config.Levels.Count is 0)
                     return false;
             }
 
-            bool isSorted = _difficultyConfigs.SequenceEqual(_difficultyConfigs.OrderBy(с => с.Difficulty));
-            bool hasDuplicate = _difficultyConfigs.HasDuplicate(c => c.Difficulty);
-            
-            return hasDuplicate is false && isSorted;
+            UnityEditor.EditorUtility.SetDirty(this);
+            return true;
         }
 
         #endregion

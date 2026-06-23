@@ -1,4 +1,5 @@
-using System;
+using Assets.SimpleLocalization.Scripts;
+using NaughtyAttributes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -8,6 +9,7 @@ namespace UI
 {
     public class Hud : MonoBehaviour
     {
+        [SerializeField, Expandable] private LocalizedTextData _localizedLevel;
         [SerializeField] private TMP_Text _levelNumber;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _collectionButton;
@@ -31,6 +33,6 @@ namespace UI
         }
 
         public void SetLevel(int levelNumber) =>
-            _levelNumber.SetText("Уровень {0}", levelNumber);
+            _levelNumber.SetText(_localizedLevel.Text, levelNumber);
     }
 }

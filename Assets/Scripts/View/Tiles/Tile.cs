@@ -1,4 +1,7 @@
+using System;
+using DG.Tweening;
 using UnityEngine;
+using View.Animations;
 using Zenject;
 
 namespace Gameplay
@@ -9,8 +12,10 @@ namespace Gameplay
         [SerializeField] private SpriteRenderer _bone;
         [SerializeField] private SpriteRenderer _symbol;
 
+        private Tween _showAnimation;
         private Color _color;
-
+        private Vector2 _initialScale;
+        
         public Color Color
         {
             get => _color;
@@ -26,12 +31,26 @@ namespace Gameplay
         public Vector3Int GridPosition { get; private set; }
 
         public int SortingOrder => _bone.sortingOrder;
-        public Vector2 Size => _bone.bounds.size;
+        public Vector2 Size => _bone.sprite.bounds.size;
+
+        private void Awake() => _initialScale = transform.localScale;
 
         private void SetLayer(int layer)
         {
             _bone.sortingOrder = layer;
             _symbol.sortingOrder = layer + 1;
+        }
+
+        public Tween StartShowing(ShowTileAnimationConfig config, float delay)
+        {
+            transform.localScale = Vector2.zero;
+            
+            _showAnimation = transform.DOScale(_initialScale, config.Duration)
+                .SetEase(config.Ease, config.OverShoot)
+                .SetDelay(delay)
+                .SetLink(gameObject, LinkBehaviour.CompleteOnDisable);
+            
+            return _showAnimation;
         }
 
         public class Pool : MonoMemoryPool<TileConfig, Vector3Int, Vector2, int, Transform, Tile>

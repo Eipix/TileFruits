@@ -30,7 +30,9 @@ namespace Gameplay.Levels
         private TileTray _tileTray;
         private LevelData _levelData;
 
-        private DifficultyConfig CurrentDifficultyConfig => _levelList.ConfigByDifficulty[_levelData.Difficulty];
+        private DifficultyConfig CurrentDifficultyConfig =>
+            _levelList.ConfigByDifficulty[_levelData.Difficulty];
+        
         public Level CurrentLevel { get; private set; }
         public int LevelIndex => _levelData.LevelIndex;
         
