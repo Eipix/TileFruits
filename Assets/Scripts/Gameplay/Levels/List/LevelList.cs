@@ -87,7 +87,9 @@ namespace Gameplay.Levels
                     return false;
             }
 
+            #if UNITY_EDITOR
             UnityEditor.EditorUtility.SetDirty(this);
+            #endif
             return true;
         }
 

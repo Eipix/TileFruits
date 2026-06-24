@@ -1,24 +1,29 @@
+using Coffee.UIExtensions;
 using Commons.Extensions;
-using Constants;
 using DG.Tweening;
 using Gameplay;
 using UnityEngine;
 using UnityEngine.UI;
 using View.Animations;
+using View.Effects;
 using Zenject;
 
 namespace UI.Tray
 {
     public class TileTrayItem : MonoBehaviour
     {
+        [SerializeField] private TrailRenderer _trailRenderer;
         [SerializeField] private RectTransform _iconsParent;
         [SerializeField] private Image _icon;
         
         private CollectAnimationConfig _collectAnimationConfig;
         private HideAnimationConfig _hideConfig;
+        private MatchEffect.Pool _matchEffectPool;
         private RectTransform _outerLayoutTransform;
-        private Vector2 _initialScale;
         
+        private Vector2 _initialScale;
+        private float _initialTrailStartWidth;
+
         public RectTransform RectTransform { get; private set; }
         public TileConfig Config { get; private set; }
         
@@ -27,12 +32,18 @@ namespace UI.Tray
         public Tween Hiding { get; private set; }
         
         [Inject]
-        private void Construct(CollectAnimationConfig config, HideAnimationConfig hideConfig)
+        private void Construct(CollectAnimationConfig config,
+            HideAnimationConfig hideConfig,
+            MatchEffect.Pool matchEffectPool)
         {
             _collectAnimationConfig = config;
             _hideConfig = hideConfig;
+            _matchEffectPool = matchEffectPool;
+            
             _outerLayoutTransform = transform.parent.parent as RectTransform;
             _initialScale = _iconsParent.localScale;
+            _trailRenderer.emitting = false;
+            _initialTrailStartWidth = _trailRenderer.startWidth;
         }
         
         public void Awake() => RectTransform = transform as RectTransform;
@@ -57,11 +68,20 @@ namespace UI.Tray
         {
             ReturningToTray.CompleteIfActive(true);
 
+            _trailRenderer.emitting = true;
+
             ReturningToTray = DOTween.Sequence()
-                .OnStart(() => _iconsParent.localScale = startScale)
+                .OnStart(() =>
+                {
+                    _iconsParent.localScale = startScale;
+                    _trailRenderer.startWidth *= Mathf.Max(startScale.x, startScale.y);
+                })
                 .Append(_iconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
                     .SetEase(_collectAnimationConfig.MoveEase))
                 .Join(_iconsParent.DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
+                .Join(_trailRenderer.DOResize(_initialTrailStartWidth, _trailRenderer.endWidth,
+                    _collectAnimationConfig.MoveDuration))
+                .AppendCallback(() => _trailRenderer.emitting = false)
                 .Append(_iconsParent.DOPunchScale(
                     _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
                     _collectAnimationConfig.Vibrato, _collectAnimationConfig.Elasticity));
@@ -71,6 +91,8 @@ namespace UI.Tray
 
         public Tween Hide()
         {
+            _matchEffectPool.Spawn(transform.position);
+            
             Hiding = RectTransform.DOScale(Vector3.zero, _hideConfig.Duration)
                 .SetEase(_hideConfig.Ease);
 
@@ -100,6 +122,7 @@ namespace UI.Tray
                 DOTween.Kill(item._iconsParent);
                 
                 item.ReturningToTray?.Kill();
+                
                 item.RectTransform.localScale = Vector3.one;
                 item.RectTransform.anchoredPosition3D = Vector3.zero;
                 item._iconsParent.anchoredPosition3D = Vector3.zero;

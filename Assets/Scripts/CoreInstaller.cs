@@ -12,6 +12,7 @@ using NaughtyAttributes;
 using Presenters__Controllers;
 using UI.Tray;
 using UnityEngine;
+using View.Effects;
 using WebGLCommons.Scripts;
 using Zenject;
 
@@ -29,6 +30,7 @@ namespace DefaultNamespace
         [SerializeField] private MapVisualizer _mapVisualizer;
         [SerializeField] private Tile _tilePrefab;
         [SerializeField] private AudioManager _audioManagerPrefab;
+        [SerializeField] private MatchEffect _matchEffectPrefab;
 
         public override void InstallBindings()
         {
@@ -90,6 +92,12 @@ namespace DefaultNamespace
 
         public void BindPools()
         {
+            Container.BindMemoryPool<MatchEffect, MatchEffect.Pool>()
+                .WithInitialSize(10)
+                .FromComponentInNewPrefab(_matchEffectPrefab)
+                .UnderTransformGroup("MatchEffect Pool")
+                .AsCached();
+            
             Container.BindMemoryPool<Tile, Tile.Pool>()
                 .WithInitialSize(_tilePoolInitialSize)
                 .FromComponentInNewPrefab(_tilePrefab)
