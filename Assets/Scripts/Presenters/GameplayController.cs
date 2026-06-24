@@ -18,6 +18,8 @@ namespace Gameplay
         private readonly TileTray _tray;
         private readonly TileShaker _tileShaker;
 
+        public event Action TileBlocked;
+
         private ITileMap Map => _tileMapProvider.ActiveMap;
 
         public GameplayController(
@@ -72,6 +74,7 @@ namespace Gameplay
             else
             {
                 _tileShaker.Shake(tile);
+                TileBlocked?.Invoke();
             }
         }
     }

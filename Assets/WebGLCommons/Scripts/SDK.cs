@@ -4,9 +4,10 @@ using Playgama.Modules.Advertisement;
 using System;
 using Commons.Systems.AudioManager;
 using Playgama.Modules.Leaderboards;
+using UnityEngine;
 using Zenject;
 
-public class SDK : IInitializable
+public class SDK : IInitializable, IDisposable
 {
     private AudioManager _audioManager;
 
@@ -20,6 +21,9 @@ public class SDK : IInitializable
 
     public void Initialize()
         => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
+
+    public void Dispose()
+        => Bridge.advertisement.interstitialStateChanged -= OnInterstitialStateChanged;
 
     public void Setup()
     {
@@ -52,13 +56,11 @@ public class SDK : IInitializable
         {
             case InterstitialState.Loading:
             case InterstitialState.Opened:
-                _audioManager.MuteMusic = true;
-                _audioManager.MuteSounds = true;
+                AudioListener.pause = true;
                 break;
             case InterstitialState.Closed:
             case InterstitialState.Failed:
-                _audioManager.MuteMusic = false;
-                _audioManager.MuteSounds = false;
+                AudioListener.pause = false;
                 break;
         }
     }

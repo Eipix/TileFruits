@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19d475798584deda824a8059e3f1534, type: 3}
+  m_Name: GameAudios
+  m_EditorClassIdentifier: 
+  <Theme>k__BackingField: {fileID: 8300000, guid: 16ae5d91c05c57e459f73c47b1e4021f, type: 3}
+  <LevelCompleted>k__BackingField:
+    <Resource>k__BackingField: {fileID: 8300000, guid: 31d5516c2ff462944b83bfed1aff8499, type: 3}
+    <Mixer>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <ThrottleCooldown>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 0
+    <Delay>k__BackingField: 0
+  <LevelFailed>k__BackingField:
+    <Resource>k__BackingField: {fileID: 8300000, guid: 4b26a68e63243664c90ad269fdc0c168, type: 3}
+    <Mixer>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <ThrottleCooldown>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 0
+    <Delay>k__BackingField: 0
+  <LevelStarted>k__BackingField:
+    <Resource>k__BackingField: {fileID: 8300000, guid: 03768debbbb5fc44096735aa9609130b, type: 3}
+    <Mixer>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <ThrottleCooldown>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 0
+    <Delay>k__BackingField: 0
+  <TileMatches>k__BackingField:
+    <Resource>k__BackingField: {fileID: 8300000, guid: e14b643c125b49c43b54ec781f799fc0, type: 3}
+    <Mixer>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <ThrottleCooldown>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 0
+    <Delay>k__BackingField: 0.5
+  <TileBlocked>k__BackingField:
+    <Resource>k__BackingField: {fileID: 8300000, guid: 6be003a75c5c41d4488910f8c10e3a3d, type: 3}
+    <Mixer>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <ThrottleCooldown>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 0
+    <Delay>k__BackingField: 0
+  <TileMoveToTray>k__BackingField:
+    <Resource>k__BackingField: {fileID: 8300000, guid: cc6b7b9334193e44198416ea960e0bf8, type: 3}
+    <Mixer>k__BackingField: {fileID: 0}
+    <Priority>k__BackingField: 128
+    <ThrottleCooldown>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 0
+    <Delay>k__BackingField: 0

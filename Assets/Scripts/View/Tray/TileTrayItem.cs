@@ -1,4 +1,3 @@
-using Coffee.UIExtensions;
 using Commons.Extensions;
 using DG.Tweening;
 using Gameplay;
@@ -42,8 +41,8 @@ namespace UI.Tray
             
             _outerLayoutTransform = transform.parent.parent as RectTransform;
             _initialScale = _iconsParent.localScale;
-            _trailRenderer.emitting = false;
             _initialTrailStartWidth = _trailRenderer.startWidth;
+            _trailRenderer.emitting = false;
         }
         
         public void Awake() => RectTransform = transform as RectTransform;
@@ -62,20 +61,19 @@ namespace UI.Tray
             _iconsParent.SetParent(_outerLayoutTransform, false);
             _iconsParent.position = worldPosition;
             _iconsParent.SetParent(RectTransform, true);
+            _iconsParent.anchoredPosition3D *= Vector2.one;
         }
         
         public Sequence ReturnToTray(Vector2 startScale)
         {
             ReturningToTray.CompleteIfActive(true);
 
+            _trailRenderer.Clear();
             _trailRenderer.emitting = true;
-
+            _iconsParent.localScale = startScale;
+            _trailRenderer.startWidth = _initialTrailStartWidth * Mathf.Max(startScale.x, startScale.y);
+            
             ReturningToTray = DOTween.Sequence()
-                .OnStart(() =>
-                {
-                    _iconsParent.localScale = startScale;
-                    _trailRenderer.startWidth *= Mathf.Max(startScale.x, startScale.y);
-                })
                 .Append(_iconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
                     .SetEase(_collectAnimationConfig.MoveEase))
                 .Join(_iconsParent.DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
