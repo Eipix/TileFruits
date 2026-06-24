@@ -4786,6 +4786,7 @@ MonoBehaviour:
   _mapVisualizer: {fileID: 728194088}
   _tilePrefab: {fileID: 1333554635087709957, guid: 2caed10a3a0d44e4ebc330f529389474, type: 3}
   _audioManagerPrefab: {fileID: 6135174895942097652, guid: a0680f833875c7d45bb4de41067ab369, type: 3}
+  _matchEffectPrefab: {fileID: 1263148708841680659, guid: 6c52ee79710704a4dab242c5ba8e0408, type: 3}
 --- !u!114 &1829872347
 MonoBehaviour:
   m_ObjectHideFlags: 0
