@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Commons.Extensions;
 using Commons.Pools;
 using Commons.Systems.PauseManager;
-using Commons.Systems.Save;
 using JetBrains.Annotations;
 using NaughtyAttributes;
 using UnityEngine;
@@ -36,6 +35,9 @@ namespace Commons.Systems.AudioManager
             get => _music.volume;
             set
             {
+                if (Mathf.Approximately(_music.volume, value))
+                    return;
+                
                 value = Mathf.Clamp01(value);
                 _music.volume = value;
             }
@@ -46,6 +48,9 @@ namespace Commons.Systems.AudioManager
             get => _soundVolume;
             set
             {
+                if (Mathf.Approximately(_soundVolume, value))
+                    return;
+                
                 value = Mathf.Clamp01(value);
                 _soundVolume = value;
                 ForEachSound((sound, _) => sound.SetVolume(_soundVolume));
@@ -53,6 +58,16 @@ namespace Commons.Systems.AudioManager
         }
         
         public bool IsPaused { get; private set; }
+
+        public bool Mute
+        {
+            get => MuteMusic && MuteSounds;
+            set
+            {
+                MuteMusic = value;
+                MuteSounds = value;
+            }
+        }
 
         public bool MuteMusic
         {
@@ -170,6 +185,7 @@ namespace Commons.Systems.AudioManager
 
         private void RegisterSound(Sound sound)
         {
+            sound.Mute = _muteSound;
             sound.SetVolume(SoundVolume);
             _sounds.Add(sound);
         }
@@ -226,7 +242,7 @@ namespace Commons.Systems.AudioManager
             return false;
         }
 
-        public void StopMusic() => _music.Stop();
+        public void StopMusic() => _music?.Stop();
 
         public void StopSounds() => ForEachSound((sound, _) => sound.Stop());
 
@@ -264,6 +280,7 @@ namespace Commons.Systems.AudioManager
                 source.pitch = 1f;
                 source.priority = 128;
                 source.loop = false;
+                source.mute = false;
                 source.outputAudioMixerGroup = _soundDefaultMixer;
 
                 if (source.transform.IsChildOf(transform) is false)

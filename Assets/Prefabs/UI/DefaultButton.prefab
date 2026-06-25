@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 889208642640644370}
   - component: {fileID: 1864840538880953436}
   - component: {fileID: 5622932139339820855}
+  - component: {fileID: 8139659957591660556}
   m_Layer: 5
   m_Name: DefaultButton
   m_TagString: Untagged
@@ -120,7 +121,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 889208642640644370}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8139659957591660556}
+        m_TargetAssemblyTypeName: Commons.Sounds.SoundEmitter, Assembly-CSharp
+        m_MethodName: PlayOneShot
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8300000, guid: c1ccc4c247caaa24bb0b06c962b16f4b, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Audio.AudioResource, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &5622932139339820855
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,3 +149,17 @@ MonoBehaviour:
   _useIndependentUpdate: 0
   _strength: 0.05
   _duration: 0.1
+--- !u!114 &8139659957591660556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3618809712668880548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d2960a11f264c848740fa1d4fa8c23c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loop: 0
+  _delay: 0

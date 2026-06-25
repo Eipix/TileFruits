@@ -1,5 +1,6 @@
 using _Commons.Scripts.Effects.Shakers;
 using _Commons.Scripts.UI;
+using Audio;
 using Commons;
 using Gameplay;
 using Generator;
@@ -41,7 +42,8 @@ namespace UI
         public override void InstallBindings()
         {
             BindFactories();
-            
+
+            Container.Bind<AudioPresenter>().AsSingle().NonLazy();
             Container.Bind<Hud>().FromInstance(_hud);
             Container.BindInterfacesAndSelfTo<HudController>().AsSingle().NonLazy();
             

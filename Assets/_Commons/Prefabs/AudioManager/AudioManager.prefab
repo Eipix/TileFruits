@@ -41,7 +41,7 @@ AudioSource:
   m_GameObject: {fileID: 2718259654005046176}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 24300002, guid: b404198a9cbdfe7419bd2478a10bf9f6, type: 2}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 5d9e8ccc564c93d4e949ae42416bccdf, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -175,6 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minThrottleCooldown: 0.05
+  _defaultPoolSize: 10
   _soundDefaultMixer: {fileID: 24300002, guid: f32d26e153549b44da048ee4e96f554f, type: 2}
   _unscaledSoundMixer: {fileID: 24300002, guid: f32d26e153549b44da048ee4e96f554f, type: 2}
   _soundPrefab: {fileID: 6210602332543524056, guid: 607f0690271d6f34c9ca8e24fc87bbff, type: 3}
