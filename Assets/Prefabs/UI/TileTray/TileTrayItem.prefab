@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4db4d6729d174c06906dc0f6945c20da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _baseTrailWidth: 1.5
   _trailRenderer: {fileID: 8153104936426105209}
   _iconsParent: {fileID: 6452425066842499651}
   _icon: {fileID: 7870210320110865705}

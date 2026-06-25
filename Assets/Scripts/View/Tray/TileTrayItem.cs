@@ -1,8 +1,11 @@
 using Commons.Extensions;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using Gameplay;
 using UnityEngine;
 using UnityEngine.UI;
+using View;
 using View.Animations;
 using View.Effects;
 using Zenject;
@@ -11,6 +14,7 @@ namespace UI.Tray
 {
     public class TileTrayItem : MonoBehaviour
     {
+        [SerializeField] private float _baseTrailWidth;
         [SerializeField] private TrailRenderer _trailRenderer;
         [SerializeField] private RectTransform _iconsParent;
         [SerializeField] private Image _icon;
@@ -19,9 +23,9 @@ namespace UI.Tray
         private HideAnimationConfig _hideConfig;
         private MatchEffect.Pool _matchEffectPool;
         private RectTransform _outerLayoutTransform;
+        private CanvasSizeTracker _canvasSizeTracker;
         
         private Vector2 _initialScale;
-        private float _initialTrailStartWidth;
 
         public RectTransform RectTransform { get; private set; }
         public TileConfig Config { get; private set; }
@@ -39,13 +43,26 @@ namespace UI.Tray
             _hideConfig = hideConfig;
             _matchEffectPool = matchEffectPool;
             
+            RectTransform = transform as RectTransform;
             _outerLayoutTransform = transform.parent.parent as RectTransform;
             _initialScale = _iconsParent.localScale;
-            _initialTrailStartWidth = _trailRenderer.startWidth;
+            
             _trailRenderer.emitting = false;
+            _canvasSizeTracker = _icon.canvas.GetComponent<CanvasSizeTracker>();
         }
-        
-        public void Awake() => RectTransform = transform as RectTransform;
+
+        private void OnEnable() => _canvasSizeTracker.Changed += ResizeTrail;
+        private void OnDisable() => _canvasSizeTracker.Changed -= ResizeTrail;
+
+        private void ResizeTrail()
+        {
+            float canvasScaleFactor = (_canvasSizeTracker.RectTransform.sizeDelta
+                                      / _canvasSizeTracker.ReferenceResolution).x;
+            
+            float elementScale = _iconsParent.localScale.x;
+
+            _trailRenderer.widthMultiplier = _baseTrailWidth * canvasScaleFactor * elementScale;
+        }
 
         public Tween ShiftTo(float targetX, float duration, Ease ease)
         {
@@ -71,14 +88,11 @@ namespace UI.Tray
             _trailRenderer.Clear();
             _trailRenderer.emitting = true;
             _iconsParent.localScale = startScale;
-            _trailRenderer.startWidth = _initialTrailStartWidth * Mathf.Max(startScale.x, startScale.y);
             
             ReturningToTray = DOTween.Sequence()
                 .Append(_iconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
                     .SetEase(_collectAnimationConfig.MoveEase))
-                .Join(_iconsParent.DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
-                .Join(_trailRenderer.DOResize(_initialTrailStartWidth, _trailRenderer.endWidth,
-                    _collectAnimationConfig.MoveDuration))
+                .Join(DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
                 .AppendCallback(() => _trailRenderer.emitting = false)
                 .Append(_iconsParent.DOPunchScale(
                     _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
@@ -96,7 +110,18 @@ namespace UI.Tray
 
             return Hiding;
         }
-        
+
+        private TweenerCore<Vector3, Vector3, VectorOptions> DOScale(Vector3 target, float duration)
+        {
+            return DOTween.To(
+                () => _iconsParent.localScale,
+                value =>
+                {
+                    _iconsParent.localScale = value;
+                    ResizeTrail();
+                }, target, duration);
+        }
+
         public class Pool : MonoMemoryPool<TileConfig, RectTransform, TileTrayItem>
         {
             protected override void Reinitialize(TileConfig config, RectTransform parent, TileTrayItem item)
