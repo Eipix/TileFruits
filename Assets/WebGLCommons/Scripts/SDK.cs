@@ -1,29 +1,25 @@
 using Playgama;
 using Playgama.Modules.Platform;
 using Playgama.Modules.Advertisement;
-using System;
-using Commons.Systems.AudioManager;
 using Playgama.Modules.Leaderboards;
+using System;
 using UnityEngine;
 using Zenject;
 
 public class SDK : IInitializable, IDisposable
 {
-    private AudioManager _audioManager;
-
+    public event Action<InterstitialState> InterstitialStateChanged;
+    
     public string Language => Bridge.platform.language;
-
-    [Inject]
-    private void Construct(AudioManager audioManager)
-    {
-        _audioManager = audioManager;
-    }
 
     public void Initialize()
         => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
 
     public void Dispose()
-        => Bridge.advertisement.interstitialStateChanged -= OnInterstitialStateChanged;
+    {
+        if (Bridge.advertisement != null)
+            Bridge.advertisement.interstitialStateChanged -= OnInterstitialStateChanged;
+    }
 
     public void Setup()
     {
@@ -63,6 +59,7 @@ public class SDK : IInitializable, IDisposable
                 AudioListener.pause = false;
                 break;
         }
+        InterstitialStateChanged?.Invoke(state);
     }
 
     private void GameReady()

@@ -19,13 +19,15 @@ namespace View
         private LevelManager _levelManager;
         private GameManager _gameManager;
         private ISaveSystem _saveSystem;
+        private SDK _sdk;
 
         [Inject]
         private void Construct(LevelManager levelManager,
-            GameManager gameManager)
+            GameManager gameManager, SDK sdk)
         {
             _levelManager = levelManager;
             _gameManager = gameManager;
+            _sdk = sdk;
         }
 
         private void ChangeTimeScale() => Time.timeScale = _timeScale;
@@ -49,5 +51,11 @@ namespace View
             _levelManager.StartLevel();
             Debug.Log($"Started Level with index {_levelManager.LevelIndex + 1}, id {_levelManager.CurrentLevel.Id}");
         }
+
+        [Button]
+        private void ShowBanner() => _sdk.ShowBanner();
+        
+        [Button]
+        private void ShowFullScreenAd() => _sdk.ShowFullScreenAd();
     }
 }

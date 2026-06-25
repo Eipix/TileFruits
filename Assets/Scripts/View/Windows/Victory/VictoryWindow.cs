@@ -19,19 +19,13 @@ namespace UI
 
         protected override void OnOpen()
         {
-            _closeButton.onClick.AddListener(Close);
             _closeButton.onClick.AddListener(_onNextLevel);
-            
-            _nextLevelButton.onClick.AddListener(Close);
             _nextLevelButton.onClick.AddListener(_onNextLevel);
         }
         
         protected override void OnClose()
         {
-            _closeButton.onClick.RemoveListener(Close);
             _closeButton.onClick.RemoveListener(_onNextLevel);
-            
-            _nextLevelButton.onClick.RemoveListener(Close);
             _nextLevelButton.onClick.RemoveListener(_onNextLevel);
         }
     }
