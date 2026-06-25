@@ -1,5 +1,6 @@
 using System;
 using Assets.SimpleLocalization.Scripts;
+using Audio;
 using Commons.Systems.AudioManager;
 using Commons.Systems.Save;
 using Commons.Systems.SaveManager;
@@ -9,8 +10,6 @@ using Gameplay;
 using Gameplay.Levels;
 using Presenters__Controllers;
 using UnityEngine;
-using View.Animations;
-using View.Windows.Collection;
 using Zenject;
 
 public class GameplayBootstrap : IInitializable, IDisposable
@@ -23,6 +22,7 @@ public class GameplayBootstrap : IInitializable, IDisposable
     private GameplayController _gameplayController;
     private TileTrayPresenter _trayPresenter;
     private TileClickDetector _tileClickDetector;
+    private AudioPresenter _audioPresenter;
 
     [Inject]
     private void Construct(SDK sdk, AudioManager audioManager,
@@ -30,7 +30,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
         LevelManager levelManager,
         GameplayController gameplayController,
         TileTrayPresenter trayPresenter,
-        TileClickDetector tileClickDetector)
+        TileClickDetector tileClickDetector,
+        AudioPresenter audioPresenter)
     {
         _sdk = sdk;
         _audioManager = audioManager;
@@ -40,6 +41,7 @@ public class GameplayBootstrap : IInitializable, IDisposable
         _gameplayController = gameplayController;
         _trayPresenter = trayPresenter;
         _tileClickDetector = tileClickDetector;
+        _audioPresenter = audioPresenter;
     }
 
     public async void Initialize()
@@ -54,6 +56,7 @@ public class GameplayBootstrap : IInitializable, IDisposable
             _trayPresenter.Initialize();
             _gameplayController.Initialize();
             _levelManager.StartLevel();
+            _audioPresenter.Initialize();
             Debug.Log("Initialized Gameplay Bootstrap");
         }
         catch (Exception e)
@@ -77,8 +80,9 @@ public class GameplayBootstrap : IInitializable, IDisposable
 
     public void Dispose()
     {
-        _tileClickDetector.Dispose();
-        _trayPresenter.Dispose();
-        _gameplayController.Dispose();
+        _tileClickDetector?.Dispose();
+        _trayPresenter?.Dispose();
+        _gameplayController?.Dispose();
+        _audioPresenter?.Dispose();
     }
 }
