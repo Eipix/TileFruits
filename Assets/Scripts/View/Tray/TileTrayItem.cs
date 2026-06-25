@@ -52,12 +52,15 @@ namespace UI.Tray
         }
 
         private void OnEnable() => _canvasSizeTracker.Changed += ResizeTrail;
+
         private void OnDisable() => _canvasSizeTracker.Changed -= ResizeTrail;
 
         private void ResizeTrail()
         {
-            float canvasScaleFactor = (_canvasSizeTracker.RectTransform.sizeDelta
-                                      / _canvasSizeTracker.ReferenceResolution).x;
+            var canvasRect = _canvasSizeTracker.RectTransform;
+            var referenceResolution = _canvasSizeTracker.ReferenceResolution;
+            
+            float canvasScaleFactor = (canvasRect.sizeDelta / referenceResolution).x;
             
             float elementScale = _iconsParent.localScale.x;
 

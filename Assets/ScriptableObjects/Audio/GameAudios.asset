@@ -50,7 +50,7 @@ MonoBehaviour:
     <Delay>k__BackingField: 0
   <TileMoveToTray>k__BackingField:
     <Resource>k__BackingField: {fileID: 8300000, guid: cc6b7b9334193e44198416ea960e0bf8, type: 3}
-    <Mixer>k__BackingField: {fileID: 0}
+    <Mixer>k__BackingField: {fileID: 24300002, guid: cdf0dccc8b79e584c8bfade22c8d6814, type: 2}
     <Priority>k__BackingField: 128
     <ThrottleCooldown>k__BackingField: 0
     <RandomizePitch>k__BackingField: 0

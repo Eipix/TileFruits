@@ -9,9 +9,9 @@ namespace View
     {
         public event Action Changed;
 
-        public RectTransform RectTransform;
+        public RectTransform RectTransform { get; private set; }
         
-        public Vector2 ReferenceResolution;
+        public Vector2 ReferenceResolution { get; private set; }
 
         private void Awake()
         {
