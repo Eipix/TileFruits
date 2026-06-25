@@ -39,14 +39,14 @@ MonoBehaviour:
     <Mixer>k__BackingField: {fileID: 0}
     <Priority>k__BackingField: 128
     <ThrottleCooldown>k__BackingField: 0
-    <RandomizePitch>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 1
     <Delay>k__BackingField: 0.5
   <TileBlocked>k__BackingField:
     <Resource>k__BackingField: {fileID: 8300000, guid: 6be003a75c5c41d4488910f8c10e3a3d, type: 3}
     <Mixer>k__BackingField: {fileID: 0}
     <Priority>k__BackingField: 128
     <ThrottleCooldown>k__BackingField: 0
-    <RandomizePitch>k__BackingField: 0
+    <RandomizePitch>k__BackingField: 1
     <Delay>k__BackingField: 0
   <TileMoveToTray>k__BackingField:
     <Resource>k__BackingField: {fileID: 8300000, guid: cc6b7b9334193e44198416ea960e0bf8, type: 3}

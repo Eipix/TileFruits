@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Commons;
 using Gameplay;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -15,15 +16,26 @@ namespace View.Windows.Collection
         [SerializeField] private Button _close;
         [SerializeField] private RectTransform _itemsParent;
         [SerializeField] private LayoutGroup _group;
+
+        public event Action TilePointerDown;
         
         [Inject] private CollectionItem.Factory _itemsFactory;
         
         public void Add(TileConfig config)
         {
             var item = _itemsFactory.Create(config, _itemsParent);
+            item.PointerDown += OnPointerDown;
             _items.Add(item);
         }
-        
+
+        private void OnPointerDown() => TilePointerDown?.Invoke();
+
+        private void OnDestroy()
+        {
+            _items.ForEach(item => item.PointerDown -= OnPointerDown);
+            _items.Clear();
+        }
+
         public void ForceRebuildLayoutImmediate()
         {
             _group.enabled = true;

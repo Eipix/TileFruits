@@ -1,19 +1,21 @@
+using System;
 using Gameplay;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Zenject;
 
 namespace View.Windows.Collection
 {
-    public class CollectionItem : MonoBehaviour
+    public class CollectionItem : MonoBehaviour, IPointerDownHandler
     {
         [SerializeField] private RectTransform _tile;
         [SerializeField] private Image _tileIcon;
         [SerializeField] private Image _lock;
 
-        private bool _isUnlocked;
+        public event Action PointerDown;
         
-        public string Id { get; private set; }
+        private bool _isUnlocked;
         
         public bool IsUnlocked
         {
@@ -34,6 +36,8 @@ namespace View.Windows.Collection
                 }
             }
         }
+        
+        public string Id { get; private set; }
 
         [Inject]
         private void Construct(TileConfig tileConfig, RectTransform parent)
@@ -43,6 +47,8 @@ namespace View.Windows.Collection
             transform.SetParent(parent, false);
             IsUnlocked = false;
         }
+
+        public void OnPointerDown(PointerEventData eventData) => PointerDown?.Invoke();
 
         public class Factory : PlaceholderFactory<TileConfig, RectTransform, CollectionItem> { }
     }

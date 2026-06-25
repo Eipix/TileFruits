@@ -1,8 +1,10 @@
 using System;
+using _Commons.Scripts.UI;
 using Commons.Systems.AudioManager;
 using Gameplay;
 using Gameplay.Levels;
 using Gameplay.Tray;
+using View.Windows.Collection;
 
 namespace Audio
 {
@@ -13,13 +15,15 @@ namespace Audio
         private readonly LevelManager _levelManager;
         private readonly TileTray _tileTray;
         private readonly GameplayController _gameplayController;
+        private readonly CollectionWindow _collectionWindow;
 
         public AudioPresenter(
             AudioManager audioManager,
             AudioConfig audioConfig,
             LevelManager levelManager,
             TileTray tileTray,
-            GameplayController gameplayController)
+            GameplayController gameplayController,
+            UIManager uiManager)
 
         {
             _audioManager = audioManager;
@@ -27,6 +31,7 @@ namespace Audio
             _levelManager = levelManager;
             _tileTray = tileTray;
             _gameplayController = gameplayController;
+            _collectionWindow = uiManager.GetWindow<CollectionWindow>();
         }
 
         public void Initialize()
@@ -37,6 +42,7 @@ namespace Audio
             _tileTray.MatchCleared += PlayMatchesSound;
             _tileTray.Added += PlayTileMoveToTraySound;
             _gameplayController.TileBlocked += PlayTileBlockedSound;
+            _collectionWindow.TilePointerDown += PlayTileBlockedSound;
             
             PlayTheme();
         }
@@ -49,6 +55,7 @@ namespace Audio
             _tileTray.MatchCleared -= PlayMatchesSound;
             _tileTray.Added -= PlayTileMoveToTraySound;
             _gameplayController.TileBlocked -= PlayTileBlockedSound;
+            _collectionWindow.TilePointerDown -= PlayTileBlockedSound;
             
             _audioManager.Stop();
         }
