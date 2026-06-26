@@ -96,13 +96,13 @@ namespace Gameplay.Levels
 
         private void SetNextLevel()
         {
-            CurrentLevel = _enumerationStrategy.Next();
             int nextLevelIndex = _levelData.LevelIndex + 1;
             var difficulty = GetDifficultyByLevel(nextLevelIndex);
 
             if (_levelData.Difficulty != difficulty)
                 _enumerationStrategy = _levelList.ConfigByDifficulty[difficulty].GetStrategy();
             
+            CurrentLevel = _enumerationStrategy.Next();
             _levelData = new(nextLevelIndex, difficulty, CurrentLevel.Id);
             Save();
         }
