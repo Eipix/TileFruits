@@ -1247,8 +1247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea929cafc40743ffaf9006995db20c56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RectTransform: {fileID: 0}
-  ReferenceResolution: {x: 0, y: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2111,7 +2109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a374567d724b8bba9de91a640bb6e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _timeScale: 1
+  _timeScale: 0.1
 --- !u!4 &863795663
 Transform:
   m_ObjectHideFlags: 0

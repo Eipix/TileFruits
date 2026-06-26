@@ -24,6 +24,7 @@ namespace UI.Tray
         private MatchEffect.Pool _matchEffectPool;
         private RectTransform _outerLayoutTransform;
         private CanvasSizeTracker _canvasSizeTracker;
+        private CameraZoomController _cameraZoomController;
         
         private Vector2 _initialScale;
 
@@ -37,11 +38,13 @@ namespace UI.Tray
         [Inject]
         private void Construct(CollectAnimationConfig config,
             HideAnimationConfig hideConfig,
-            MatchEffect.Pool matchEffectPool)
+            MatchEffect.Pool matchEffectPool,
+            CameraZoomController cameraZoomController)
         {
             _collectAnimationConfig = config;
             _hideConfig = hideConfig;
             _matchEffectPool = matchEffectPool;
+            _cameraZoomController = cameraZoomController;
             
             RectTransform = transform as RectTransform;
             _outerLayoutTransform = transform.parent.parent as RectTransform;
@@ -64,7 +67,10 @@ namespace UI.Tray
             
             float elementScale = _iconsParent.localScale.x;
 
-            _trailRenderer.widthMultiplier = _baseTrailWidth * canvasScaleFactor * elementScale;
+            _trailRenderer.widthMultiplier = _baseTrailWidth
+                                             * canvasScaleFactor
+                                             * elementScale
+                                             / _cameraZoomController.Zoom;
         }
 
         public Tween ShiftTo(float targetX, float duration, Ease ease)
@@ -93,13 +99,12 @@ namespace UI.Tray
             _iconsParent.localScale = startScale;
             
             ReturningToTray = DOTween.Sequence()
+                .Append(DOPunchScale())
                 .Append(_iconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
                     .SetEase(_collectAnimationConfig.MoveEase))
                 .Join(DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
                 .AppendCallback(() => _trailRenderer.emitting = false)
-                .Append(_iconsParent.DOPunchScale(
-                    _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
-                    _collectAnimationConfig.Vibrato, _collectAnimationConfig.Elasticity));
+                .Append(DOPunchScale());
             
             return ReturningToTray;
         }
@@ -124,6 +129,10 @@ namespace UI.Tray
                     ResizeTrail();
                 }, target, duration);
         }
+
+        private Tween DOPunchScale() => _iconsParent.DOPunchScale(
+                _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
+                _collectAnimationConfig.Vibrato, _collectAnimationConfig.Elasticity);
 
         public class Pool : MonoMemoryPool<TileConfig, RectTransform, TileTrayItem>
         {

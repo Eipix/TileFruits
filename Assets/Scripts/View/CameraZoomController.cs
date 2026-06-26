@@ -1,4 +1,3 @@
-using System;
 using EmeraldPowder.CameraScaler;
 using Generator;
 using NaughtyAttributes;
@@ -17,7 +16,7 @@ namespace View
         private CameraScaler _cameraScaler;
         private Camera _mainCamera;
 
-        [ShowNativeProperty] public float CameraZoom => _cameraScaler.CameraZoom;
+        [ShowNativeProperty] public float Zoom => _cameraScaler.CameraZoom;
 
         [Inject]
         private void Construct(
