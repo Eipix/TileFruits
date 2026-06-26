@@ -12,6 +12,7 @@ using NaughtyAttributes;
 using Presenters__Controllers;
 using UI.Tray;
 using UnityEngine;
+using View;
 using View.Effects;
 using WebGLCommons.Scripts;
 using Zenject;
@@ -34,7 +35,9 @@ namespace DefaultNamespace
 
         public override void InstallBindings()
         {
-            Container.Bind<Camera>().FromInstance(Camera.main).AsSingle();
+            Container.Bind(typeof(Camera), typeof(CameraZoomController))
+                .FromComponentOn(Camera.main!.gameObject)
+                .AsSingle();
             
             BindSystems();
             BindPools();

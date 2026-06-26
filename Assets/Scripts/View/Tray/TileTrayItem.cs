@@ -24,6 +24,7 @@ namespace UI.Tray
         private MatchEffect.Pool _matchEffectPool;
         private RectTransform _outerLayoutTransform;
         private CanvasSizeTracker _canvasSizeTracker;
+        private CameraZoomController _cameraZoomController;
         
         private Vector2 _initialScale;
 
@@ -37,11 +38,13 @@ namespace UI.Tray
         [Inject]
         private void Construct(CollectAnimationConfig config,
             HideAnimationConfig hideConfig,
-            MatchEffect.Pool matchEffectPool)
+            MatchEffect.Pool matchEffectPool,
+            CameraZoomController cameraZoomController)
         {
             _collectAnimationConfig = config;
             _hideConfig = hideConfig;
             _matchEffectPool = matchEffectPool;
+            _cameraZoomController = cameraZoomController;
             
             RectTransform = transform as RectTransform;
             _outerLayoutTransform = transform.parent.parent as RectTransform;
@@ -64,7 +67,10 @@ namespace UI.Tray
             
             float elementScale = _iconsParent.localScale.x;
 
-            _trailRenderer.widthMultiplier = _baseTrailWidth * canvasScaleFactor * elementScale;
+            _trailRenderer.widthMultiplier = _baseTrailWidth
+                                             * canvasScaleFactor
+                                             * elementScale
+                                             / _cameraZoomController.Zoom;
         }
 
         public Tween ShiftTo(float targetX, float duration, Ease ease)

@@ -12,9 +12,10 @@ namespace View
         [SerializeField, Range(0, 1), OnValueChanged(nameof(ChangeTimeScale))]
         private float _timeScale;
         
-        [ShowNativeProperty] public Level CurrentLevel => _levelManager.CurrentLevel;
-        [ShowNativeProperty] public Vector2Int Size =>
-            _levelManager.CurrentLevel.GeneratorConfig.ShapeStrategy.Size;
+        [ShowNativeProperty] public Level CurrentLevel => _levelManager?.CurrentLevel;
+        [ShowNativeProperty] public Vector2Int Size => _levelManager == null
+            ? Vector2Int.zero
+            : _levelManager.CurrentLevel.GeneratorConfig.ShapeStrategy.Size;
         
         private LevelManager _levelManager;
         private GameManager _gameManager;
