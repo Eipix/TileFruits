@@ -49,7 +49,6 @@ public class GameplayBootstrap : IInitializable, IDisposable
         try
         {
             await LoadData();
-            _sdk.Setup();
             LocalizationManager.Language = _sdk.Language;
             
             _tileClickDetector.Initialize();
@@ -57,7 +56,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
             _gameplayController.Initialize();
             _levelManager.StartLevel();
             _audioPresenter.Initialize();
-            Debug.Log("Initialized Gameplay Bootstrap");
+            
+            _sdk.Setup();
         }
         catch (Exception e)
         {
