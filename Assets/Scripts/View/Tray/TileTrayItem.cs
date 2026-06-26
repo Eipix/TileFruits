@@ -93,13 +93,12 @@ namespace UI.Tray
             _iconsParent.localScale = startScale;
             
             ReturningToTray = DOTween.Sequence()
+                .Append(DOPunchScale())
                 .Append(_iconsParent.DOAnchorPos(Vector2.zero, _collectAnimationConfig.MoveDuration)
                     .SetEase(_collectAnimationConfig.MoveEase))
                 .Join(DOScale(_initialScale, _collectAnimationConfig.MoveDuration))
                 .AppendCallback(() => _trailRenderer.emitting = false)
-                .Append(_iconsParent.DOPunchScale(
-                    _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
-                    _collectAnimationConfig.Vibrato, _collectAnimationConfig.Elasticity));
+                .Append(DOPunchScale());
             
             return ReturningToTray;
         }
@@ -124,6 +123,10 @@ namespace UI.Tray
                     ResizeTrail();
                 }, target, duration);
         }
+
+        private Tween DOPunchScale() => _iconsParent.DOPunchScale(
+                _collectAnimationConfig.Punch, _collectAnimationConfig.PunchDuration,
+                _collectAnimationConfig.Vibrato, _collectAnimationConfig.Elasticity);
 
         public class Pool : MonoMemoryPool<TileConfig, RectTransform, TileTrayItem>
         {
