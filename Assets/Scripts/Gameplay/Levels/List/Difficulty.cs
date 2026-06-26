@@ -4,6 +4,7 @@ namespace Gameplay.Levels
     {
         Easy,
         Medium,
-        Hard
+        Hard,
+        Infinite
     }
 }

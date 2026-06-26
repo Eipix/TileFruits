@@ -17,7 +17,6 @@ public class GameplayBootstrap : IInitializable, IDisposable
     private SDK _sdk;
     private AudioManager _audioManager;
     private ISaveSystem _saveSystem;
-    private SaveManager _saveManager;
     private LevelManager _levelManager;
     private GameplayController _gameplayController;
     private TileTrayPresenter _trayPresenter;
@@ -26,7 +25,7 @@ public class GameplayBootstrap : IInitializable, IDisposable
 
     [Inject]
     private void Construct(SDK sdk, AudioManager audioManager,
-        ISaveSystem saveSystem, SaveManager saveManager,
+        ISaveSystem saveSystem,
         LevelManager levelManager,
         GameplayController gameplayController,
         TileTrayPresenter trayPresenter,
@@ -36,7 +35,6 @@ public class GameplayBootstrap : IInitializable, IDisposable
         _sdk = sdk;
         _audioManager = audioManager;
         _saveSystem = saveSystem;
-        _saveManager = saveManager;
         _levelManager = levelManager;
         _gameplayController = gameplayController;
         _trayPresenter = trayPresenter;
@@ -54,6 +52,8 @@ public class GameplayBootstrap : IInitializable, IDisposable
             _tileClickDetector.Initialize();
             _trayPresenter.Initialize();
             _gameplayController.Initialize();
+            _levelManager.Initialize();
+            
             _levelManager.StartLevel();
             _audioPresenter.Initialize();
             
@@ -67,15 +67,10 @@ public class GameplayBootstrap : IInitializable, IDisposable
 
     private async UniTask LoadData()
     {
-        var (muteSounds, muteMusic) = await UniTask.WhenAll(
-            _saveSystem.Load(SaveKeys.MuteSound_Bool, false),
-            _saveSystem.Load(SaveKeys.MuteMusic_Bool, false)
-        );
-        
-        _audioManager.MuteSounds = muteSounds;
-        _audioManager.MuteMusic = muteMusic;
-        
-        await _saveManager.Load();
+        await _saveSystem.LoadAsync();
+            
+        _audioManager.MuteSounds = _saveSystem.Get(SaveKeys.MuteSound_Bool, false);
+        _audioManager.MuteMusic = _saveSystem.Get(SaveKeys.MuteMusic_Bool, false);
     }
 
     public void Dispose()

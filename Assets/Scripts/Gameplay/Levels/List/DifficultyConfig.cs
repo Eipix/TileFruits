@@ -16,8 +16,8 @@ namespace Gameplay.Levels
         public int LevelsForNextDifficulty { get; private set; }
         
         [field: SerializeField] public EnumerationMode Mode { get; private set; } = EnumerationMode.Shuffle;
-        
-        [field: SerializeField] public List<Level> Levels { get; private set; }
+
+        [field: SerializeField] public List<Level> Levels { get; private set; } = new();
 
         [field: SerializeField, HideInInspector]
         public bool HideLevelsForNextDifficulty { get; set; }

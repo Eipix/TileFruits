@@ -55,6 +55,41 @@ MonoBehaviour:
     <HideLevelsForNextDifficulty>k__BackingField: 0
   - <Difficulty>k__BackingField: 2
     <LevelsForNextDifficulty>k__BackingField: 30
+    <Mode>k__BackingField: 0
+    <Levels>k__BackingField:
+    - {fileID: 11400000, guid: c1dc1a63669da7c4a8067fbbaed27980, type: 2}
+    - {fileID: 11400000, guid: 5063c43a605341d41983db82eaa60ac3, type: 2}
+    - {fileID: 11400000, guid: 9188fade196a52c4c83bb9910ca3e484, type: 2}
+    - {fileID: 11400000, guid: 4dc846b7557b0f341bb913043a04971d, type: 2}
+    - {fileID: 11400000, guid: c1c4942d3be11cf4bb316322b4d24484, type: 2}
+    - {fileID: 11400000, guid: ac357df14cd4ae94ab6e825ed7377df7, type: 2}
+    - {fileID: 11400000, guid: e28185ef20906494ba3fb2f2554100c6, type: 2}
+    - {fileID: 11400000, guid: 536aaa44e4d031e4599eb0d3378027b5, type: 2}
+    - {fileID: 11400000, guid: a1fed2236252bb0458362b81cedeb64d, type: 2}
+    - {fileID: 11400000, guid: baff6005b371b4347b9c078facb5f605, type: 2}
+    - {fileID: 11400000, guid: 65449df7637f38e418ae7bafbfe7c656, type: 2}
+    - {fileID: 11400000, guid: fd51d8766353392479cfa38342bbc1d0, type: 2}
+    - {fileID: 11400000, guid: e4e703b1f26cfa347a918b78840a1683, type: 2}
+    - {fileID: 11400000, guid: a6ae72969f5033d4a8ad3487266fc42f, type: 2}
+    - {fileID: 11400000, guid: 6f608cabe86d4f240944a0ac8f499427, type: 2}
+    - {fileID: 11400000, guid: fa4583640f948224cb9830d1141d64ab, type: 2}
+    - {fileID: 11400000, guid: 6e2c1e7787a0a8743850317e478ed991, type: 2}
+    - {fileID: 11400000, guid: d390053b53f4a1c4494b130ddb63bc06, type: 2}
+    - {fileID: 11400000, guid: fff65bbe029ba1949a224b581cc990dd, type: 2}
+    - {fileID: 11400000, guid: 067fca163719be24fbc2100cf436c064, type: 2}
+    - {fileID: 11400000, guid: a90d7385470e9d74cb9b10637ff7dbbd, type: 2}
+    - {fileID: 11400000, guid: e47da69206388c343a75fe7b2b696c7d, type: 2}
+    - {fileID: 11400000, guid: e1d9f17b225433a42901c31ac7e8c4a3, type: 2}
+    - {fileID: 11400000, guid: ac05bfd6a376b054bba8e4cd618e076f, type: 2}
+    - {fileID: 11400000, guid: 19770a1bfadcc1d4abce8e91a2bc70b6, type: 2}
+    - {fileID: 11400000, guid: 4ad75d555bbe2f241938bbd8d65e2724, type: 2}
+    - {fileID: 11400000, guid: ebb5b2183e5081c4cac1dc4068a3e7a0, type: 2}
+    - {fileID: 11400000, guid: 7cffeffd40b40f74b99aece3ba236ad0, type: 2}
+    - {fileID: 11400000, guid: e2cf0e352b3feaa4e97d119b5b375790, type: 2}
+    - {fileID: 11400000, guid: dfd63c6ae5cdd4e408b144464cbd8ae0, type: 2}
+    <HideLevelsForNextDifficulty>k__BackingField: 0
+  - <Difficulty>k__BackingField: 3
+    <LevelsForNextDifficulty>k__BackingField: 0
     <Mode>k__BackingField: 2
     <Levels>k__BackingField:
     - {fileID: 11400000, guid: c1dc1a63669da7c4a8067fbbaed27980, type: 2}

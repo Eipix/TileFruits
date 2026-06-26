@@ -5,7 +5,7 @@ using Zenject;
 
 namespace Commons.Wallet
 {
-    public class Balance : IReadOnlyWallet
+    public class Balance : IReadOnlyBalance
     {
         public event Action ValueChanged;
 
@@ -20,10 +20,7 @@ namespace Commons.Wallet
             Initialize();
         }
 
-        private async void Initialize()
-        {
-            Value = await _saveSystem.Load(CommonSaveKeys.CurrencyInt, 0);
-        }
+        private void Initialize() => Value = _saveSystem.Get(CommonSaveKeys.CurrencyInt, 0);
 
         public void Add(int value)
         {
@@ -37,7 +34,7 @@ namespace Commons.Wallet
             }
 
             Value += value;
-            _saveSystem.Save(CommonSaveKeys.CurrencyInt, Value);
+            _saveSystem.Set(CommonSaveKeys.CurrencyInt, Value);
             ValueChanged?.Invoke();
         }
 
@@ -47,7 +44,7 @@ namespace Commons.Wallet
                 return false;
 
             Value -= price;
-            _saveSystem.Save(CommonSaveKeys.CurrencyInt, Value);
+            _saveSystem.Set(CommonSaveKeys.CurrencyInt, Value);
             ValueChanged?.Invoke();
             return true;
         }

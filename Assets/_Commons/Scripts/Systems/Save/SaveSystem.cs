@@ -12,83 +12,68 @@ namespace Commons.Systems
     {
         public const string SaveFile = "SaveData.json";
 
-        public string JsonData => File.Exists(Path)
-            ? File.ReadAllText(Path)
-            : string.Empty;
+        private Dictionary<string, object> _data;
         
         public string Path => $"{Application.persistentDataPath}/{SaveFile}";
-        
-        public Dictionary<string, object> Data
+
+        public void Set<T>(string key, T value) => _data[key] = value;
+
+        public T Get<T>(string key, T defaultValue = default)
         {
-            get
-            {
-                if (File.Exists(Path) is false)
-                    return new Dictionary<string, object>();
-
-                try
-                {
-                    byte[] bytes = File.ReadAllBytes(Path);
-
-                    var data = SerializationUtility
-                        .DeserializeValue<Dictionary<string, object>>(bytes, DataFormat.JSON);
-                    
-                    return data ?? new Dictionary<string, object>();
-                }
-                catch (Exception ex)
-                {
-                    Debug.LogError($"Failed to deserialize save data: {ex.Message}");
-                    return new Dictionary<string, object>();
-                }
-            }
-        }
-
-        public void Save<T>(string key, T value)
-        {
-            var data = Data;
-            data[key] = value;
-            SerializeAndWrite(data);
-        }
-
-        public UniTask<T> Load<T>(string key, T defaultValue = default)
-        {
-            if (File.Exists(Path) is false)
-                return UniTask.FromResult(defaultValue);
-
-            var data = Data;
-
-            if (data.TryGetValue(key, out object value) is false)
-                return UniTask.FromResult(defaultValue);
+            if (_data.TryGetValue(key, out object value) is false)
+                return defaultValue;
 
             if (value is T direct)
-                return UniTask.FromResult(direct);
+                return direct;
 
             try
             {
-                return UniTask.FromResult((T)Convert.ChangeType(value, typeof(T)));
+                return (T)Convert.ChangeType(value, typeof(T));
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Failed to load '{key}' as {typeof(T)}: {ex.Message}. Using default value.");
-                return UniTask.FromResult(defaultValue);
+                Debug.LogError($"Failed to get '{key}' as {typeof(T)}: {ex.Message}. Using default value.");
+                return defaultValue;
             }
         }
-        
-        public bool HasKey(string key)
-        => Data.ContainsKey(key);
 
-        public void DeleteKey(string key)
+        public UniTask SaveAsync()
         {
-            var data = Data;
-
-            if (data.Remove(key))
-                SerializeAndWrite(data);
+            SerializeAndWrite(_data);
+            return UniTask.CompletedTask;
         }
 
-        public void DeleteAll()
+        public UniTask LoadAsync()
         {
-            if (File.Exists(Path))
-                File.Delete(Path);
+            if (File.Exists(Path) is false)
+            {
+                _data = new Dictionary<string, object>();
+                return UniTask.CompletedTask;
+            }
+
+            try
+            {
+                byte[] bytes = File.ReadAllBytes(Path);
+
+                var data = SerializationUtility
+                    .DeserializeValue<Dictionary<string, object>>(bytes, DataFormat.JSON);
+                    
+                _data = data ?? new Dictionary<string, object>();
+                return UniTask.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to deserialize save data: {ex.Message}");
+                _data = new Dictionary<string, object>();
+                return UniTask.CompletedTask;
+            }
         }
+
+        public bool HasKey(string key) => _data.ContainsKey(key);
+
+        public void DeleteKey(string key) => _data.Remove(key);
+
+        public void DeleteAll() => _data.Clear();
 
         private void SerializeAndWrite(Dictionary<string, object> data)
         {

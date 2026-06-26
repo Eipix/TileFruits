@@ -1,5 +1,5 @@
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Text;
 using Commons.Systems.Save;
 using Cysharp.Threading.Tasks;
@@ -11,49 +11,69 @@ namespace WebGLCommons.Scripts
 {
     public class SDKSaveSystem : ISaveSystem
     {
-        public void Save<T>(string key, T value)
+        private const string GlobalSaveKey = "Data";
+        
+        private Dictionary<string, object> _data;
+        
+        public void Set<T>(string key, T value)
         {
-            byte[] bytes = SerializationUtility.SerializeValue(value, DataFormat.JSON);
-            string json = Encoding.UTF8.GetString(bytes);
-            Bridge.storage.Set(key, json);
-            Debug.Log($"Save {key}: {value}");
+            _data[key] = value;
+            Debug.Log($"Set {key}");
         }
 
-        public async UniTask<T> Load<T>(string key, T defaultValue = default)
+        public T Get<T>(string key, T defaultValue)
+        {
+            if (_data.TryGetValue(key, out object value) is false)
+                return defaultValue;
+
+            if (value is T direct)
+                return direct;
+
+            try
+            {
+                return (T)Convert.ChangeType(value, typeof(T));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Failed to get '{key}' as {typeof(T)}: {ex.Message}. Using default value.");
+                return defaultValue;
+            }
+        }
+
+        public UniTask SaveAsync()
+        {
+            byte[] bytes = SerializationUtility.SerializeValue(_data, DataFormat.JSON);
+            string json = Encoding.UTF8.GetString(bytes);
+            Bridge.storage.Set(GlobalSaveKey, json);
+            Debug.Log("Save");
+            return UniTask.CompletedTask;
+        }
+
+        public async UniTask LoadAsync()
         {
             bool loaded = false;
-            T result = defaultValue;
-            
-            Bridge.storage.Get(key, OnComplete);
+            Bridge.storage.Get(GlobalSaveKey, OnComplete);
             
             await UniTask.WaitUntil(() => loaded);
-            
-            return result;
 
             void OnComplete(bool success, string data)
             {
                 if (success is false || data is null)
                 {
-                    Debug.Log($"Load Fail {key}. Returned default value {defaultValue}");
-                    loaded = true;
-                    return;
+                    _data = new();
                 }
-                
-                Type targetType = typeof(T);
-                
-                if (FormatterUtilities.IsPrimitiveType(targetType))
+                else
                 {
-                    result = (T)Convert.ChangeType(data, targetType, CultureInfo.InvariantCulture);
-                    loaded = true;
-                    return;
+                    byte[] bytes = Encoding.UTF8.GetBytes(data);
+                    _data = SerializationUtility
+                        .DeserializeValue<Dictionary<string, object>>(bytes, DataFormat.JSON);
                 }
 
-                byte[] bytes = Encoding.UTF8.GetBytes(data);
-                result = SerializationUtility.DeserializeValue<T>(bytes, DataFormat.JSON);
                 loaded = true;
             }
         }
 
         public void DeleteKey(string key) => Bridge.storage.Delete(key);
+        public void DeleteAll() => Bridge.storage.Delete(GlobalSaveKey);
     }
 }

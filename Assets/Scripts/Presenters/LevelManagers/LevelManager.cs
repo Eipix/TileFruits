@@ -1,11 +1,8 @@
 using System;
 using System.Linq;
 using _Commons.Scripts.EnumerationStrategies;
-using Commons.Systems;
 using Commons.Systems.Save;
-using Commons.Systems.SaveManager;
 using Constants;
-using Cysharp.Threading.Tasks;
 using Gameplay.Tray;
 using Generator;
 using UnityEngine;
@@ -13,7 +10,7 @@ using Zenject;
 
 namespace Gameplay.Levels
 {
-    public class LevelManager : ISaveLoad, IInitializable, IDisposable
+    public class LevelManager : IDisposable
     {
         public event Action LevelStarted;
         public event Action<LevelResult> LevelFinished;
@@ -22,7 +19,6 @@ namespace Gameplay.Levels
         private TileMapGenerator _tileMapGenerator;
         private MapVisualizer _mapVisualizer;
         private ISaveSystem _saveSystem;
-        private IRegistry<ISaveLoad> _saveLoadRegistry;
         
         private ITileMap _tileMap;
         private DifficultyConfig _difficultyConfig;
@@ -42,26 +38,28 @@ namespace Gameplay.Levels
             TileMapGenerator tileMapGenerator,
             MapVisualizer mapVisualizer,
             ISaveSystem saveSystem,
-            IRegistry<ISaveLoad> registry,
             TileTray tileTray)
         {
             _levelList = levelList;
             _tileMapGenerator = tileMapGenerator;
             _mapVisualizer = mapVisualizer;
             _saveSystem = saveSystem;
-            _saveLoadRegistry = registry;
             _tileTray = tileTray;
         }
-        
-        public void Initialize() => _saveLoadRegistry.Register(this);
 
-        public void Save() => _saveSystem.Save(SaveKeys.LevelData, _levelData);
-
-        public async UniTask Load()
+        public void Initialize()
         {
-            _levelData = await _saveSystem.Load<LevelData>(SaveKeys.LevelData);
+            _levelData = _saveSystem.Get<LevelData>(SaveKeys.LevelData);
             _difficultyConfig = CurrentDifficultyConfig;
             _enumerationStrategy = _difficultyConfig.GetStrategy();
+
+            int levelDifficultyIndex = GetLevelIndexInDifficulty(_levelData.LevelIndex);
+            
+            if(levelDifficultyIndex != 0)
+                for (int i = 0; i < levelDifficultyIndex + 1; i++)
+                    _enumerationStrategy.Next();
+            
+            Debug.Log($"{nameof(levelDifficultyIndex)}: {levelDifficultyIndex}");
             
             CurrentLevel = _difficultyConfig.Levels
                 .FirstOrDefault(level => level.Id == _levelData.LevelID)
@@ -104,13 +102,28 @@ namespace Gameplay.Levels
             
             CurrentLevel = _enumerationStrategy.Next();
             _levelData = new(nextLevelIndex, difficulty, CurrentLevel.Id);
-            Save();
+            _saveSystem.SetAndSave(SaveKeys.LevelData, _levelData);
         }
 
         private void OnDefeat()
         {
             UnsubscribeFromLevelResult();
             LevelFinished?.Invoke(LevelResult.Defeat);
+        }
+
+        private int GetLevelIndexInDifficulty(int levelIndex)
+        {
+            int cumulativeLevels = 0;
+
+            foreach (var config in _levelList.DifficultyConfigs)
+            {
+                if (levelIndex <= cumulativeLevels + config.LevelsForNextDifficulty)
+                    return levelIndex - cumulativeLevels;
+
+                cumulativeLevels += config.LevelsForNextDifficulty;
+            }
+    
+            return 0;
         }
         
         private Difficulty GetDifficultyByLevel(int levelIndex)
@@ -131,7 +144,6 @@ namespace Gameplay.Levels
 
         public void Dispose()
         {
-            _saveLoadRegistry.Unregister(this);
             _tileMap.TileTaken -= OnVictoryIfTileZero;
             LevelStarted = null;
             LevelFinished = null;
