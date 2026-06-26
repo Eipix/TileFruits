@@ -11,27 +11,24 @@ using Zenject;
 
 namespace View.Windows.Collection
 {
-    public class CollectionController : IInitializable, IDisposable, ISaveLoad
+    public class CollectionController : IInitializable, IDisposable
     {
         private readonly CollectionWindow _window;
         private readonly ISaveSystem _saveSystem;
         private readonly LevelManager _levelManager;
         private readonly TileList _tileDatabase;
-        private readonly IRegistry<ISaveLoad> _saveLoadRegistry;
 
         private List<string> _tileIds;
 
         public CollectionController(CollectionWindow window,
             ISaveSystem saveSystem,
             LevelManager levelManager,
-            TileList tileDatabase,
-            IRegistry<ISaveLoad> registry)
+            TileList tileDatabase)
         {
             _window = window;
             _saveSystem = saveSystem;
             _levelManager = levelManager;
             _tileDatabase = tileDatabase;
-            _saveLoadRegistry = registry;
 
             _tileIds = new(_tileDatabase.Length);
         }
@@ -43,14 +40,14 @@ namespace View.Windows.Collection
 
             _window.ForceRebuildLayoutImmediate();
             
+            Load();
+            
             _levelManager.LevelStarted += ExploreTiles;
-            _saveLoadRegistry.Register(this);
         }
 
         public void Dispose()
         {
             _levelManager.LevelStarted -= ExploreTiles;
-            _saveLoadRegistry.Unregister(this);
         }
 
         public void ExploreTiles()
@@ -69,15 +66,12 @@ namespace View.Windows.Collection
             }
 
             if (hasNewTiles)
-                Save();
+                _saveSystem.SetAndSave(SaveKeys.ExploredItemIDs_StringArray, _tileIds);
         }
 
-        public void Save() =>
-            _saveSystem.Save(SaveKeys.ExploredItemIDs_StringArray, _tileIds);
-
-        public async UniTask Load()
+        private void Load()
         {
-             _tileIds = await _saveSystem.Load(SaveKeys.ExploredItemIDs_StringArray, _tileIds);
+             _tileIds = _saveSystem.Get(SaveKeys.ExploredItemIDs_StringArray, _tileIds);
             
             foreach (var tileId in _tileIds)
             {

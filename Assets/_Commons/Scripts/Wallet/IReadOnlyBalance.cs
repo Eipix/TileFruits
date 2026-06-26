@@ -2,7 +2,7 @@ using System;
 
 namespace Commons.Wallet
 {
-    public interface IReadOnlyWallet
+    public interface IReadOnlyBalance
     {
         public event Action ValueChanged;
 

@@ -6,7 +6,7 @@ namespace _Commons.Scripts.EnumerationStrategies.Implementations
     public class ShuffleStrategy<T> : EnumerationStrategy<T>
     {
         private int? _seed;
-        private int _index;
+        private int _index = int.MaxValue;
 
         public ShuffleStrategy(List<T> items) : base(items) { }
 

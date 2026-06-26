@@ -14,14 +14,14 @@ namespace Gameplay.Levels
     {
         private const string InvalidMessage = "Invalid Difficulty Config: Ensure all difficulties contain" +
                                               "levels, there are no duplicate difficulties, and the list is " +
-                                              "sorted in ascending order (Easy -> Medium -> Hard).";
+                                              "sorted in ascending order (Easy -> Medium -> Hard -> Infinite).";
         
         private readonly Dictionary<Difficulty, DifficultyConfig> _configByDifficulty = new();
         
         [SerializeField, ValidateInput(nameof(ValidateConfigs), InvalidMessage)]
         private List<DifficultyConfig> _difficultyConfigs;
         
-        public Difficulty[] DifficultiesEnum { get; private set; } = (Difficulty[])Enum.GetValues(typeof(Difficulty));
+        public Difficulty[] DifficultiesEnum => (Difficulty[])Enum.GetValues(typeof(Difficulty));
         
         public IReadOnlyList<DifficultyConfig> DifficultyConfigs => _difficultyConfigs;
         public IReadOnlyDictionary<Difficulty, DifficultyConfig> ConfigByDifficulty => _configByDifficulty;
@@ -75,6 +75,12 @@ namespace Gameplay.Levels
         {
             for (int i = 0; i < DifficultiesEnum.Length; i++)
             {
+                if(i >= _difficultyConfigs.Count)
+                {
+                    DifficultyConfig config = new(DifficultiesEnum[i]);
+                    _difficultyConfigs.Add(config);
+                }
+                    
                 _difficultyConfigs[i].Difficulty = DifficultiesEnum[i];
                 _difficultyConfigs[i].HideLevelsForNextDifficulty = false;
             }
