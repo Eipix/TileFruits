@@ -1,7 +1,6 @@
 using Commons.Systems.AudioManager;
 using Commons.Systems.PauseManager;
 using Commons.Systems.Save;
-using Commons.Systems.SaveManager;
 using Gameplay;
 using Gameplay.Levels;
 using Gameplay.Tray;
@@ -85,7 +84,6 @@ namespace DefaultNamespace
         public void BindSystems()
         {
             Container.Bind<ISaveSystem>().To<SDKSaveSystem>().AsSingle();
-            Container.BindInterfacesAndSelfTo<SaveManager>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<SDK>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PauseManager>().AsSingle().NonLazy();
             

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d43f626d9b5f4d729097092ded48bdb, type: 3}
   m_Name: UIEffectProjectSettings
   m_EditorClassIdentifier: 
+  _jsonText: 
   m_RuntimePresets: []
   m_RuntimePresetsV2: []
   m_UseHDRColorPicker: 1
@@ -38,7 +39,41 @@ ShaderVariantCollection:
         passType: 0
       - keywords: COLOR_FILTER
         passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE GRADATION_COLOR2 TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE GRADATION_GRADIENT TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE SAMPLING_BLUR_FAST TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE SAMPLING_EDGE_ALPHA TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE SAMPLING_EDGE_LUMINANCE TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE SAMPLING_RGB_SHIFT TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE TONE_GRAYSCALE TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE TONE_NEGATIVE TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE TONE_POSTERIZE TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE TONE_SEPIA TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_MULTIPLY_ADDITIVE TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_REPLACE TRANSITION_PATTERN
+        passType: 0
+      - keywords: DETAIL_SUBTRACTIVE TRANSITION_MELT
+        passType: 0
+      - keywords: DETAIL_SUBTRACTIVE TRANSITION_PATTERN
+        passType: 0
+      - keywords: EDGE_PLAIN
+        passType: 0
       - keywords: EDGE_PLAIN GRADATION_GRADIENT
+        passType: 0
+      - keywords: EDGE_SHINY
         passType: 0
       - keywords: GRADATION_COLOR2
         passType: 0
