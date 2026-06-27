@@ -5309,7 +5309,7 @@ MonoBehaviour:
     <RandomnessMode>k__BackingField: 0
   _hideAnimationConfig:
     <Duration>k__BackingField: 0.3
-    <Ease>k__BackingField: 1
+    <Ease>k__BackingField: 26
   _collectionItemPrefab: {fileID: 1182193463743071245, guid: f999c61a7ae6e0d4e9192cf1710de503, type: 3}
   _hud: {fileID: 1567479125}
   _settingsWindow: {fileID: 1367488374}
