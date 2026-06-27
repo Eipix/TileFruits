@@ -1,8 +1,6 @@
 {
   "dependencies": {
     "com.alexeytaranov.serializereferencedropdown": "https://github.com/AlexeyTaranov/SerializeReferenceDropdown.git",
-    "com.coffee.ui-effect": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
-    "com.coffee.ui-particle": "https://github.com/mob-sakai/ParticleEffectForUGUI.git",
     "com.playgama.bridge": "https://github.com/playgama/bridge-unity.git",
     "com.spellsinger.sprites": "https://github.com/SpellSingerGames/sprite-animation-helpers.git",
     "com.unity.collab-proxy": "2.12.4",

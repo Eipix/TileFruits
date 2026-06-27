@@ -12,5 +12,6 @@
     },
     "payments": [],
     "leaderboards": [],
+    "disableLoadingLogo": true,
     "sendAnalyticsEvents": true
 }
