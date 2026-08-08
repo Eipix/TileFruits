@@ -1,62 +1,32 @@
 using Playgama;
-using System.Collections;
-using System.IO;
-using UnityEngine;
 using Playgama.Modules.Platform;
 using Playgama.Modules.Advertisement;
-using System;
-using Commons.Coroutines;
-using Commons.Systems;
-using Commons.Systems.AudioManager;
-using Commons.Systems.Save;
 using Playgama.Modules.Leaderboards;
+using System;
+using UnityEngine;
 using Zenject;
 
-public class SDK
+public class SDK : IInitializable, IDisposable
 {
-    private SaveSystem _saveSystem;
-    private AudioManager _audioManager;
+    public event Action<InterstitialState> InterstitialStateChanged;
     
-    public bool IsLoad { get; private set; }
+    public string Language => Bridge.platform.language;
 
-    [Inject]
-    private void Construct(ISaveSystem saveSystem, AudioManager audioManager)
+    public void Initialize()
+        => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
+
+    public void Dispose()
     {
-        _saveSystem  = (SaveSystem)saveSystem;
-        _audioManager = audioManager;
+        if (Bridge.advertisement != null)
+            Bridge.advertisement.interstitialStateChanged -= OnInterstitialStateChanged;
     }
 
-    private void Start() => Bridge.advertisement.interstitialStateChanged += OnInterstitialStateChanged;
-
-    public IEnumerator InitRoutine(Action onInit = null)
+    public void Setup()
     {
-        //TODO setup language
-        //Language.Instance.ChangeLanguage(Bridge.platform.language);
-        Load();
-        GameReady();
-        yield return new WaitUntil(() => IsLoad);
+        #if !UNITY_EDITOR
         ShowBanner();
-        onInit?.Invoke();
-    }
-
-    public void Save()
-        => Bridge.storage.Set(SaveSystem.SaveFile, _saveSystem.JsonData);
-
-    public void Load()
-    {
-#if UNITY_EDITOR
-        IsLoad = true;
-#else
-        Bridge.storage.Get(SaveSerial.SaveFile, OnLoadComplete);
 #endif
-    }
-
-    public void OnLoadComplete(bool success, string data)
-    {
-        if (success && !string.IsNullOrEmpty(data))
-            File.WriteAllText(_saveSystem.Path, data);
-
-        IsLoad = true;
+        GameReady();
     }
 
     public void SetToLeaderBoard(int value, Action<bool> onComplete = null)
@@ -82,17 +52,14 @@ public class SDK
         {
             case InterstitialState.Loading:
             case InterstitialState.Opened:
-                _audioManager.MuteMusic();
-                _audioManager.MuteSounds();
+                AudioListener.pause = true;
                 break;
             case InterstitialState.Closed:
             case InterstitialState.Failed:
-                _audioManager.UnmuteMusic();
-                _audioManager.UnmuteSounds();
-                break;
-            default:
+                AudioListener.pause = false;
                 break;
         }
+        InterstitialStateChanged?.Invoke(state);
     }
 
     private void GameReady()

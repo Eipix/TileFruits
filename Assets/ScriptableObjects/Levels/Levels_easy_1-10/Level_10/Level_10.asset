@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54faef65d48c4eb98958793ca7b0aeab, type: 3}
+  m_Name: Level_10
+  m_EditorClassIdentifier: 
+  <Id>k__BackingField: f6a8cefd66c958a4c9998d7fa491f1df
+  <GeneratorConfig>k__BackingField:
+    <TileList>k__BackingField: {fileID: 11400000, guid: 066226cee98551e438c8096b5190ad1e, type: 2}
+    <ShapeStrategy>k__BackingField:
+      rid: 4620319893468479630
+    <GenerationStrategy>k__BackingField: {fileID: 11400000, guid: 4fb0cb7546d8be04eb377dcfe3a3cad1, type: 2}
+    <DistributionStrategy>k__BackingField: {fileID: 11400000, guid: 716c097c00456a54dbfc033c82075a3f, type: 2}
+  references:
+    version: 2
+    RefIds:
+    - rid: 4620319893468479630
+      type: {class: CustomStrategy, ns: Generator.GenerationStrategies.Implementations, asm: Assembly-CSharp}
+      data:
+        <Size>k__BackingField: {x: 9, y: 8}
+        _positions:
+        - {x: 5, y: 0, z: 0}
+        - {x: 5, y: 2, z: 0}
+        - {x: 5, y: 6, z: 0}
+        - {x: 5, y: 8, z: 0}
+        - {x: 1, y: 2, z: 0}
+        - {x: 1, y: 0, z: 0}
+        - {x: 3, y: 2, z: 0}
+        - {x: 3, y: 0, z: 0}
+        - {x: 3, y: 6, z: 0}
+        - {x: 3, y: 4, z: 0}
+        - {x: 3, y: 8, z: 0}
+        - {x: 9, y: 2, z: 0}
+        - {x: 9, y: 0, z: 0}
+        - {x: 5, y: 4, z: 0}
+        - {x: 7, y: 8, z: 0}
+        - {x: 7, y: 4, z: 0}
+        - {x: 7, y: 0, z: 0}
+        - {x: 7, y: 2, z: 0}
+        - {x: 7, y: 6, z: 0}
+        - {x: 2, y: 1, z: 1}
+        - {x: 4, y: 1, z: 1}
+        - {x: 6, y: 1, z: 1}
+        - {x: 8, y: 1, z: 1}
+        - {x: 4, y: 3, z: 1}
+        - {x: 6, y: 3, z: 1}
+        - {x: 4, y: 5, z: 1}
+        - {x: 4, y: 7, z: 1}
+        - {x: 6, y: 7, z: 1}
+        - {x: 6, y: 5, z: 1}
+        - {x: 5, y: 6, z: 2}
+        - {x: 5, y: 4, z: 2}
+        - {x: 7, y: 1, z: 2}
+        - {x: 5, y: 2, z: 2}
+        - {x: 3, y: 1, z: 2}
+        - {x: 5, y: 3, z: 3}
+        - {x: 5, y: 5, z: 3}
+        - {x: 7, y: 1, z: 3}
+        - {x: 3, y: 1, z: 3}
+        - {x: 5, y: 4, z: 4}
