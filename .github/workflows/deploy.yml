@@ -3,6 +3,7 @@ name: Unity Build WebGL & Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
