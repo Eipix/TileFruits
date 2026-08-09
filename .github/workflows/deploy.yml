@@ -36,7 +36,7 @@ jobs:
           customParameters: -webGLCompressionFormat Brotli -webGLDecompressionFallback True
 
       - name: Fix Jekyll for GitHub Pages
-        run: touch build/WebGL/WebGL/.nojekyll
+        run: sudo touch build/WebGL/WebGL/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
