@@ -33,7 +33,7 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: WebGL
-          customParameters: -webGLCompressionFormat Brotli -webGLDecompressionFallback True
+          customParameters: -webGLCompressionFormat Gzip -webGLDecompressionFallback
 
       - name: Fix Jekyll for GitHub Pages
         run: sudo touch build/WebGL/WebGL/.nojekyll
