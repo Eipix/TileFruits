@@ -33,7 +33,7 @@ jobs:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         with:
           targetPlatform: WebGL
-          customParameters: -webGLCompressionFormat Gzip -webGLDecompressionFallback
+          buildProfile: 'Assets/Settings/Build Profiles/New Web Profile.asset'
 
       - name: Fix Jekyll for GitHub Pages
         run: sudo touch build/WebGL/WebGL/.nojekyll
@@ -41,5 +41,5 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build/WebGL/WebGL
+          folder: build/WebGL
           branch: gh-pages
