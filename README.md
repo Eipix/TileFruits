@@ -13,7 +13,8 @@ Casual Tile Match puzzle game with an infinite level loop and a custom Scriptabl
 * **Infinite Level Loop:** Level layouts cycle endlessly using a shuffle algorithm that strictly preserves tile type parity, guaranteeing level solvability.
 
 ---
-<video src="https://github.com/Eipix/TileFruits/blob/master/docs/media/gameplay.mp4" autoplay loop muted playsinline width="100%"></video>
+
+https://github.com/user-attachments/assets/d5aa81b5-4435-4bb7-8bad-92aa7200d01d
 
 
 ## Custom Level Editor
@@ -25,7 +26,8 @@ Custom inspector for `CustomLevel` ScriptableObjects to design and validate layo
 * **Solvability Validation:** Automated checks for total tile count parity, fruit type distribution, and unreachable tile detection.
 * **Instant Serialization:** Real-time data updates directly in the asset, ready for immediate Play Mode testing.
 ---
-<video src="https://github.com/Eipix/TileFruits/blob/master/docs/media/level editor.mp4" autoplay loop muted playsinline width="100%"></video>
+
+https://github.com/user-attachments/assets/a633adab-8392-4ead-b66d-772ed5591037
 
 
 ## Tech Stack & Architecture
