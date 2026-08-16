@@ -147,7 +147,7 @@ function initializeBridge() {
                         streamingAssetsUrl: 'StreamingAssets',
                         companyName: 'DefaultCompany',
                         productName: 'TileFruits',
-                        productVersion: '0.0.181',
+                        productVersion: '0.0.182',
                         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
                         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
                     },
